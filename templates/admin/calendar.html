@@ -1,0 +1,63 @@
+{% extends 'admin/base.html' %}
+
+{% block body %}
+<div class="container">
+    <h2>All Bookings Calendar</h2>
+    <div id="calendar"></div>
+</div>
+
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.2/main.min.css' rel='stylesheet' />
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.2/main.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.2/locales-all.min.js'></script>
+<script src="https://unpkg.com/@popperjs/core@2"></script>
+<script src="https://unpkg.com/tippy.js@6"></script>
+<link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light.css" />
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            events: '/api/bookings',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            eventTimeFormat: { // like '14:30:00'
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                meridiem: false
+            },
+            eventDataTransform: function(eventData) {
+                return {
+                    id: eventData.id,
+                    title: eventData.title,
+                    start: new Date(eventData.start),
+                    end: new Date(eventData.end),
+                    description: eventData.description
+                };
+            },
+            eventClick: function(info) {
+                var bookingId = info.event.id;
+                window.location.href = `/admin/booking/${bookingId}`;
+            },
+            eventDidMount: function(info) {
+                tippy(info.el, {
+                    content: info.event.extendedProps.description,
+                    placement: 'top',
+                    theme: 'light',
+                    trigger: 'mouseenter',
+                    arrow: true,
+                    duration: [200, 200]
+                });
+            }
+        });
+
+        calendar.render();
+    });
+</script>
+{% endblock %}
+

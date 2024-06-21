@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Select Tickets{% endblock %}
+
+{% block content %}
+
+   
+<div class="container-fluid p-0"> <!-- Use container-fluid for full width and remove padding -->
+    <div class="d-flex flex-column flex-lg-row" style="min-height: 100vh;"> <!-- Ensure full screen height -->
+        <div class="flex-grow-1 p-2" id='calendar'></div> <!-- Calendar takes available space -->
+        
+            <form id="bookingForm" action="{{ url_for('calculate_price') }}" method="post">
+                <input type="hidden" id="date" name="date" required>
+                <input type="hidden" id="time_slot" name="time_slot" required>
+                <input type="hidden" id="tickets" name="tickets" min="1" required><br><br>
+                <input type="hidden" id="event_price" name="event_price" required>
+                <button type="button" id="selectTicketsButton" style="display: none;" class="btn btn-primary">Select Tickets</button>
+                <input type="hidden" value="calculate_price">
+            </form>
+            
+     
+        </div>
+    </div>
+    
+    <div class="modal fade" id="eventDetailsModal" tabindex="-1" aria-labelledby="eventDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="eventDetailsModalLabel">Event Details</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p id="eventDescription"></p>
+              <!-- Add any other event details you want to include here -->
+            </div>
+            <div class="modal-footer">
+              <input type="number" id="modalNumberOfTickets" placeholder="Number of Guests">
+              <button type="button" class="btn btn-primary" id="confirmGuestsButton">OK</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: window.innerWidth < 768 ? 'timeGridWeek' : 'dayGridMonth',
+        events: '/get_events',
+        slotMinTime: "09:00:00",
+        slotMaxTime: "19:00:00",
+        businessHours: {
+            daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
+            startTime: '09:00',
+            endTime: '19:00',
+        },
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        eventContent: function(arg) {
+            let eventTitle = document.createElement('div');
+            eventTitle.innerHTML = `<b>${arg.event.title}</b>`; 
+            return { domNodes: [eventTitle] };
+        },
+        eventClick: function(info) {
+            var eventDescription = info.event.extendedProps.description || 'No description available';
+            var message = eventDescription + "\n\nHow many guests are in your group?";
+
+            if(calendar.view.type !== 'timeGridDay') {
+                calendar.changeView('timeGridDay', info.event.startStr);
+            } else {
+                const numberOfTickets = prompt(message);
+                if (numberOfTickets) {
+                    document.getElementById('time_slot').value = info.event.id;
+                    document.getElementById('tickets').value = numberOfTickets;
+                    document.getElementById('date').value = info.event.start.toISOString().split('T')[0];
+                    document.getElementById('bookingForm').submit();
+                }
+            }
+        },
+        windowResize: function(view) {
+            if(window.innerWidth < 768) {
+                calendar.changeView('timeGridWeek');
+            } else {
+                calendar.changeView('dayGridMonth');
+            }
+        }
+    });
+
+    calendar.render();
+});
+
+        </script>
+        
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,69 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}The Howe Ranch Payment{% endblock %}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href='https://unpkg.com/fullcalendar@5/main.min.css' rel='stylesheet' />
+    <script src='https://unpkg.com/fullcalendar@5/main.min.js'></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=AW63n3y6utvApUTf5siisjfJSopHKj7ZaNATpf6w88N69q5650KHzcm9IhdWWF_ZeIOZcrQHU8DvhBow&currency=USD"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=MuseoModerno:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <style>
+      body {
+          font-family: Arial, sans-serif;
+      }
+    
+        .footer-title {
+            font-family: 'MuseoModerno', cursive;
+            font-size: 1rem; /* Smaller font size */
+            margin-bottom: 0.25rem !important; /* Minimize margin */
+        }
+  </style>
+</head>
+<body>
+{% block navbar %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-center">
+    <a class="navbar-brand" href="https://www.thehoweranch.com/">
+      <img src="/static/pic/logo2.jpg" alt="Logo" width="100" height="auto" class="d-inline-block align-text-top">
+      <!-- Optionally, add text here if needed -->
+    </a>
+  </nav>
+{% endblock %}
+
+<div class="container">
+    {% block content %}
+    <!-- Default content goes here -->
+    {% endblock %}
+</div>
+<footer class="bg-light text-center text-lg-start">
+  <div class="container p-0">
+    <div class="row justify-content-center">
+      <div class="col-12 col-sm-10 col-md-8 col-lg-6 p-1">
+        <h5 class="footer-title">Howe Design</h5>
+        <p class="fs-6 mb-1">
+          Offering app development, web design, hosting, and tech support.
+        </p>
+        <p class="fs-6 mb-1">
+          For tech support, contact us at:
+        </p>
+        <p class="fs-6 mb-1">
+          Email: <a href="mailto:howeranchservices@gmail.com">howeranchservices@gmail.com</a><br>
+          Phone: Spencer Howe 424-219-4212
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="text-center p-1 bg-dark text-light">
+    &copy; 2024 Howe Design. All rights reserved.
+  </div>
+</footer>
+
+<!-- Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

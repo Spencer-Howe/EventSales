@@ -1,0 +1,9 @@
+Flask
+Flask-SQLAlchemy
+requests
+python-dotenv
+Flask-Mail
+Flask-Admin
+Flask-Migrate
+WTForms
+psycopg2-binary

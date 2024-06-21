@@ -1,0 +1,20 @@
+
+{% block body %}
+<div class="container">
+    <h2>Booking Details</h2>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Booking ID: {{ booking.id }}</h5>
+            <p class="card-text"><strong>Time Slot:</strong> {{ booking.time_slot }}</p>
+            <p class="card-text"><strong>Tickets:</strong> {{ booking.tickets }}</p>
+            <p class="card-text"><strong>Order ID:</strong> {{ booking.order_id }}</p>
+            <p class="card-text"><strong>Amount Paid:</strong> {{ booking.amount_paid }} {{ booking.currency }}</p>
+            <p class="card-text"><strong>Status:</strong> {{ booking.status }}</p>
+            <p class="card-text"><strong>Name:</strong> {{ booking.name }}</p>
+            <p class="card-text"><strong>Email:</strong> {{ booking.email }}</p>
+            <p><strong>Phone:</strong> {{ booking.phone }}</p>
+            <a href="{{ url_for('calendar.index') }}" class="btn btn-primary">Back to Calendar</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
