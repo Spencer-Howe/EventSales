@@ -5,13 +5,16 @@ from flask import jsonify, render_template, request, redirect, url_for, session,
 from flask_mail import Message
 from eventapp.models import Booking, User, Event, Waiver
 from eventapp import db, mail
+
 from flask_login import LoginManager, login_user, logout_user, login_required
 
-
-
-
-
 views = Blueprint('views', __name__)
+
+#admin
+@views.route('/admin')
+@login_required
+def admin_home():
+    return render_template('home.html')
 
 @views.route('/api/bookings')
 def bookings():
@@ -30,11 +33,15 @@ def login():
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
         if user and user.password == password:
-            login(user)
+            login_user(user)
             return redirect(url_for('admin.index'))
         else:
             return 'Invalid credentials'
     return render_template('login.html')
+
+@views.route('/')
+def index():
+    return render_template('index')
 
 @views.route('/logout')
 @login_required

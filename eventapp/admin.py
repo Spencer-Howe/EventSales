@@ -7,7 +7,9 @@ from wtforms.fields import DateTimeLocalField, TextAreaField
 from eventapp.models import Event, User
 from eventapp import db
 
-admin_bp = Blueprint('admin_bp', __name__)
+
+admin1 = Blueprint('admin1', __name__)
+
 
 
 class CalendarView(BaseView):
@@ -45,7 +47,7 @@ class EventModelView(ModelView):
         return current_user.is_authenticated
 
     def inaccessible_callback(self, name, **kwargs):
-        return redirect(url_for('login'))
+        return redirect(url_for('views.login'))
 
 
 # Custom AdminIndexView
@@ -54,16 +56,11 @@ class MyAdminIndexView(AdminIndexView):
         return current_user.is_authenticated
 
     def inaccessible_callback(self, name, **kwargs):
-        return redirect(url_for('login'))
+        return redirect(url_for('views.login'))
 
-def create_admin(app):
+def setup_admin(app):
     admin = Admin(app, index_view=MyAdminIndexView(), template_mode='bootstrap3')
     admin.add_view(EventModelView(Event, db.session, name='Event Model'))
     admin.add_view(CalendarView(name='Calendar', endpoint='calendar'))
-    return admin
 
-#@admin_bp.before_app_first_request
-def setup_admin():
-    from eventapp import create_app
-    app = create_app()
-    create_admin(app)
+
