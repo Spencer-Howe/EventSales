@@ -3,34 +3,38 @@ import requests
 from datetime import datetime
 from flask import jsonify, render_template, request, redirect, url_for, session, Blueprint, current_app
 from flask_mail import Message
-from eventapp.models import Booking, User, Event, Waiver
-from eventapp import db, mail
-from flask_login import LoginManager, login_user, logout_user, login_required
-
+from flask_login import login_user, logout_user, login_required
+from .extensions import db, mail, login_manager
 
 
 
 
 views = Blueprint('views', __name__)
 
+
+
+
 @views.route('/api/bookings')
 def bookings():
+    from eventapp.models import Booking
     bookings = Booking.query.all()
     return jsonify([b.serialize() for b in bookings])
 @views.route('/admin/booking/<int:booking_id>')
 @login_required
 def booking_detail(booking_id):
+    from eventapp.models import Booking
     booking = Booking.query.get_or_404(booking_id)
     return render_template('base1.html', booking=booking)
 
 @views.route('/login', methods=['GET', 'POST'])
-def login():
+def login_view():
     if request.method == 'POST':
+        from eventapp.models import User
         username = request.form['username']
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
         if user and user.password == password:
-            login(user)
+            login_user(user)
             return redirect(url_for('admin.index'))
         else:
             return 'Invalid credentials'
@@ -51,6 +55,7 @@ def home():
 
 @views.route('/calculate_price', methods=['POST'])
 def calculate_price():
+    from eventapp.models import Event
     time_slot_code = request.form.get('time_slot')
     tickets_str = request.form.get('tickets')
     try:
@@ -105,6 +110,7 @@ def verify_transaction():
 
 @views.route('/receipt/<order_id>')
 def show_receipt(order_id):
+    from eventapp.models import Booking
     access_token = get_paypal_access_token()
     if not access_token:
         return "Failed to obtain access token", 500
@@ -154,6 +160,7 @@ def show_receipt(order_id):
 
 @views.route('/waiver/<order_id>', methods=['GET', 'POST'])
 def sign_waiver(order_id):
+    from eventapp.models import Waiver
     if request.method == 'POST':
         signature = request.form.get('signature')
         new_waiver = Waiver(order_id=order_id, signature=signature, signed_date=datetime.utcnow())
@@ -184,6 +191,7 @@ def thank_you_page():
 
 @views.route('/get_events')
 def get_events():
+    from eventapp.models import Event
     events = Event.query.all()
     events_data = [{
         'id': event.id,
@@ -196,6 +204,7 @@ def get_events():
 
 
 def convert_time_slot(time_slot_code):
+    from eventapp.models import Event
     event = Event.query.filter_by(id=time_slot_code).first()
     if event:
         return f'{event.title} - {event.start.isoformat()}'
