@@ -139,7 +139,7 @@ def sign_waiver(order_id):
         """
         message = Message(subject, sender=sender, recipients=recipients, body=body)
         mail.send(message)
-        return redirect(url_for('thank_you_page'))
+        return redirect(url_for('views.thank_you_page'))
     # noinspection PyUnresolvedReferences
     return render_template('waiver_form.html', order_id=order_id)
 
