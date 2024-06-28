@@ -4,6 +4,7 @@ from datetime import datetime
 from flask import jsonify, render_template, request, redirect, url_for, session, Blueprint, current_app
 from flask_mail import Message
 from flask_login import login_user, logout_user, login_required
+# noinspection PyUnresolvedReferences
 from .extensions import db, mail, login_manager
 
 
@@ -24,6 +25,7 @@ def bookings():
 def booking_detail(booking_id):
     from eventapp.models import Booking
     booking = Booking.query.get_or_404(booking_id)
+    # noinspection PyUnresolvedReferences
     return render_template('base1.html', booking=booking)
 
 @views.route('/login', methods=['GET', 'POST'])
@@ -38,6 +40,7 @@ def login_view():
             return redirect(url_for('admin.index'))
         else:
             return 'Invalid credentials'
+    # noinspection PyUnresolvedReferences
     return render_template('login.html')
 
 @views.route('/logout')
@@ -48,6 +51,7 @@ def logout():
 
 @views.route('/')
 def home():
+    # noinspection PyUnresolvedReferences
     return render_template('home.html')
 
 
@@ -80,15 +84,18 @@ def calculate_price():
         readable_time_slot = 'Unknown Time Slot'
         total_price = 0
 
+    # noinspection PyUnresolvedReferences
     return render_template('some_template.html', time_slot=readable_time_slot, tickets=tickets,
                            total_price=total_price, )
 
 
 @views.route('/select_tickets')
 def select_tickets():
+    # noinspection PyUnresolvedReferences
     return render_template('select_tickets.html')
 @views.route('/select_easter')
 def select_easter():
+    # noinspection PyUnresolvedReferences
     return render_template('select_easter.html')
 
 
@@ -107,6 +114,34 @@ def verify_transaction():
     else:
         return jsonify({"verified": False, "reason": "Verification failed or order not completed"}), 400
 
+
+@views.route('/waiver/<order_id>', methods=['GET', 'POST'])
+def sign_waiver(order_id):
+    from eventapp.models import Waiver
+    if request.method == 'POST':
+        signature = request.form.get('signature')
+        new_waiver = Waiver(order_id=order_id, signature=signature, signed_date=datetime.utcnow())
+        db.session.add(new_waiver)
+        db.session.commit()
+        subject = f"New Waiver Submitted: {order_id}"
+        sender = current_app.config['MAIL_USERNAME']
+        recipients = [sender]
+        body = f"""
+        A new waiver has been submitted.
+
+        Details:
+        ID: {new_waiver.id}
+        Order ID: {order_id}
+        Signature: {signature}
+        Signed Date: {new_waiver.signed_date}
+
+        Please review the submission in your system.
+        """
+        message = Message(subject, sender=sender, recipients=recipients, body=body)
+        mail.send(message)
+        return redirect(url_for('thank_you_page'))
+    # noinspection PyUnresolvedReferences
+    return render_template('waiver_form.html', order_id=order_id)
 
 @views.route('/receipt/<order_id>')
 def show_receipt(order_id):
@@ -144,7 +179,8 @@ def show_receipt(order_id):
             'tickets': tickets
 
         }
-        waiver_url = url_for('sign_waiver', order_id=order_id, _external=True)
+
+        waiver_url = url_for('views.sign_waiver', order_id=order_id, _external=True)
         email_order_details['waiver_url'] = waiver_url
         html_content = create_receipt_email_content(email_order_details)
         subject = "Your Payment Receipt"
@@ -152,41 +188,17 @@ def show_receipt(order_id):
         recipients = [email, sender]
         msg = Message(subject, sender=sender, recipients=recipients, html=html_content)
         mail.send(msg)
+        # noinspection PyUnresolvedReferences
         return render_template('receipt.html', order_id=order_id, name=name, email=email,
                                time_slot=convert_time_slot(time_slot), tickets=tickets, amount=amount,
                                currency=currency, status=status, phone=phone)
     else:
         return "Verification failed or order not completed", 400
 
-@views.route('/waiver/<order_id>', methods=['GET', 'POST'])
-def sign_waiver(order_id):
-    from eventapp.models import Waiver
-    if request.method == 'POST':
-        signature = request.form.get('signature')
-        new_waiver = Waiver(order_id=order_id, signature=signature, signed_date=datetime.utcnow())
-        db.session.add(new_waiver)
-        db.session.commit()
-        subject = f"New Waiver Submitted: {order_id}"
-        sender = current_app.config['MAIL_USERNAME']
-        recipients = [sender]
-        body = f"""
-        A new waiver has been submitted.
-
-        Details:
-        ID: {new_waiver.id}
-        Order ID: {order_id}
-        Signature: {signature}
-        Signed Date: {new_waiver.signed_date}
-
-        Please review the submission in your system.
-        """
-        message = Message(subject, sender=sender, recipients=recipients, body=body)
-        mail.send(message)
-        return redirect(url_for('thank_you_page'))
-    return render_template('waiver_form.html', order_id=order_id)
 
 @views.route('/thank_you')
 def thank_you_page():
+    # noinspection PyUnresolvedReferences
     return render_template('thank_you.html')
 
 @views.route('/get_events')
