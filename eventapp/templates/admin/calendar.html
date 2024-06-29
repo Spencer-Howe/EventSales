@@ -19,7 +19,40 @@
 
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
-            events: '/api/bookings',
+            events: function(fetchInfo, successCallback, failureCallback) {
+                console.log('Fetching events from API...');
+                console.log('Fetch Info:', fetchInfo);
+
+                fetch(`/api/bookings?start=${fetchInfo.startStr}&end=${fetchInfo.endStr}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Fetched booking data:', data); // Log the data fetched
+                        // Transform data if needed
+                        const events = data.map(booking => {
+                            console.log('Processing booking:', booking);
+                            // Ensure the date format is correct
+                            let startDate = new Date(booking.start.split(' - ')[1].replace(" ", "T"));
+                            return {
+                                id: booking.id,
+                                title: booking.title,
+                                start: startDate,
+                                end: startDate, // Adjust if you have end time
+                                description: `Amount Paid: ${booking.amount_paid} ${booking.currency}, Tickets: ${booking.tickets}, Order ID: ${booking.order_id}, Phone: ${booking.phone || 'N/A'}, Status: ${booking.status}, Email: ${booking.email}`
+                            };
+                        });
+                        console.log('Transformed events:', events); // Log transformed events
+                        successCallback(events);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching bookings:', error);
+                        failureCallback(error);
+                    });
+            },
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
@@ -30,15 +63,6 @@
                 minute: '2-digit',
                 second: '2-digit',
                 meridiem: false
-            },
-            eventDataTransform: function(eventData) {
-                return {
-                    id: eventData.id,
-                    title: eventData.title,
-                    start: new Date(eventData.start),
-                    end: new Date(eventData.end),
-                    description: eventData.description
-                };
             },
             eventClick: function(info) {
                 var bookingId = info.event.id;
