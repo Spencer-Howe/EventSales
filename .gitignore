@@ -1,4 +1,23 @@
 .env.local
 .env.production
-migrations/
-venv/
+
+Dockerfile
+
+
+docker-compose.dev.yml
+
+
+docker-compose.prod.yml
+
+
+*.log
+docker-compose.override.yml
+.idea/runConfigurations/
+*.iml
+
+idea/
+
+# Ignore datasource configuration files (if present)
+datasources.xml
+dataSources.local.xml
+workspace.xml
