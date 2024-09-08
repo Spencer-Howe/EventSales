@@ -1,6 +1,7 @@
 from flask import Flask
 from config import Config
 from .extensions import db, migrate, mail, login_manager
+import os
 
 def configure_database(app):
     db.init_app(app)
@@ -34,6 +35,9 @@ def create_app(config_class=Config):
     configure_app(app, config_class)
     configure_database(app)
     register_blueprints(app)
+
+    app.config['PAYPAL_CLIENT_ID'] = os.getenv('PAYPAL_CLIENT_ID')
+    app.config['PAYPAL_API_BASE'] = os.getenv('PAYPAL_API_BASE')
 
     from eventapp.admin import setup_admin
     setup_admin(app)

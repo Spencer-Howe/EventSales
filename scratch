@@ -1,0 +1,12 @@
+I have the complete working docker image and now its succsfully updating based on production or local for purchase for seamless switching
+I have fixed time_slot and gotten all the way thru the app
+TODO: decide on which way to do this 2 seperate docker compose and run seperate?
+docker-compose -f docker-compose.dev.yml up --build
+for dev
+new one for prod
+
+TODO: if there is a way to create a recrest to go thru email like they click on a date and then make their
+form from an email link or sometrhing like that. or prefilled with approved denied and sent email link for payment
+explore all options
+
+

@@ -54,31 +54,24 @@ def home():
     # noinspection PyUnresolvedReferences
     return render_template('home.html')
 
-
-
-
 @views.route('/calculate_price', methods=['POST'])
 def calculate_price():
     from eventapp.models import Event
-    time_slot_code = request.form.get('time_slot')
+    event_id = request.form['event_id']
     tickets_str = request.form.get('tickets')
+    paypal_client_id = current_app.config['PAYPAL_CLIENT_ID']
     try:
         tickets = int(tickets_str)
     except (ValueError, TypeError):
         tickets = 0
 
-    event = Event.query.filter_by(id=time_slot_code).first()
+    event = Event.query.filter_by(id=event_id).first()
 
     if event:
-        try:
-            readable_start = event.start.strftime("%B %d, %Y, %I:%M %p")
-            readable_time_slot = f'{event.title} - {readable_start}'
-            total_price = tickets * event.price_per_ticket
-        except ValueError as e:
-            print(f"Error parsing datetime: {e}")
-            readable_time_slot = "Error in date format"
-            total_price = 0
-        session['time_slot'] = time_slot_code
+        readable_start = event.start.strftime("%B %d, %Y, %I:%M %p")
+        readable_time_slot = f'{event.title} - {readable_start}'
+        total_price = tickets * event.price_per_ticket
+        session['event_id'] = event_id  # Store event ID only
         session['tickets'] = tickets
     else:
         readable_time_slot = 'Unknown Time Slot'
@@ -86,13 +79,18 @@ def calculate_price():
 
     # noinspection PyUnresolvedReferences
     return render_template('some_template.html', time_slot=readable_time_slot, tickets=tickets,
-                           total_price=total_price, )
+                           total_price=total_price, paypal_client_id=paypal_client_id)
+
 
 
 @views.route('/select_tickets')
 def select_tickets():
+    paypal_client_id = current_app.config['PAYPAL_CLIENT_ID']
     # noinspection PyUnresolvedReferences
-    return render_template('select_tickets.html')
+    return render_template(
+        'select_tickets.html',
+        paypal_client_id=paypal_client_id
+    )
 @views.route('/select_easter')
 def select_easter():
     # noinspection PyUnresolvedReferences
@@ -145,26 +143,38 @@ def sign_waiver(order_id):
 
 @views.route('/receipt/<order_id>')
 def show_receipt(order_id):
-    from eventapp.models import Booking
+    from eventapp.models import Booking, Event
     access_token = get_paypal_access_token()
     if not access_token:
         return "Failed to obtain access token", 500
     verified, order_details = verify_order_with_paypal(order_id, access_token)
     if verified:
-        time_slot = session.get('time_slot')
+        event_id = session.get('event_id')
         tickets = session.get('tickets')
         phone = session.get('phone')
-        session.pop('time_slot', None)
+        session.pop('event_id', None)
         session.pop('tickets', None)
         session.pop('phone', None)
+        event = Event.query.filter_by(id=event_id).first()
+        if not event:
+            return "Event not found", 404
+        time_slot = event.start
         payer_info = order_details.get('payer', {})
         name = f"{payer_info.get('name').get('given_name')} {payer_info.get('name').get('surname')}"
         email = payer_info.get('email_address')
         amount = order_details['purchase_units'][0]['amount']['value']
         currency = order_details['purchase_units'][0]['amount']['currency_code']
         status = order_details.get('status')
-        new_booking = Booking(time_slot=convert_time_slot(time_slot), tickets=tickets, order_id=order_id,
-                              amount_paid=amount, currency=currency, status=status, name=name, email=email, phone=phone)
+        new_booking = Booking(
+            time_slot=time_slot,
+            tickets=tickets,
+            order_id=order_id,
+            amount_paid=amount,
+            currency=currency,
+            status=status,
+            name=name,
+            email=email,
+            phone=phone)
         db.session.add(new_booking)
         db.session.commit()
         email_order_details = {
@@ -175,7 +185,7 @@ def show_receipt(order_id):
             'amount': amount,
             'currency': currency,
             'status': status,
-            'time_slot': convert_time_slot(time_slot),
+            'time_slot': time_slot,
             'tickets': tickets
 
         }
@@ -190,7 +200,7 @@ def show_receipt(order_id):
         mail.send(msg)
         # noinspection PyUnresolvedReferences
         return render_template('receipt.html', order_id=order_id, name=name, email=email,
-                               time_slot=convert_time_slot(time_slot), tickets=tickets, amount=amount,
+                               time_slot=time_slot, tickets=tickets, amount=amount,
                                currency=currency, status=status, phone=phone)
     else:
         return "Verification failed or order not completed", 400
@@ -214,13 +224,6 @@ def get_events():
     } for event in events]
     return jsonify(events_data)
 
-
-def convert_time_slot(time_slot_code):
-    from eventapp.models import Event
-    event = Event.query.filter_by(id=time_slot_code).first()
-    if event:
-        return f'{event.title} - {event.start.isoformat()}'
-    return 'Unknown Time Slot'
 
 def get_paypal_access_token():
     url = f"{current_app.config['PAYPAL_API_BASE']}/v1/oauth2/token"

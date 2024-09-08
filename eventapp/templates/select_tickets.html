@@ -11,7 +11,7 @@
 
             <form id="bookingForm" action="{{ url_for('views.calculate_price') }}" method="post">
                 <input type="hidden" id="date" name="date" required>
-                <input type="hidden" id="time_slot" name="time_slot" required>
+                <input type="hidden" id="event_id" name="event_id" required>
                 <input type="hidden" id="tickets" name="tickets" min="1" required><br><br>
                 <input type="hidden" id="event_price" name="event_price" required>
                 <button type="button" id="selectTicketsButton" style="display: none;" class="btn btn-primary">Select Tickets</button>
@@ -73,9 +73,8 @@
             } else {
                 const numberOfTickets = prompt(message);
                 if (numberOfTickets) {
-                    document.getElementById('time_slot').value = info.event.id;
+                    document.getElementById('event_id').value = info.event.id;
                     document.getElementById('tickets').value = numberOfTickets;
-                    document.getElementById('date').value = info.event.start.toISOString().split('T')[0];
                     document.getElementById('bookingForm').submit();
                 }
             }
