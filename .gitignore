@@ -1,14 +1,7 @@
 .env.local
 .env.production
-
-Dockerfile
-
-
-docker-compose.dev.yml
-
-
-docker-compose.prod.yml
-
+ssl/
+/etc/letsencrypt
 
 *.log
 docker-compose.override.yml
