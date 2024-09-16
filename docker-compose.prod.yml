@@ -34,6 +34,7 @@ services:
     - ./ssl:/etc/nginx/ssl                            # Mount your SSL directory
     - /etc/letsencrypt:/etc/letsencrypt                # For future Let's Encrypt certs
     - /var/lib/letsencrypt:/var/lib/letsencrypt
+    - /usr/share/nginx/html:/usr/share/nginx/html
     depends_on:
       - web
   certbot:
