@@ -13,6 +13,7 @@ find docker name container ---- docker ps
 once in ---- flask db migrate -m "Describe your migration here"
 flask db upgrade
 exit
+docker-compose -f docker-compose.prod.yml up --build  COMMMAND
 
 for dev
 new one for prod
