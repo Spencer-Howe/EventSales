@@ -8,3 +8,4 @@ Flask-Migrate
 WTForms
 psycopg2-binary
 flask-login
+gunicorn

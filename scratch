@@ -1,7 +1,19 @@
 I have the complete working docker image and now its succsfully updating based on production or local for purchase for seamless switching
 I have fixed time_slot and gotten all the way thru the app
+fixed iso format for admin calender
+
 TODO: decide on which way to do this 2 seperate docker compose and run seperate?
 docker-compose -f docker-compose.dev.yml up --build
+docker-compose -f docker-compose.prod.yml up --build
+sudo docker-compose -f docker-compose.prod.yml up --build
+
+commands after start for db migrations
+docker exec -it <container_name> /bin/bash
+find docker name container ---- docker ps
+once in ---- flask db migrate -m "Describe your migration here"
+flask db upgrade
+exit
+
 for dev
 new one for prod
 
@@ -10,3 +22,98 @@ form from an email link or sometrhing like that. or prefilled with approved deni
 explore all options
 
 
+Run Docker in Detached Mode
+Instead of running docker-compose up and keeping it attached to the terminal, you can run it in detached mode by adding the -d flag. This will start the containers in the background, freeing up your terminal for further commands.
+
+bash
+
+sudo docker-compose -f docker-compose.prod.yml up -d
+
+/Users/spencer/Desktop/SSH
+spencer@Bixis-MBP SSH % cd LightsailDefaultKey-us-east-2.pem
+
+ssh -i /Users/spencer/.ssh/LightsailDefaultKey-us-east-2.pem  ubuntu@52.14.177.75
+52.14.177.75
+mv /Users/spencer/Desktop/SSH/LightsailDefaultKey-us-east-2.pem ~/.ssh/
+
+chmod 400 ~/.ssh/LightsailDefaultKey-us-east-2.pem
+
+cd ~/myapp
+
+/home/ubuntu/myapp
+
+scp -i /Users/spencer/.ssh/LightsailDefaultKey-us-east-2.pem -r /Users/spencer/PycharmProjects/EventSales ubuntu@52.14.177.75:/home/ubuntu/myapp
+
+!!!!!! AFTER INITIAL DONT USE ABOVE RSYNC TO NOT MAKE DUPLICATES
+
+
+
+services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER:
+      POSTGRES_PASSWORD:
+      POSTGRES_DB:
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    env_file:
+      - .env.production
+    command: bash -c "flask db upgrade && flask run --host=0.0.0.0"
+    volumes:
+      - .:/app
+    ports:
+      - "5000:5000"
+    environment:
+      FLASK_APP: run.py
+
+
+
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
+
+
+/Users/spencer/Downloads/LightsailDefaultKey-us-east-2(1).pem ~/.ssh/LightsailDefaultKey-us-east-2.pem
+
+
+
+/Users/spencer/Desktop/SSH/LightsailDefaultKey-us-east-2(1).pem ~/.ssh/LightsailDefaultKey-us-east-2.pem
+
+
+  GNU nano 6.2                                                                        /home/ubuntu/myapp/nginx/myapp.conf
+server {
+    listen 80;
+    server_name www.thehoweranchpayment.com;
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl;
+    server_name www.thehoweranchpayment.com;
+
+    # Use the correct paths for the SSL certificate
+    ssl_certificate /etc/nginx/ssl/localhost.crt;  # Replace this with your actual cert file
+    ssl_certificate_key /etc/nginx/ssl/localhost.key;  # Replace this with your actual key file
+
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
+
+    location / {
+        proxy_pass http://web:5000;  # Proxy to your Flask app
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
