@@ -41,26 +41,65 @@
     {% endblock %}
 </div>
 <footer class="bg-light text-center text-lg-start">
-  <div class="container p-0">
-    <div class="row justify-content-center">
-      <div class="col-12 col-sm-10 col-md-8 col-lg-6 p-1">
-        <h5 class="footer-title">Howe Design</h5>
-        <p class="fs-6 mb-1">
-          Offering app development, web design, hosting, and tech support.
-        </p>
-        <p class="fs-6 mb-1">
-          For tech support, contact us at:
-        </p>
-        <p class="fs-6 mb-1">
-          Email: <a href="mailto:howeranchservices@gmail.com">howeranchservices@gmail.com</a><br>
-          Phone: Spencer Howe 424-219-4212
-        </p>
-      </div>
+    <!-- Simplified and Compact Advertisement Section -->
+    <div class="howe-advertisement-container text-center">
+        <div class="howe-ad">
+            <h3 class="ad-title">Howe DevOps</h3>
+            <p class="ad-description">
+                Specializing in backend development, cloud deployments, and software engineering with Python, Flask, Docker, JavaScript, and more.
+            </p>
+            <a href="mailto:howeranchservices@gmail.com" class="ad-btn">Contact Us</a>
+        </div>
     </div>
-  </div>
-  <div class="text-center p-1 bg-dark text-light">
-    &copy; 2024 Howe Design. All rights reserved.
-  </div>
+
+    <!-- Styles for the Advertisement Section -->
+    <style>
+        .howe-advertisement-container {
+            background-color: #2c3e50;
+            padding: 20px 10px; /* Reduced padding for less vertical space */
+            color: white;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .howe-ad {
+            display: inline-block;
+            padding: 15px;  /* Reduced padding to make it more compact */
+            border-radius: 8px;
+            background-color: #34495e;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Lighter shadow for a more subtle effect */
+        }
+
+        .ad-title {
+            font-size: 1.5rem;  /* Slightly smaller title */
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #ecf0f1;
+        }
+
+        .ad-description {
+            font-size: 0.9rem;  /* Smaller font size for the description */
+            margin-bottom: 15px;
+            color: #bdc3c7;
+        }
+
+        .ad-btn {
+            background-color: #2980b9;
+            border: none;
+            padding: 8px 16px;  /* Reduced padding on the button */
+            font-size: 0.9rem;  /* Smaller button text */
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .ad-btn:hover {
+            background-color: #1abc9c;
+        }
+    </style>
+
+
 </footer>
 
 <!-- Bootstrap Bundle with Popper -->
