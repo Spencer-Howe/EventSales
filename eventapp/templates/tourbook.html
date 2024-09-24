@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tour Booking</title>
+</head>
+<body>
+<h1>Tour Booking</h1>
+
+<!-- Automatically redirect the user to the checkout page with URL parameters -->
+<script>
+    // Define hardcoded or dynamically set values
+    var eventId = 42;  // Hardcoded or dynamically fetched event ID
+    var tickets = 3;   // Hardcoded or dynamically fetched number of tickets
+
+    // Construct the URL with parameters
+    var checkoutUrl = `/checkout?event_id=${eventId}&tickets=${tickets}`;
+
+    // Redirect the user to the constructed URL
+    window.location.href = checkoutUrl;
+</script>
+
+</body>
+</html>

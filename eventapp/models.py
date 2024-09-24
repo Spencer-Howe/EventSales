@@ -23,6 +23,7 @@ class Event(db.Model):
     end = db.Column(db.DateTime)
     description = db.Column(db.Text)
     price_per_ticket = db.Column(db.Float, nullable=False, default=0.0)
+    private = db.Column(db.Boolean, default=False)
 
 user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 

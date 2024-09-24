@@ -1,40 +1,35 @@
-<!-- templates/select_tickets.html -->
 {% extends "base.html" %}
 
 {% block title %}Select Tickets{% endblock %}
 
 {% block content %}
 
-<body>
     <h1>Confirm Your Purchase</h1>
-    <p>{{ time_slot }} </p>
+
+    <!-- Display Event Title and Description -->
+    <h2>{{ event_title }}</h2>
+    <p>{{ event_description }}</p>
+
+    <p>{{ time_slot }}</p>
     <p>Number of Tickets: {{ tickets }}</p>
     <p>Total Price: ${{ total_price }}</p>
 
     <label for="phone">Phone Number:</label>
     <small>We must have your verified phone number on file to complete your booking.</small><br>
     <input type="tel" id="phone" name="phone" required><br>
-    
-    <div style="margin-top: 30px;"></div> 
-    
+
+    <div style="margin-top: 30px;"></div>
+
     <div id="paypal-button-container"></div>
     <p id="result-message"></p>
-    
+
     <!-- PayPal SDK Script -->
-    
-
-
     <script src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id }}&currency=USD&enable-funding=venmo"></script>
-
-    
-    
-
 
     <!-- Inline Script to Define totalAmount -->
     <script>var totalAmount = {{ total_price }};</script>
 
     <!-- External JavaScript File -->
     <script src="{{ url_for('static', filename='app.js') }}"></script>
-</body>
-</html>
+
 {% endblock %}

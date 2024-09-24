@@ -49,6 +49,11 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
+
+
+
+
+
 @views.route('/')
 def home():
     # noinspection PyUnresolvedReferences
@@ -60,26 +65,41 @@ def calculate_price():
     event_id = request.form['event_id']
     tickets_str = request.form.get('tickets')
     paypal_client_id = current_app.config['PAYPAL_CLIENT_ID']
+
     try:
         tickets = int(tickets_str)
     except (ValueError, TypeError):
         tickets = 0
 
+    # Query the event from the database
     event = Event.query.filter_by(id=event_id).first()
 
     if event:
         readable_start = event.start.strftime("%B %d, %Y, %I:%M %p")
         readable_time_slot = f'{event.title} - {readable_start}'
         total_price = tickets * event.price_per_ticket
+
+        # Pass the title and description to the template
+        event_title = event.title
+        event_description = event.description
+
         session['event_id'] = event_id  # Store event ID only
         session['tickets'] = tickets
     else:
         readable_time_slot = 'Unknown Time Slot'
         total_price = 0
+        event_title = 'Unknown Event'
+        event_description = 'No description available'
 
-    # noinspection PyUnresolvedReferences
-    return render_template('some_template.html', time_slot=readable_time_slot, tickets=tickets,
-                           total_price=total_price, paypal_client_id=paypal_client_id)
+    # Render the template and pass the required data
+    return render_template('some_template.html',
+                           time_slot=readable_time_slot,
+                           tickets=tickets,
+                           total_price=total_price,
+                           paypal_client_id=paypal_client_id,
+                           event_title=event_title,
+                           event_description=event_description)
+
 
 
 
@@ -95,6 +115,48 @@ def select_tickets():
 def select_easter():
     # noinspection PyUnresolvedReferences
     return render_template('select_easter.html')
+
+@views.route('/tourbook')
+def select_tourbook():
+    # noinspection PyUnresolvedReferences
+    return render_template('tourbook.html')
+
+@views.route('/checkout', methods=['GET'])
+def checkout():
+    # Retrieve the event ID and number of tickets from the URL query parameters
+    event_id = request.args.get('event_id')
+    tickets = request.args.get('tickets')
+
+    try:
+        tickets = int(float(tickets))  # Convert to float first, then cast to int
+    except (ValueError, TypeError):
+        tickets = 0  # Default to 0 if there's an issue with conversion
+
+    # Query the event from the database
+    from .models import Event
+    event = Event.query.get_or_404(event_id)
+
+    session['event_id'] = event.id
+    session['tickets'] = tickets
+
+    # Calculate the total price
+    total_price = tickets * event.price_per_ticket
+
+    # Format the event start time
+    readable_start = event.start.strftime("%B %d, %Y, %I:%M %p")
+    readable_time_slot = f'{event.title} - {readable_start}'
+
+    # Pass event_id, event_title, event_description, and other details to the template
+    event_description = event.description  # Fetch event description from the database
+    return render_template('some_template.html',
+                           event_id=event.id,  # Pass event ID
+                           event_title=event.title,  # Pass event title
+                           event_description=event_description,  # Pass event description
+                           time_slot=readable_time_slot,  # Pass formatted time slot
+                           tickets=tickets,
+                           total_price=total_price,
+                           paypal_client_id=current_app.config['PAYPAL_CLIENT_ID'])
+
 
 
 @views.route('/verify_transaction', methods=['POST'])
@@ -214,7 +276,8 @@ def thank_you_page():
 @views.route('/get_events')
 def get_events():
     from eventapp.models import Event
-    events = Event.query.all()
+    events = Event.query.filter_by(private=False).all()
+
     events_data = [{
         'id': event.id,
         'title': event.title,
