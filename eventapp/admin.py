@@ -31,7 +31,7 @@ class EventURLsView(BaseView):
         event_urls = []
         for event in events:
             # Construct the event URL
-            event_url = f"http://127.0.0.1:5000/checkout?event_id={event.id}&tickets=1"
+            event_url = f"https://thehoweranchpayment.com/checkout?event_id={event.id}&tickets=1"
             event_urls.append({'id': event.id, 'title': event.title, 'url': event_url})
 
         # Render the template to display the event URLs
