@@ -3,84 +3,101 @@
 {% block title %}Select Tickets{% endblock %}
 
 {% block content %}
-
-
-        <!-- Adding Christmas Party Selection -->
-        <div class="row">
-            <div class="col-md-6 mx-auto">
-                <div class="card shadow-sm">
-                    <img src="static/pic/Mary.jpg" class="card-img-top" alt="Mini Highland Calf Experience">
-                    <div class="card-body">
-                        <h5 class="card-title">Dec 8 Passes</h5>
-                        <p class="card-text">
-                            🎟️ <strong>Snowflake Saver Passes</strong> are still available at just $15/person (ages 1 and up) and include everything, even drinks! Gather your family and experience the holiday magic that only Howe Ranch can offer.
-                        </p>
-                        <p class="card-text">
-                            <strong>Additional Details:</strong> <a href="https://www.thehoweranch.com/winterwonderland">https://www.thehoweranch.com/winterwonderland</a>
-                        </p>
-                        <p class="card-text">
-                            To reserve your passes, purchase below and join us for a day filled with warmth, joy, and a step back in time as Howe Ranch transforms into a nostalgic winter wonderland.
-                        </p>
-                        <p class="card-text">
-                            <strong>Highlights:</strong> Explore six enchanting areas, each capturing the old-world charm of the season with twinkling lights, cozy farm traditions, and timeless holiday cheer.
-                        </p>
-                        <p class="card-text">
-                            • Discover the <strong>European Christmas Market</strong> and <strong>Enchanted Forest</strong><br>
-                            • Cuddle baby farm animals like Highland calves, fluffy alpacas, curious goats, and more<br>
-                            • Enjoy live music and farm truck rides at the <strong>Holiday Harvest Grounds</strong><br>
-                            • Savor a seasonal buffet and hot chocolate at the Christmas Market<br>
-                            • Try your luck with winter games and prizes
-                        </p>
-
-                        <!-- Hardcoded form to submit Christmas party booking details -->
-                        <form id="christmasPartyForm" action="{{ url_for('views.calculate_price') }}" method="post">
-                            <!-- Hidden inputs for hardcoded event details -->
-                            <input type="hidden" name="event_id" value="18">
-                            <input type="hidden" name="tickets" id="partyTickets" value="">
-
-                            <div class="form-group mb-3">
-                                <label for="party-size" class="form-label">Party Size</label>
-                                <input type="number" class="form-control" id="party-size" placeholder="Enter number of guests" required>
-                            </div>
-
-                            <button type="button" class="btn btn-success" id="bookChristmasPartyBtn">Reserve Passes</button>
-                        </form>
-                    </div>
+    <div class="text-center mt-3">
+        <span>&larr; Swipe &rarr;</span>
+    </div>
+    <div class="container my-4">
+        <h2 class="text-center mb-4">Upcoming Events</h2>
+        <div class="d-flex overflow-auto position-relative" style="gap: 1rem;">
+            <!-- Card 1 -->
+            <div class="card" style="min-width: 300px;">
+                <img src="static/pic/Mary.jpg" class="card-img-top" alt="Dec 8 Passes">
+                <div class="card-body">
+                    <h5 class="card-title">🎄 Dec 8 Passes</h5>
+                    🎟️ North Pole Passes are still available at just $20/person (ages 1 and up) and include everything, even food and drinks! Gather your family and experience the holiday magic that only Howe Ranch can offer.
+                    <p class="card-text">
+                        <strong>Additional Details:</strong> <a href="https://www.thehoweranch.com/winterwonderland">https://www.thehoweranch.com/winterwonderland</a>
+                    </p>
+                    <p class="card-text">
+                        To reserve your passes, purchase below and join us for a day filled with warmth, joy, and a step back in time as Howe Ranch transforms into a nostalgic winter wonderland.
+                    </p>
+                    <p class="card-text">
+                        <strong>Highlights:</strong> Explore six enchanting areas, each capturing the old-world charm of the season with twinkling lights, cozy farm traditions, and timeless holiday cheer.
+                    </p>
+                    <p class="card-text">
+                        • Discover the <strong>European Christmas Market</strong> and <strong>Enchanted Forest</strong><br>
+                        • Cuddle baby farm animals like Highland calves, fluffy alpacas, curious goats, and more<br>
+                        • Enjoy live music and farm truck rides at the <strong>Holiday Harvest Grounds</strong><br>
+                        • Savor a seasonal buffet and hot chocolate at the Christmas Market<br>
+                        • Try your luck with winter games and prizes
+                    </p>
+                    <form id="christmasPartyForm" action="{{ url_for('views.calculate_price') }}" method="post">
+                        <input type="hidden" name="event_id" value="18">
+                        <input type="hidden" name="tickets" id="partyTickets" value="">
+                        <div class="form-group mb-3">
+                            <label for="party-size" class="form-label">Party Size</label>
+                            <input type="number" class="form-control" id="party-size" placeholder="Enter number of guests" required>
+                        </div>
+                        <button type="button" class="btn btn-success" id="bookChristmasPartyBtn">Reserve Passes</button>
+                    </form>
+                </div>
+            </div>
+            <!-- Card 2 -->
+            <div class="card" style="min-width: 300px;">
+                <img src="static/pic/zoo.jpg" class="card-img-top" alt="Farm Tour">
+                <div class="card-body">
+                    <h5 class="card-title">Cow Cuddling</h5>
+                    <p class="card-text">
+                        Experience the magic of cow cuddling and calf kisses with our calves' first encounters, where you get a chance to be part of our precious mini Highland calves' bottle-feeding routine and spend one-on-one time with the rest of our friendly farm family—alpacas, donkeys, goats, ducks, chickens, and the curious bunnies.
+                    </p>
+                    <p class="card-text">
+                        <strong>Pricing:</strong> There is a $90 minimum which is for 1 to 3 guests. Each additional guest is $20/person.
+                    </p>
+                    <a href="/select_tickets" class="btn btn-primary">Book Now</a>
+                </div>
+            </div>
+            <!-- Card 3 -->
+            <div class="card" style="min-width: 300px;">
+                <img src="static/pic/eve.jpg" class="card-img-top" alt="Christmas Eve with Mini Moos">
+                <div class="card-body">
+                    <h5 class="card-title">🐮🎄 Spend Christmas Eve with Mini Moos 🎄🐮</h5>
+                    <p class="card-text">
+                        Join us on December 24th, 1–5 PM for a heartwarming holiday experience featuring our lovable mini Highland calves and the Menagerie, plus Santa Claus!
+                    </p>
+                    <ul class="card-text">
+                        <li>✨ Snuggle and cuddle with mini Moos</li>
+                        <li>🍫 Craft Hot Drinks Bar & Sweet Treats</li>
+                        <li>🎁 Festive Scavenger Hunt with Prizes</li>
+                        <li>📸 Capture magical moments with curated Christmas Backdrops</li>
+                    </ul>
+                    <p class="card-text"><strong>🎟 Xmas Passes are $30 per guest.</strong></p>
+                    <p class="card-text">📍 Howe Ranch, Wildomar, CA</p>
+                    <form id="christmasPartyForm" action="{{ url_for('views.calculate_price') }}" method="post">
+                        <input type="hidden" name="event_id" value="84">
+                        <input type="hidden" name="tickets" id="partyTickets" value="">
+                        <div class="form-group mb-3">
+                            <label for="party-size" class="form-label">Party Size</label>
+                            <input type="number" class="form-control" id="party-size" placeholder="Enter number of guests" required>
+                        </div>
+                    <button class="btn btn-danger w-100">Secure Your Spot</button>
+                    </form>
                 </div>
             </div>
         </div>
+        <div class="text-center mt-3">
+            <span>&larr; Swipe &rarr;</span>
+        </div>
+    </div>
 
-        <div class="container my-5">
-            <div class="row">
-                <div class="col-md-6 mx-auto">
-                    <div class="card shadow-sm mb-4">
-                        <img src="static/pic/zoo.jpg" class="card-img-top" alt="Mini Highland Calf Experience">
-                        <div class="card-body">
-                            <h5 class="card-title">Farm Tour with Cow Cuddling</h5>
-                            <p class="card-text">
-                                Experience the magic of cow cuddling and calf kisses with our calves' first encounters, where you get a chance to be part of our precious mini Highland calves' bottle-feeding routine and spend one-on-one time with the rest of our friendly farm family—alpacas, donkeys, goats, ducks, chickens, and the curious bunnies.
-                            </p>
-                            <a href="/select_tickets" class="btn btn-primary">Book Now</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        <script>
-            document.getElementById('bookChristmasPartyBtn').addEventListener('click', function() {
-                // Get party size input value
-                var partySize = document.getElementById('party-size').value;
-
-                // Check if the party size is valid
-                if (partySize && partySize > 0) {
-                    // Set the number of tickets in the hidden field
-                    document.getElementById('partyTickets').value = partySize;
-
-                    // Submit the form to calculate the price
-                    document.getElementById('christmasPartyForm').submit();
-                } else {
-                    alert("Please enter a valid number of guests.");
-                }
-            });
-        </script>
-
+    <script>
+        document.getElementById('bookChristmasPartyBtn').addEventListener('click', function () {
+            var partySize = document.getElementById('party-size').value;
+            if (partySize && partySize > 0) {
+                document.getElementById('partyTickets').value = partySize;
+                document.getElementById('christmasPartyForm').submit();
+            } else {
+                alert("Please enter a valid number of guests.");
+            }
+        });
+    </script>
 {% endblock %}

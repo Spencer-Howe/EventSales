@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Select Tickets{% endblock %}
+
+{% block content %}
+
+    <div class="container my-4">
+        <h2 class="text-center mb-4">Upcoming Events</h2>
+        <div class="d-flex overflow-auto position-relative">
+            <div class="card me-3" style="min-width: 300px;">
+                <img src="static/pic/Mary.jpg" class="card-img-top" alt="Dec 8 Passes">
+                <div class="card-body">
+                    <h5 class="card-title">🎄 Dec 8 Passes</h5>
+                    <p class="card-text">Snowflake Saver Passes for $15/person. Includes food, drinks, and more!</p>
+                    <button class="btn btn-success w-100">Reserve Passes</button>
+                </div>
+            </div>
+            <div class="card me-3" style="min-width: 300px;">
+                <img src="static/pic/zoo.jpg" class="card-img-top" alt="Farm Tour">
+                <div class="card-body">
+                    <h5 class="card-title">🐄 Farm Tour</h5>
+                    <p class="card-text">Cuddle mini Highland calves, bottle feed, and meet friendly animals.</p>
+                    <button class="btn btn-primary w-100">Book Now</button>
+                </div>
+            </div>
+            <!-- More cards -->
+        </div>
+        <div class="text-center mt-3">
+            <span>&larr; Swipe &rarr;</span>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

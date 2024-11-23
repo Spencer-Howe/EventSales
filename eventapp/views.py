@@ -77,9 +77,18 @@ def calculate_price():
     if event:
         readable_start = event.start.strftime("%B %d, %Y, %I:%M %p")
         readable_time_slot = f'{event.title} - {readable_start}'
-        total_price = tickets * event.price_per_ticket
+        if event.title == "Cow Cuddling":
+            if tickets <= 3:
+                total_price = 90
+            else:
+                additional_tickets = tickets - 3
+                total_price = 90 + (additional_tickets * event.price_per_ticket)
 
-        # Pass the title and description to the template
+        else:
+            total_price = tickets * event.price_per_ticket
+
+
+# Pass the title and description to the template
         event_title = event.title
         event_description = event.description
 
@@ -102,6 +111,9 @@ def calculate_price():
 
 
 
+@views.route('/test')
+def test():
+    return render_template('test.html')
 
 @views.route('/select_tickets')
 def select_tickets():
