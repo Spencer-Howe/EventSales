@@ -72,15 +72,16 @@
                     </ul>
                     <p class="card-text"><strong>🎟 Xmas Passes are $30 per guest.</strong></p>
                     <p class="card-text">📍 Howe Ranch, Wildomar, CA</p>
-                    <form id="christmasPartyForm" action="{{ url_for('views.calculate_price') }}" method="post">
+                    <form id="christmasEveForm" action="{{ url_for('views.calculate_price') }}" method="post">
                         <input type="hidden" name="event_id" value="84">
-                        <input type="hidden" name="tickets" id="partyTickets" value="">
+                        <input type="hidden" name="tickets" id="eveTickets" value="">
                         <div class="form-group mb-3">
-                            <label for="party-size" class="form-label">Party Size</label>
-                            <input type="number" class="form-control" id="party-size" placeholder="Enter number of guests" required>
+                            <label for="party-size-eve" class="form-label">Party Size</label>
+                            <input type="number" class="form-control" id="party-size-eve" placeholder="Enter number of guests" required>
                         </div>
-                    <button class="btn btn-danger w-100">Secure Your Spot</button>
+                        <button type="button" class="btn btn-danger w-100" id="bookEveBtn">Secure Your Spot</button>
                     </form>
+
                 </div>
             </div>
         </div>
@@ -90,14 +91,16 @@
     </div>
 
     <script>
-        document.getElementById('bookChristmasPartyBtn').addEventListener('click', function () {
-            var partySize = document.getElementById('party-size').value;
+        document.getElementById('bookEveBtn').addEventListener('click', function () {
+            const partySize = document.getElementById('party-size-eve').value;
+
             if (partySize && partySize > 0) {
-                document.getElementById('partyTickets').value = partySize;
-                document.getElementById('christmasPartyForm').submit();
+                document.getElementById('eveTickets').value = partySize; // Set hidden input value
+                document.getElementById('christmasEveForm').submit(); // Submit the form
             } else {
                 alert("Please enter a valid number of guests.");
             }
         });
+
     </script>
 {% endblock %}
