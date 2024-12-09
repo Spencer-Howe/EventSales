@@ -10,38 +10,7 @@
         <h2 class="text-center mb-4">Upcoming Events</h2>
         <div class="d-flex overflow-auto position-relative" style="gap: 1rem;">
             <!-- Card 1 -->
-            <div class="card" style="min-width: 300px;">
-                <img src="static/pic/Mary.jpg" class="card-img-top" alt="Dec 8 Passes">
-                <div class="card-body">
-                    <h5 class="card-title">🎄 Dec 8 Passes</h5>
-                    🎟️ North Pole Passes are still available at just $20/person (ages 1 and up) and include everything, even food and drinks! Gather your family and experience the holiday magic that only Howe Ranch can offer.
-                    <p class="card-text">
-                        <strong>Additional Details:</strong> <a href="https://www.thehoweranch.com/winterwonderland">https://www.thehoweranch.com/winterwonderland</a>
-                    </p>
-                    <p class="card-text">
-                        To reserve your passes, purchase below and join us for a day filled with warmth, joy, and a step back in time as Howe Ranch transforms into a nostalgic winter wonderland.
-                    </p>
-                    <p class="card-text">
-                        <strong>Highlights:</strong> Explore six enchanting areas, each capturing the old-world charm of the season with twinkling lights, cozy farm traditions, and timeless holiday cheer.
-                    </p>
-                    <p class="card-text">
-                        • Discover the <strong>European Christmas Market</strong> and <strong>Enchanted Forest</strong><br>
-                        • Cuddle baby farm animals like Highland calves, fluffy alpacas, curious goats, and more<br>
-                        • Enjoy live music and farm truck rides at the <strong>Holiday Harvest Grounds</strong><br>
-                        • Savor a seasonal buffet and hot chocolate at the Christmas Market<br>
-                        • Try your luck with winter games and prizes
-                    </p>
-                    <form id="christmasPartyForm" action="{{ url_for('views.calculate_price') }}" method="post">
-                        <input type="hidden" name="event_id" value="18">
-                        <input type="hidden" name="tickets" id="partyTickets" value="">
-                        <div class="form-group mb-3">
-                            <label for="party-size" class="form-label">Party Size</label>
-                            <input type="number" class="form-control" id="party-size" placeholder="Enter number of guests" required>
-                        </div>
-                        <button type="button" class="btn btn-success" id="bookChristmasPartyBtn">Reserve Passes</button>
-                    </form>
-                </div>
-            </div>
+
             <!-- Card 2 -->
             <div class="card" style="min-width: 300px;">
                 <img src="static/pic/Baby P 4.jpg" class="card-img-top" alt="Farm Tour">
