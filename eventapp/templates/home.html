@@ -61,16 +61,7 @@
 
     <script>
         // Function for Dec 8 Passes
-        document.getElementById('bookChristmasPartyBtn').addEventListener('click', function () {
-            const partySize = document.getElementById('party-size').value;
 
-            if (partySize && partySize > 0) {
-                document.getElementById('partyTickets').value = partySize; // Set hidden input value
-                document.getElementById('christmasPartyForm').submit(); // Submit the form
-            } else {
-                alert("Please enter a valid number of guests.");
-            }
-        });
 
         // Function for Christmas Eve Passes
         document.getElementById('bookEveBtn').addEventListener('click', function () {
