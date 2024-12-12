@@ -77,12 +77,12 @@ def calculate_price():
     if event:
         readable_start = event.start.strftime("%B %d, %Y, %I:%M %p")
         readable_time_slot = f'{event.title} - {readable_start}'
-        if event.title == "Cow Cuddling":
-            if tickets <= 3:
-                total_price = 90
+        if event.title == "Cow Cuddling with the Mini Moos in Winter Wonderland":
+            if tickets <= 4:
+                total_price = 150
             else:
-                additional_tickets = tickets - 3
-                total_price = 90 + (additional_tickets * event.price_per_ticket)
+                additional_tickets = tickets - 4
+                total_price = 150 + (additional_tickets * event.price_per_ticket)
 
         else:
             total_price = tickets * event.price_per_ticket
