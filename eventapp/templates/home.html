@@ -13,11 +13,11 @@
 
             <!-- Card 2 -->
             <div class="card" style="min-width: 300px;">
-                <img src="static/pic/Marytruck.jpg" class="card-img-top" alt="Farm Tour">
+                <img src="static/pic/A Lou.jpg" class="card-img-top" alt="Farm Tour">
                 <div class="card-body">
-                    <h5 class="card-title">Cow Cuddling with the Mini Moos in Winter Wonderland</h5>
+                    <h5 class="card-title">Cow Cuddling with the Mini Moos: From Winter Wonderland to Valentine’s Magic</h5>
                     <p class="card-text">
-                        Experience a truly special encounter with our sweet, fluffy micro Highland calves and their friends in the magical setting of our farm's Winter Wonderland. Your visit will include stunning photo backdrops and a visit to all the animal pens, Winter Wonderland signature areas and the Mini North Pole village. You also get a chance to be part of our precious mini Highland calves' bottle-feeding routine.
+                        Experience the charm of Howe Ranch starting the new year with our Winter Wonderland, where you can cuddle with our fluffy micro Highland calves, Mary Lou and Petunia, and their friends. Enjoy festive decor, the winter market, stunning photo backdrops, and visits to all animal pens, including the Mini North Pole village. Partake in our calves' bottle-feeding routine, savor hot winter drinks, and join in a fun scavenger hunt with prizes for kids. After January 15th, the theme shifts to capturing the moments of love, maintaining the warm atmosphere with a sweet and romantic twist. Enjoy the same intimate interactions with our mini moos, now set against the season of love’s enchanting decor, perfect for creating lasting memories.
 
 
                     </p>
@@ -30,29 +30,23 @@
             </div>
             <!-- Card 3 -->
             <div class="card" style="min-width: 300px;">
-                <img src="static/pic/eve.jpg" class="card-img-top" alt="Christmas Eve with Mini Moos">
+                <img src="static/pic/vmm.jpg" class="card-img-top" alt="Christmas Eve with Mini Moos">
                 <div class="card-body">
-                    <h5 class="card-title">🐮🎄 Spend Christmas Eve with Mini Moos 🎄🐮</h5>
+                    <h5 class="card-title">🐮Valentine's Date with the Mini Moos🐮</h5>
                     <p class="card-text">
-                        Join us on December 24th, 1–5 PM for a heartwarming holiday experience featuring our lovable mini Highland calves and the Menagerie, plus Santa Claus!
+                        Indulge in the magic of Valentine’s at Howe Ranch on January 18, 25, and February 1, 8. Revel in the charm of our exquisite afternoons from 1:00 PM to 4:00 PM, designed for those who cherish unique and intimate moments. Our beloved mini Highland calves, Mary Lou and Petunia, along with our other mini cows, alpacas, and goats, await to offer their gentle affection in a setting that radiates love.
                     </p>
                     <ul class="card-text">
-                        <li>✨ Snuggle and cuddle with mini Moos</li>
-                        <li>🍫 Craft Hot Drinks Bar & Sweet Treats</li>
-                        <li>🎁 Festive Scavenger Hunt with Prizes</li>
-                        <li>📸 Capture magical moments with curated Christmas Backdrops</li>
+                        <li>✨ For $30 per guest, your exclusive experience includes:</li>
+                        <li>Personal cuddling sessions with our tender mini moos, creating a heartfelt connection.</li>
+                        <li>Hands-on interactions with our charming alpacas and playful goats, enriching your visit with delightful animal encounters.</li>
+                        <li>A luxurious array of treats featuring fine chocolates, handcrafted cupcakes, and comforting winter drinks.</li>
+                        <li>Idyllic photo opportunities amidst our beautifully decorated Valentine-themed decor, ensuring your memories are as lasting as they are delightful.</li>
+
                     </ul>
-                    <p class="card-text"><strong>🎟 Xmas Passes are $25 per guest.</strong></p>
-                    <p class="card-text">📍 Howe Ranch, Wildomar, CA</p>
-                    <form id="christmasEveForm" action="{{ url_for('views.calculate_price') }}" method="post">
-                        <input type="hidden" name="event_id" value="84">
-                        <input type="hidden" name="tickets" id="eveTickets" value="">
-                        <div class="form-group mb-3">
-                            <label for="party-size-eve" class="form-label">Party Size</label>
-                            <input type="number" class="form-control" id="party-size-eve" placeholder="Enter number of guests" required>
-                        </div>
-                        <button type="button" class="btn btn-danger w-100" id="bookEveBtn">Secure Your Spot</button>
-                    </form>
+                    <p class="card-text"><strong>Immerse yourself in an atmosphere of elegance and warmth at Howe Ranch, where love flourishes and special moments are savored. Secure your visit now for a Valentine’s celebration that promises to be as enchanting as it is memorable.Howe </strong></p>
+                    <p class="card-text">📍 tickets will be available starting December 31st!</p>
+
 
                 </div>
             </div>
@@ -62,21 +56,6 @@
         </div>
     </div>
 
-    <script>
-        // Function for Dec 8 Passes
 
-
-        // Function for Christmas Eve Passes
-        document.getElementById('bookEveBtn').addEventListener('click', function () {
-            const partySize = document.getElementById('party-size-eve').value;
-
-            if (partySize && partySize > 0) {
-                document.getElementById('eveTickets').value = partySize; // Set hidden input value
-                document.getElementById('christmasEveForm').submit(); // Submit the form
-            } else {
-                alert("Please enter a valid number of guests.");
-            }
-        });
-    </script>
 
 {% endblock %}
