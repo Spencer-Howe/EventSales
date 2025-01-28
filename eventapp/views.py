@@ -334,6 +334,14 @@ def create_receipt_email_content(order_details):
             <p>Time slot: {order_details['time_slot']}</p>
             <p>Number of Tickets: {order_details['tickets']}</p>
             <p>Please review and sign the waiver if you did not already finish the registration after checkout<a href="{order_details['waiver_url']}">here</a>.</p>
+            <hr>
+            <h2>Thank You for Your Purchase!</h2>
+            <p>Thank you for purchasing passes to the Mini Moos experience at Howe Ranch! You’re on our guest list—just identify yourself at the welcome table when you arrive.</p>
+            <p>We’ll see you at:</p>
+            <p><strong>22053 Highland St, Wildomar, CA 92595</strong></p>
+            <p>Looking forward to having you with us!</p>
+            <p>Best regards,</p>
+            <p>Spencer Howe</p>
         </body>
     </html>
     """
