@@ -73,17 +73,17 @@ def calculate_price():
 
     # Query the event from the database
     event = Event.query.filter_by(id=event_id).first()
-
+    error_message = None
     if event:
         readable_start = event.start.strftime("%B %d, %Y, %I:%M %p")
         readable_time_slot = f'{event.title} - {readable_start}'
-        if event.title in ["Mini Moo Cuddles", "Cow Cuddling with the Mini Moos in Winter Wonderland"]:
-            if tickets <= 4:
-                total_price = 150
-            else:
-                additional_tickets = tickets - 4
-                total_price = 150 + (additional_tickets * event.price_per_ticket)
+        if event.title in ["Private Farm Tour & Cow Cuddling Experience"]:
+            if tickets <= 10:
+                total_price = 250
 
+            else:
+                error_message = ("For groups larger than 10, please contact us to book a special event.")
+                total_price = None  # Optional: Set `total_price` to None or handle it differently
         else:
             total_price = tickets * event.price_per_ticket
 
@@ -107,7 +107,8 @@ def calculate_price():
                            total_price=total_price,
                            paypal_client_id=paypal_client_id,
                            event_title=event_title,
-                           event_description=event_description)
+                           event_description=event_description,
+                            error_message=error_message)
 
 
 

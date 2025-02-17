@@ -12,6 +12,11 @@
 
     <p>{{ time_slot }}</p>
     <p>Number of Tickets: {{ tickets }}</p>
+    {% if error_message %}
+        <div class="alert alert-warning">
+            {{ error_message }}
+        </div>
+    {% endif %}
     <p>Total Price: ${{ total_price }}</p>
 
     <label for="phone">Phone Number:</label>
