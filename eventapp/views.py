@@ -77,7 +77,7 @@ def calculate_price():
     if event:
         readable_start = event.start.strftime("%B %d, %Y, %I:%M %p")
         readable_time_slot = f'{event.title} - {readable_start}'
-        if event.title in ["Private Farm Tour & Cow Cuddling Experience"]:
+        if event.title in ["Private Experience"]:
             if tickets <= 10:
                 total_price = 250
 
@@ -233,6 +233,8 @@ def show_receipt(order_id):
         event = Event.query.filter_by(id=event_id).first()
         if not event:
             return "Event not found", 404
+        if event.is_private:
+            event.is_booked = True
         time_slot = event.start
         payer_info = order_details.get('payer', {})
         name = f"{payer_info.get('name').get('given_name')} {payer_info.get('name').get('surname')}"
@@ -289,7 +291,12 @@ def thank_you_page():
 @views.route('/get_events')
 def get_events():
     from eventapp.models import Event
-    events = Event.query.filter_by(private=False).all()
+
+    from sqlalchemy import and_
+
+    events = Event.query.filter(
+        and_(Event.private.is_(False), Event.is_booked.is_(False))
+    ).all()
 
     events_data = [{
         'id': event.id,

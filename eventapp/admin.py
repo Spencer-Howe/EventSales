@@ -60,7 +60,7 @@ class EventModelView(ModelView):
             'format': '%Y-%m-%dT%H:%M'
         }
     }
-    form_columns = ['title', 'start', 'end', 'price_per_ticket', 'description', 'private']
+    form_columns = ['title', 'start', 'end', 'price_per_ticket', 'description', 'private', 'is_private', 'is_booked']
 
     def is_accessible(self):
         return current_user.is_authenticated
