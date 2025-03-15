@@ -124,10 +124,6 @@ def select_tickets():
         'select_tickets.html',
         paypal_client_id=paypal_client_id
     )
-@views.route('/select_easter')
-def select_easter():
-    # noinspection PyUnresolvedReferences
-    return render_template('select_easter.html')
 
 @views.route('/tourbook')
 def select_tourbook():

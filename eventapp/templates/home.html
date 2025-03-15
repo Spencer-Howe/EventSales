@@ -3,120 +3,171 @@
 {% block title %}Select Tickets{% endblock %}
 
 {% block content %}
-    <div class="text-center mt-3">
-        <span>&larr; Swipe &rarr;</span>
-    </div>
-    <div class="container my-4">
-        <h2 class="text-center mb-4">Upcoming Events</h2>
-        <div class="d-flex overflow-auto position-relative" style="gap: 1rem;">
-            <!-- Card 1 -->
+  <div class="text-center mt-3">
+    <span>&larr; Swipe &rarr;</span>
+  </div>
+  <div class="container my-4">
+    <h2 class="text-center mb-4">Upcoming Events</h2>
 
-            <!-- Card 2 -->
-            <div class="card" style="min-width: 300px;">
-                <img src="static/pic/PrivateTours.jpg" class="card-img-top" alt="Private Farm Tour">
-                <div class="card-body">
-                    <h5 class="card-title">🌼 Private Farm Tour & Cow Cuddling Experience 🌼</h5>
-                    <p class="card-text">
-                        An Exclusive Spring Adventure at Howe Ranch – Perfect for Families and Small Groups (1–10 Guests), by appointment starting March 3:
-                    </p>
-                    <ul class="card-text">
-                        <li><strong>Weekdays:</strong> 6:00 - 7:30 PM</li>
-                        <li><strong>Sundays:</strong> 11:30 AM - 1 PM & 3:00 PM - 4:30 PM</li>
-                    </ul>
-                    <p class="card-text"><strong>$250 for 1–10 Guests</strong></p>
-                    <p class="card-text">
-                        Discover the magic of springtime at Howe Ranch with our Private Farm Tour & Cow Cuddling Experience, specially curated for those seeking an unforgettable encounter with nature and our beloved animals.
-                    </p>
-                    <p class="card-text"><strong>✨ Your Private Experience Includes:</strong></p>
-                    <ul class="card-text">
-                        <li><strong>Facilitated Cow Cuddling Session –</strong> Spend quality time with our mini and micro-Highland calves. Enjoy fluffy baby cow hugs, kisses, brushing their beautiful coats, and making connections with these specially trained calves that provide therapeutic relaxation and joyful moments.</li>
-                        <li><strong>Photo Opportunities –</strong> Capture perfect moments in front of beautifully designed spring-themed backdrops, ideal for sharing and keepsakes.</li>
-                        <li><strong>Full Tour of the Ranch –</strong> Explore our facilities with guided access to all animal pens. Enjoy hands-on experiences with our alpacas, donkeys, and playful mini goats.</li>
-                        <li><strong>Mad Tea Party with the Bunnies –</strong> Step into a whimsical mini wonderland for an enchanting tea party-inspired experience with our adorable bunnies.</li>
-                        <li><strong>Springtime Scavenger Hunt –</strong> Embark on a playful adventure across the farm, discovering hidden treasures and winning fun prizes.</li>
-                        <li><strong>Highland Cow Sketching & Coloring –</strong> Let your creativity flow with Highland cow-themed sketching and coloring supplies, perfect for all ages.</li>
-                    </ul>
-                    <p class="card-text">
-                        🌸 <strong>A Unique, Personal Experience:</strong> This exclusive tour is designed for up to 10 guests, ensuring personalized attention and a relaxed pace for you and your group to fully enjoy everything Howe Ranch has to offer. Whether you’re planning an outing around a special occasion or simply seeking an activity filled with joy and connection, this experience is for you.
-                    </p>
-                    <p class="card-text">
-                        📍 <strong>Reserve Your Private Tour Today!</strong> Spaces are limited—secure your visit on our calendar now to enjoy this magical spring adventure. Note: This private tour does not accommodate any kind of celebratory or catering activities, but we offer special event options for groups of all sizes. Please explore our website or reach out!
-                    </p>
-                    <a href="/select_tickets" class="btn btn-primary">Book Now</a>
-                </div>
-            </div>
+    <!-- Using Bootstrap's card-group to ensure all cards are handled uniformly -->
+    <div class="card-group">
 
-            <!-- Card 3 -->
-            <div class="card" style="min-width: 300px;">
-                <img src="static/pic/Spring.jpg" class="card-img-top" alt="Mini Moo Spring Fling">
-                <div class="card-body">
-                    <h5 class="card-title">🌸 Mini Moo Spring Fling 🌸</h5>
-                    <ul class="card-text">
-                        <li>🌿 Sunday, March 9</li>
-                        <li>🌿 Sunday, March 23</li>
-                        <li>🌿 Sunday, April 6</li>
-                        <li>🌿 Sunday, April 13</li>
-                    </ul>
-                    <p class="card-text">
-                        Celebrate the magic of spring at Howe Ranch. Join us for an enchanting afternoon from 1:00 PM to 4:00 PM, perfect for families, friends, and anyone seeking a whimsical escape.
-                    </p>
-                    <p class="card-text">Our beloved mini Highland girls, Petunia and Mary Lou, along with our fluffy steers, alpacas, mini goats, and bunnies, are ready to welcome you into their curious world!</p>
-                    <p class="card-text"><strong>✨ Your exclusive spring adventure includes:</strong></p>
-                    <ul class="card-text">
-                        <li>🐮 Cuddles and kisses with our sweet baby Highland calves</li>
-                        <li>🦙 One-on-one time with our gentle alpacas and playful mini goats</li>
-                        <li>🐴 Visits with our fluffy steers and friendly donkeys</li>
-                        <li>🍵 Wonderland Tea Party with our playful bunnies at a whimsical Mad Tea Party</li>
-                        <li>🎨 Sketch a Mini Moo Station with Highland cow coloring pages and animal sketching</li>
-                        <li>🔍 Spring scavenger hunt with exciting prizes for all</li>
-                        <li>🍬 Sweet treats and refreshing springtime drinks</li>
-                        <li>📸 Picture-perfect moments at our spring-themed photo backdrops</li>
-                    </ul>
-                    <p class="card-text"><strong>📍 Passes are $30 per guest ages 1 and up.</strong></p>
-                    <p class="card-text">Reserve your spot now for a spring celebration like no other!</p>
-                    <form id="springFlingForm" action="{{ url_for('views.calculate_price') }}" method="post">
-                        <div class="form-group mb-3">
-                            <label for="event-date" class="form-label">Select a Date</label>
-                            <select class="form-control" id="event-date" name="event_id" required>
-                                <option value="">Choose a Date</option>
-                                <option value="143">Sunday, March 9</option>
-                                <option value="144">Sunday, March 23</option>
-                                <option value="145">Sunday, April 6</option>
-                                <option value="146">Sunday, April 13</option>
-                            </select>
-                        </div>
-                        <div class="form-group mb-3">
-                            <label for="tickets" class="form-label">Party Size</label>
-                            <input type="number" class="form-control" id="tickets" name="tickets" placeholder="Enter number of guests" required>
-                        </div>
-                        <button type="submit" class="btn btn-success w-100">Secure Your Spot</button>
-                    </form>
-                </div>
-            </div>
-
-            <div class="text-center mt-3">
-                <span>&larr; Swipe for More &rarr;</span>
-            </div>
-
-
+      <!-- Card 2 -->
+      <div class="card">
+        <img src="static/pic/PrivateTours.jpg" class="card-img-top" alt="Private Farm Tour">
+        <div class="card-body">
+          <h5 class="card-title">
+            🌼 Private Farm Tour & Cow Cuddling Experience 🌼
+          </h5>
+          <p class="card-text">
+            An Exclusive Spring Adventure at Howe Ranch – Perfect for Families and Small Groups (1–10 Guests), by appointment starting March 3:
+          </p>
+          <ul class="card-text">
+            <li><strong>Weekdays:</strong> 6:00 - 7:30 PM</li>
+            <li><strong>Sundays:</strong> 11:30 AM - 1 PM &amp; 3:00 PM - 4:30 PM</li>
+          </ul>
+          <p class="card-text">
+            <strong>$250 for 1–10 Guests</strong>
+          </p>
+          <p class="card-text">
+            Discover the magic of springtime at Howe Ranch with our Private Farm Tour & Cow Cuddling Experience, specially curated for those seeking an unforgettable encounter with nature and our beloved animals.
+          </p>
+          <p class="card-text">
+            <strong>✨ Your Private Experience Includes:</strong>
+          </p>
+          <ul class="card-text">
+            <li>
+              <strong>Facilitated Cow Cuddling Session –</strong>
+              Spend quality time with our mini and micro-Highland calves. Enjoy fluffy baby cow hugs, kisses, brushing their beautiful coats, and making connections with these specially trained calves that provide therapeutic relaxation and joyful moments.
+            </li>
+            <li>
+              <strong>Photo Opportunities –</strong>
+              Capture perfect moments in front of beautifully designed spring-themed backdrops, ideal for sharing and keepsakes.
+            </li>
+            <li>
+              <strong>Full Tour of the Ranch –</strong>
+              Explore our facilities with guided access to all animal pens. Enjoy hands-on experiences with our alpacas, donkeys, and playful mini goats.
+            </li>
+            <li>
+              <strong>Mad Tea Party with the Bunnies –</strong>
+              Step into a whimsical mini wonderland for an enchanting tea party-inspired experience with our adorable bunnies.
+            </li>
+            <li>
+              <strong>Springtime Scavenger Hunt –</strong>
+              Embark on a playful adventure across the farm, discovering hidden treasures and winning fun prizes.
+            </li>
+            <li>
+              <strong>Highland Cow Sketching & Coloring –</strong>
+              Let your creativity flow with Highland cow-themed sketching and coloring supplies, perfect for all ages.
+            </li>
+          </ul>
+          <p class="card-text">
+            🌸 <strong>A Unique, Personal Experience:</strong> This exclusive tour is designed for up to 10 guests, ensuring personalized attention and a relaxed pace for you and your group to fully enjoy everything Howe Ranch has to offer. Whether you’re planning an outing around a special occasion or simply seeking an activity filled with joy and connection, this experience is for you.
+          </p>
+          <p class="card-text">
+            📍 <strong>Reserve Your Private Tour Today!</strong> Spaces are limited—secure your visit on our calendar now to enjoy this magical spring adventure. Note: This private tour does not accommodate any kind of celebratory or catering activities, but we offer special event options for groups of all sizes. Please explore our website or reach out!
+          </p>
+          <a href="/select_tickets" class="btn btn-primary">Book Now</a>
         </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="card">
+        <img src="static/pic/Spring.jpg" class="card-img-top" alt="Mini Moo Spring Fling">
+        <div class="card-body">
+          <h5 class="card-title">🌸 Mini Moo Spring Fling 🌸</h5>
+          <ul class="card-text">
+            <li>🌿 Sunday, March 9</li>
+            <li>🌿 Sunday, March 23</li>
+            <li>🌿 Sunday, April 6</li>
+            <li>🌿 Sunday, April 13</li>
+          </ul>
+          <p class="card-text">
+            Celebrate the magic of spring at Howe Ranch. Join us for an enchanting afternoon from 1:00 PM to 4:00 PM, perfect for families, friends, and anyone seeking a whimsical escape.
+          </p>
+          <p class="card-text">
+            Our beloved mini Highland girls, Petunia and Mary Lou, along with our fluffy steers, alpacas, mini goats, and bunnies, are ready to welcome you into their curious world!
+          </p>
+          <p class="card-text">
+            <strong>✨ Your exclusive spring adventure includes:</strong>
+          </p>
+          <ul class="card-text">
+            <li>🐮 Cuddles and kisses with our sweet baby Highland calves</li>
+            <li>🦙 One-on-one time with our gentle alpacas and playful mini goats</li>
+            <li>🐴 Visits with our fluffy steers and friendly donkeys</li>
+            <li>🍵 Wonderland Tea Party with our playful bunnies at a whimsical Mad Tea Party</li>
+            <li>🎨 Sketch a Mini Moo Station with Highland cow coloring pages and animal sketching</li>
+            <li>🔍 Spring scavenger hunt with exciting prizes for all</li>
+            <li>🍬 Sweet treats and refreshing springtime drinks</li>
+            <li>📸 Picture-perfect moments at our spring-themed photo backdrops</li>
+          </ul>
+          <p class="card-text">
+            <strong>📍 Passes are $30 per guest ages 1 and up.</strong>
+          </p>
+          <p class="card-text">
+            Reserve your spot now for a spring celebration like no other!
+          </p>
+          <form id="springFlingForm" action="{{ url_for('views.calculate_price') }}" method="post">
+            <div class="form-group mb-3">
+              <label for="event-date" class="form-label">Select a Date</label>
+              <select class="form-control" id="event-date" name="event_id" required>
+                <option value="">Choose a Date</option>
+                <option value="143">Sunday, March 9</option>
+                <option value="144">Sunday, March 23</option>
+                <option value="145">Sunday, April 6</option>
+                <option value="146">Sunday, April 13</option>
+              </select>
+            </div>
+            <div class="form-group mb-3">
+              <label for="tickets" class="form-label">Party Size</label>
+              <input type="number" class="form-control" id="tickets" name="tickets" placeholder="Enter number of guests" required>
+            </div>
+            <button type="submit" class="btn btn-success w-100">Secure Your Spot</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Card 4 for Easter -->
+      <div class="card">
+        <img src="static/pic/Easter1.jpg" class="card-img-top" alt="Easter at the Farm">
+        <div class="card-body">
+          <h5 class="card-title">🐣 Easter at the Farm 🐣</h5>
+          <p class="card-text">
+            🌿 Sunday, April 20 (Easter Sunday)<br><br>
+            Hop into the joy of spring and celebrate Easter at Howe Ranch! Spend a heartwarming afternoon from 2:00 PM to 5:00 PM, filled with farm fun, cuddly animals, festive treats, and our 15th Annual Easter Brunch.
+          </p>
+          <strong>🌸 Your Easter experience includes:</strong>
+          <ul>
+            <li>🍽️ 15th Annual Easter Brunch—a delicious, farm-fresh celebration</li>
+            <li>🐮 Cuddles &amp; photos with our sweet micro Highland calves &amp; steers</li>
+            <li>🦙 One-on-one time with our gentle alpacas &amp; mini goats</li>
+            <li>🐴 Meet our friendly donkeys</li>
+            <li>🐰 Whimsical Bunny Wonderland—a Mad Tea Party with our playful bunnies</li>
+            <li>🎨 Sketch a Mini Moo Station—Highland cow coloring &amp; animal sketching</li>
+            <li>🔍 The Ultimate Easter Scavenger Hunt—prizes for all!</li>
+            <li>🍬 Easter sweet treats &amp; refreshing springtime drinks</li>
+            <li>📸 Picture-perfect moments with festive photo backdrops</li>
+          </ul>
+          <p class="card-text">
+            📍 Passes are $30 per guest ages 1 and up.<br>
+            Join us for a magical Easter celebration where springtime joy meets farm charm! 🌷🐣💛
+          </p>
+          <form id="EasterPartyForm" action="{{ url_for('views.calculate_price') }}" method="post">
+            <input type="hidden" name="event_id" value="194">
+            <input type="hidden" name="tickets" id="tickets" value="">
+            <div class="form-group mb-3">
+              <label for="tickets" class="form-label">Party Size</label>
+              <input type="number" class="form-control" id="tickets" name="tickets" placeholder="Enter number of guests" required>
+            </div>
+            <button type="submit" class="btn btn-success">Reserve Passes</button>
+          </form>
+        </div>
+      </div>
+
     </div>
+  </div>
 
-    <script>
-        // Function for Dec 8 Passes
-
-
-        // Function for Christmas Eve Passes
-        document.getElementById('bookEveBtn').addEventListener('click', function () {
-            const partySize = document.getElementById('party-size-eve').value;
-
-            if (partySize && partySize > 0) {
-                document.getElementById('eveTickets').value = partySize; // Set hidden input value
-                document.getElementById('christmasEveForm').submit(); // Submit the form
-            } else {
-                alert("Please enter a valid number of guests.");
-            }
-        });
-    </script>
-
+  <div class="text-center mt-3">
+    <span>&larr; Swipe for More &rarr;</span>
+  </div>
 {% endblock %}
