@@ -149,7 +149,7 @@
           </p>
           <form id="EasterPartyForm" action="{{ url_for('views.calculate_price') }}" method="post">
             <input type="hidden" name="event_id" value="194">
-            <input type="hidden" name="tickets" id="tickets" value="">
+            <!-- <input type="hidden" name="tickets" id="tickets" value=""> -->
             <div class="form-group mb-3">
               <label for="tickets" class="form-label">Party Size</label>
               <input type="number" class="form-control" id="tickets" name="tickets" placeholder="Enter number of guests" required>
