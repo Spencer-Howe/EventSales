@@ -325,28 +325,65 @@ def verify_order_with_paypal(order_id, access_token):
 
 def create_receipt_email_content(order_details):
     html_content = f"""
+    
     <html>
-        <body>
-            <h1>Payment Receipt</h1>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <h1 style="color: #2e6c80;">Payment Receipt</h1>
             <p><strong>Name:</strong> {order_details['name']}</p>
             <p><strong>Email:</strong> {order_details['email']}</p>
-            <p>Phone Number: {order_details['phone']}<p>
-            <p>Order ID: {order_details['order_id']}</p>
-            <p>Total Amount: {order_details['amount']}</p>
-            <p>Currency: {order_details['currency']}</p>
-            <p>Status: {order_details['status']}</p>
-            <p>Time slot: {order_details['time_slot']}</p>
-            <p>Number of Tickets: {order_details['tickets']}</p>
-            <p>Please review and sign the waiver if you did not already finish the registration after checkout<a href="{order_details['waiver_url']}">here</a>.</p>
-            <hr>
-            <h2>Thank You for Your Purchase!</h2>
-            <p>Thank you for purchasing passes to the Mini Moos experience at Howe Ranch! You’re on our guest list—just identify yourself at the welcome table when you arrive.</p>
-            <p>We’ll see you at:</p>
-            <p><strong>22053 Highland St, Wildomar, CA 92595</strong></p>
-            <p>Looking forward to having you with us!</p>
-            <p>Best regards,</p>
-            <p>Spencer Howe</p>
+            <p><strong>Phone Number:</strong> {order_details['phone']}</p>
+            <p><strong>Order ID:</strong> {order_details['order_id']}</p>
+            <p><strong>Total Amount:</strong> {order_details['amount']}</p>
+            <p><strong>Currency:</strong> {order_details['currency']}</p>
+            <p><strong>Status:</strong> {order_details['status']}</p>
+            <p><strong>Time Slot:</strong> {order_details['time_slot']}</p>
+            <p><strong>Number of Tickets:</strong> {order_details['tickets']}</p>
+            <p>Please review and sign the waiver if you did not already finish the registration after checkout 
+                <a href="{order_details['waiver_url']}" style="color: #1a73e8;">here</a>.
+            </p>
+            <hr style="margin: 30px 0;">
+            <h2 style="color: #2e6c80;">Thank You & Important Visit Information</h2>
+            <p>
+                Thank you for purchasing passes to the <strong>Mini Moos experience</strong> at Howe Ranch! You’re officially on our guest list—just identify yourself at the welcome table when you arrive. 
+                Our event is held at:
+            </p>
+            <p>
+                <strong>22053 Highland St<br>
+                Wildomar, CA 92595</strong>
+            </p>
+            <p>
+                To help us ensure a smooth, safe, and enjoyable experience for all our guests and animals, please take a moment to review the visit guidelines below:
+            </p>
+            <ul style="padding-left: 20px;">
+                <li>
+                    <strong>Arrival Time:</strong><br>
+                    Please do <strong>not arrive earlier than your reserved time slot at {order_details['time_slot']}</strong>. Early arrivals are not permitted, as we are actively preparing the animals and property for your visit.<br><br>
+                    Please <strong>do not stage on the private road</strong>, as this creates a safety and liability concern.
+                </li>
+                <br>
+                <li>
+                    <strong>Best Time to Arrive:</strong><br>
+                    Animal interactions are available throughout your reserved window. Most guests find the sweet spot is arriving about 15–30 minutes after the start time to enjoy the full experience.
+                </li>
+                <br>
+                <li>
+                    <strong>Parking:</strong><br>
+                    Enter through the red gate <strong>after your start time</strong> and take the left at the welcome sign.
+                </li>
+                <br>
+                <li>
+    			<strong>What to Bring:</strong><br>
+    			Be sure to bring drinking water, wear closed-toed shoes, and dress comfortably for walking around the farm.
+		        </li>
+
+            </ul>
+            <p>
+                We’re so excited to welcome you to the ranch and share the magic of our animals with you. Thank you for helping us keep the experience safe and enjoyable for all.
+            </p>
+            <p>Warmly,<br>Spencer Howe</p>
         </body>
     </html>
+
+
     """
     return html_content
