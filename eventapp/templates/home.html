@@ -64,55 +64,7 @@
       </div>
 
       <!-- Card 3 -->
-      <div class="card">
-        <img src="static/pic/Spring.jpg" class="card-img-top" alt="Mini Moo Spring Fling">
-        <div class="card-body">
-          <h5 class="card-title">🌸 Mini Moo Spring Fling 🌸</h5>
-          <ul class="card-text">
-            <li>🌿 Sunday, May 4</li>
-          </ul>
-          <p class="card-text">
-            Celebrate the magic of spring at Howe Ranch. Join us for an enchanting afternoon from 2:00 PM to 5:00 PM, perfect for families, friends, and anyone seeking a whimsical escape.
-          </p>
-          <p class="card-text">
-            Our beloved mini Highland girls, Petunia and Mary Lou, along with our fluffy steers, alpacas, mini goats, and bunnies, are ready to welcome you into their curious world!
-          </p>
-          <p class="card-text">
-            <strong>✨ Your exclusive spring adventure includes:</strong>
-          </p>
-          <ul class="card-text">
-            <li>🐮 Cuddles and kisses with our sweet baby Highland calves</li>
-            <li>🦙 One-on-one time with our gentle alpacas and playful mini goats</li>
-            <li>🐴 Visits with our fluffy steers and friendly donkeys</li>
-            <li>🍵 Wonderland Tea Party with our playful bunnies at a whimsical Mad Tea Party</li>
-            <li>🎨 Sketch a Mini Moo Station with Highland cow coloring pages and animal sketching</li>
-            <li>🔍 Spring scavenger hunt with exciting prizes for all</li>
-            <li>🍬 Sweet treats and refreshing springtime drinks</li>
-            <li>📸 Picture-perfect moments at our spring-themed photo backdrops</li>
-          </ul>
-          <p class="card-text">
-            <strong>📍 Passes are $30 per guest ages 1 and up.</strong>
-          </p>
-          <p class="card-text">
-            Reserve your spot now for a spring celebration like no other!
-          </p>
-          <form id="springFlingForm" action="{{ url_for('views.calculate_price') }}" method="post">
-            <div class="form-group mb-3">
-              <label for="event-date" class="form-label">Select a Date</label>
-              <select class="form-control" id="event-date" name="event_id" required>
-                <option value="">Choose a Date</option>
-                <option value="199">Sunday, May 4</option>
 
-              </select>
-            </div>
-            <div class="form-group mb-3">
-              <label for="tickets" class="form-label">Party Size</label>
-              <input type="number" class="form-control" id="tickets" name="tickets" placeholder="Enter number of guests" required>
-            </div>
-            <button type="submit" class="btn btn-success w-100">Secure Your Spot</button>
-          </form>
-        </div>
-      </div>
 
       <!-- Card 4 for Easter -->
       <div class="card">
