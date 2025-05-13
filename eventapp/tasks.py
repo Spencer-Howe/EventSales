@@ -1,11 +1,11 @@
 
 from datetime import datetime, timedelta
-from flask import current_app
+from flask import current_app, Blueprint
 from flask_mail import Message
 from eventapp import db, mail
 from eventapp.models import Booking
 
-
+tasks = Blueprint('tasks', __name__)
 
 def send_reminder_email(booking):
     subject = "Booking Reminder - Upcoming Event at Howe Ranch"
