@@ -8,7 +8,7 @@ class Config:
         load_dotenv('.env.production')
     else:
         load_dotenv('.env.local')
-
+    SCHEDULER_API_ENABLED = True
     # App configuration
     SECRET_KEY = os.getenv('FLASK_SECRET_KEY', 'your_development_secret_key')
     PAYPAL_API_BASE = os.getenv('PAYPAL_API_BASE')

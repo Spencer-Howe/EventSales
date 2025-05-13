@@ -42,8 +42,10 @@ class Booking(db.Model):
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), nullable=False)
     phone = db.Column(db.String(20), nullable=True)
+    reminder_sent = db.Column(db.Boolean, nullable=True, default=False)
 
-    def __init__(self, time_slot, tickets, order_id, amount_paid, currency, status, name, email, phone):
+
+    def __init__(self, time_slot, tickets, order_id, amount_paid, currency, status, name, email, phone, reminder_sent):
         self.time_slot = time_slot
         self.tickets = tickets
         self.order_id = order_id
@@ -53,6 +55,7 @@ class Booking(db.Model):
         self.name = name
         self.email = email
         self.phone = phone
+        self.reminder_sent = reminder_sent
 
     def serialize(self):
         return {

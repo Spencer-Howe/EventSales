@@ -279,6 +279,7 @@ def show_receipt(order_id):
         return "Verification failed or order not completed", 400
 
 
+
 @views.route('/thank_you')
 def thank_you_page():
     # noinspection PyUnresolvedReferences

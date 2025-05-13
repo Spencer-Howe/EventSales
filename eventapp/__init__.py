@@ -1,7 +1,9 @@
+import os
+
 from flask import Flask
 from config import Config
 from .extensions import db, migrate, mail, login_manager
-import os
+
 
 def configure_database(app):
     db.init_app(app)
@@ -17,10 +19,7 @@ def configure_app(app, config_class=Config):
 def register_blueprints(app):
     from eventapp.views import views
     app.register_blueprint(views, url_prefix='/')
-
-
-
-
+    app.register_blueprint(tasks_bp, url_prefix='/tasks_bp')
 
     #changed to main not admin because admi. initialized already exists
 
@@ -30,11 +29,11 @@ def register_blueprints(app):
         return User.query.get(user_id)
 
 
-def create_app(config_class=Config):
+def create_app(config_class=Config, scheduler=None, check_and_send_reminders=None):
     app = Flask(__name__)
     configure_app(app, config_class)
     configure_database(app)
-    register_blueprints(app)
+    scheduler.init_app(app)
 
     app.config['PAYPAL_CLIENT_ID'] = os.getenv('PAYPAL_CLIENT_ID')
     app.config['PAYPAL_API_BASE'] = os.getenv('PAYPAL_API_BASE')

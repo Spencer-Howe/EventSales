@@ -9,4 +9,5 @@ WTForms
 psycopg2-binary
 flask-login
 gunicorn
+Flask-APScheduler
 
