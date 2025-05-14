@@ -30,14 +30,14 @@ def register_blueprints(app):
         return User.query.get(user_id)
 
 
-def create_app(config_class=Config, scheduler=None, check_and_send_reminders=None):
+def create_app(config_class=Config, check_and_send_reminders=None):
     app = Flask(__name__)
     configure_app(app, config_class)
     configure_database(app)
     register_blueprints(app)
 
     scheduler.init_app(app)
-    scheduler.add_job(func=check_and_send_reminders, trigger='interval', hours=1, id='email_reminder')
+    scheduler.add_job(func=check_and_send_reminders, trigger='interval', args=[app], minutes=1, id='email_reminder')
     scheduler.start()
     app.config['PAYPAL_CLIENT_ID'] = os.getenv('PAYPAL_CLIENT_ID')
     app.config['PAYPAL_API_BASE'] = os.getenv('PAYPAL_API_BASE')

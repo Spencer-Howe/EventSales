@@ -93,22 +93,22 @@ def send_reminder_email(booking):
         print(f"Failed to send reminder email to {recipient}: {str(e)}")
 
 
-def check_and_send_reminders():
-    now = datetime.utcnow()
-    start_time = now + timedelta(hours=24)
-    end_time = start_time + timedelta(hours=24)
+def check_and_send_reminders(app):
+    with app.app_context():
+        now = datetime.utcnow()
+        end_time = now + timedelta(hours=24)
 
-    # Query bookings within the 24-hour window that haven't been sent a reminder
-    bookings = Booking.query.filter(
-        Booking.time_slot >= start_time,
-        Booking.time_slot < end_time,
-        Booking.reminder_sent == False  # Only unsent reminders
-    ).all()
+        # Query bookings within the 24-hour window that haven't been sent a reminder
+        bookings = Booking.query.filter(
+            Booking.time_slot >= now,
+            Booking.time_slot < end_time,
+            Booking.reminder_sent == False  # Only unsent reminders
+        ).all()
 
-    for booking in bookings:
-        send_reminder_email(booking)
+        for booking in bookings:
+            send_reminder_email(booking)
 
-    print(f"Checked and processed reminders for bookings between {start_time} and {end_time}")
+        print(f"Checked and processed reminders for bookings between {now} and {end_time}")
 
 
 

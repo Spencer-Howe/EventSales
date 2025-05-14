@@ -247,7 +247,8 @@ def show_receipt(order_id):
             status=status,
             name=name,
             email=email,
-            phone=phone)
+            phone=phone,
+            reminder_sent=False)
         db.session.add(new_booking)
         db.session.commit()
         email_order_details = {
