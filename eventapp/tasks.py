@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from flask import current_app, Blueprint
 from flask_mail import Message
 from eventapp import db, mail
-from eventapp.models import Booking
+from eventapp.models import Booking, Event
 
 tasks = Blueprint('tasks', __name__)
 
@@ -113,6 +113,18 @@ def check_and_send_reminders(app):
 
 
 
+def clear_old_bookings(app):
+    with app.app_context():
+        now = datetime.utcnow()
+        end_time = now - timedelta(hours=24)
+
+        old_events = Event.query.filter(
+            Event.end < end_time
+        ).all()
+
+        for event in old_events:
+            db.session.delete(event)
+        db.session.commit()
 
 
 
