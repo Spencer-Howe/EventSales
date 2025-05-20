@@ -12,7 +12,63 @@
     <!-- Using Bootstrap's card-group to ensure all cards are handled uniformly -->
     <div class="card-group">
 
-      <!-- Card 2 -->
+
+      <!-- Card 3 -->
+        <div class="card">
+        <img src="static/pic/MINImoo.jpg" class="card-img-top" alt="Mini Moo Spring Fling">
+        <div class="card-body">
+      <h5 class="card-title">🌟 Mini Moo Sunday Funday</h5>
+    <ul class="card-text">
+      <li>🌿 Sundays: June 1, 15 & 29</li>
+      <li>🕒 3:00 PM – 6:00 PM</li>
+    </ul>
+    <p class="card-text">
+      Escape the heat and join us for a lively afternoon at Howe Ranch for Open Farm Day! Gather friends and family for a fun-filled experience featuring our charming Highland calves, playful mini goats, alpacas, and friendly donkeys.
+    </p>
+    <p class="card-text">
+      <strong>✨ Your Sunday Funday Includes:</strong>
+    </p>
+    <ul class="card-text">
+      <li>🐮 Cuddles and kisses with our baby Highland calves — Petunia, Mary Lou, and friends</li>
+      <li>🐐 Playtime with mini goats and donkeys for smiles and belly laughs</li>
+      <li>📸 Patriotic and farm-themed photo backdrops</li>
+      <li>🕹️ Fun games and a beloved Scavenger Hunt with prizes</li>
+      <li>🍧 Shaved Ice Station and refreshing treats</li>
+    </ul>
+    <p class="card-text">
+      👟 <strong>Dress to Impress:</strong> Wear your favorite kicks and hat for fun photo ops!<br>
+      🩱 <strong>Pack Your Swimsuit:</strong> Enjoy a refreshing dip in the pool after your farm adventure!
+    </p>
+    <p class="card-text">
+      🌿 Experience a Sunday afternoon of fun, connection, and unforgettable moments — only at Howe Ranch.
+    </p>
+    <p class="card-text">
+      <strong>📍 Passes are $30 per guest ages 1 and up.</strong>
+    </p>
+    <p class="card-text">
+      Secure your spot now for the ultimate Mini Moo Sunday Funday!
+    </p>
+          <form id="springFlingForm" action="{{ url_for('views.calculate_price') }}" method="post">
+            <div class="form-group mb-3">
+              <label for="event-date" class="form-label">Select a Date</label>
+              <select class="form-control" id="event-date" name="event_id" required>
+                <option value="">Choose a Date</option>
+                <option value="254">Sunday, June 1</option>
+                  <option value="255">Sunday, June 15</option>
+                  <option value="256">Sunday, June 29</option>
+
+              </select>
+            </div>
+            <div class="form-group mb-3">
+              <label for="tickets" class="form-label">Party Size</label>
+              <input type="number" class="form-control" id="tickets" name="tickets" placeholder="Enter number of guests" required>
+            </div>
+            <button type="submit" class="btn btn-success w-100">Secure Your Spot</button>
+          </form>
+        </div>
+      </div>
+
+    <!-- Card 2 -->
       <div class="card">
         <img src="static/pic/PrivateTours.jpg" class="card-img-top" alt="Private Farm Tour">
         <div class="card-body">
@@ -63,38 +119,7 @@
         </div>
       </div>
 
-      <!-- Card 3 -->
 
-
-      <!-- Card 4 for Easter -->
-      <div class="card">
-        <img src="static/pic/motherday.png" class="card-img-top" alt="Mothers Day">
-        <div class="card-body">
-          <h5 class="card-title">Mother's Day Retreat at Howe Ranch</h5>
-          <p class="card-text">
-            Sunday, May 11<br><br>
-          <strong>Moms need more than flowers—give her a memory.</strong>
-            Escape to the farm for a soul-soothing Mother's Day retreat featuring mini cow cuddles, sketching sessions with our donkeys, alpacas, and Highland calves, hands-on feeding with our fluffiest steers, and mindfulness exercises designed to de-stress and delight.
-🫖 Top it off with sweet treats and artisan drinks and from the farm in a storybook setting with panoramic city and mountain views. You are welcome to bring your swimsuit for poolside relaxation.
-The retreat is most suitable for adults, but children who can modulate their behavior can attend, too. All guests 1 year and up need to be registered passholders. Passes are $30 per guest.
-
-          </p>
-          <form id="EasterPartyForm" action="{{ url_for('views.calculate_price') }}" method="post">
-            <input type="hidden" name="event_id" value="216">
-            <!-- <input type="hidden" name="tickets" id="tickets" value=""> -->
-            <div class="form-group mb-3">
-              <label for="tickets" class="form-label">Party Size</label>
-              <input type="number" class="form-control" id="tickets" name="tickets" placeholder="Enter number of guests" required>
-            </div>
-            <button type="submit" class="btn btn-success">Reserve Passes</button>
-          </form>
-        </div>
-      </div>
-
-
-
-
-    </div>
   </div>
 
   <div class="text-center mt-3">
