@@ -1,6 +1,6 @@
 import os
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import jsonify, render_template, request, redirect, url_for, session, Blueprint, current_app
 from flask_mail import Message
 from flask_login import login_user, logout_user, login_required
@@ -74,15 +74,21 @@ def calculate_price():
     # Query the event from the database
     event = Event.query.filter_by(id=event_id).first()
     error_message = None
+    now = datetime.utcnow()
+    advance = now + timedelta(hours=24)
     if event:
         readable_start = event.start.strftime("%B %d, %Y, %I:%M %p")
         readable_time_slot = f'{event.title} - {readable_start}'
         if event.title in ["Private Experience"]:
-            if tickets <= 10:
+            if tickets <= 10 and event.start > advance:
                 total_price = 250
 
             else:
-                error_message = ("For groups larger than 10, please contact us to book a special event.")
+                error_message = (
+                    "Private Experiences must be booked at least 24 hours in advance and are limited to groups of 10 or fewer. "
+                    "For larger groups, please contact us to arrange a special event."
+                )
+
                 total_price = None  # Optional: Set `total_price` to None or handle it differently
         else:
             total_price = tickets * event.price_per_ticket

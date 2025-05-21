@@ -23,51 +23,30 @@
             font-size: 1rem; /* Smaller font size */
             margin-bottom: 0.25rem !important; /* Minimize margin */
         }
-  </style>
-</head>
-<body>
-{% block navbar %}
-<nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-center">
-    <a class="navbar-brand" href="https://www.thehoweranch.com/">
-      <img src="/static/pic/logo2.jpg" alt="Logo" width="100" height="auto" class="d-inline-block align-text-top">
-      <!-- Optionally, add text here if needed -->
-    </a>
-  </nav>
-{% endblock %}
+         .howe-advertisement-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: #2c3e50;
+  padding: 20px 10px;
+  min-height: 150px;
+  color: white;
+  font-family: 'Arial', sans-serif;
+}
 
-<div class="container">
-    {% block content %}
-    <!-- Default content goes here -->
-    {% endblock %}
-</div>
-<footer class="bg-light text-center text-lg-start">
-    <!-- Simplified and Compact Advertisement Section -->
-    <div class="howe-advertisement-container text-center">
-        <div class="howe-ad">
-            <h3 class="ad-title">Howe DevOps</h3>
-            <p class="ad-description">
-                Specializing in backend development, cloud deployments, and software engineering with Python, Flask, Docker, JavaScript, and more.
-            </p>
-            <a href="mailto:howeranchservices@gmail.com" class="ad-btn">Contact Us</a>
-        </div>
-    </div>
+.howe-ad {
+  display: block;
+  width: 100%;
+  max-width: 600px;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #34495e;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  overflow: visible;
+}
 
-    <!-- Styles for the Advertisement Section -->
-    <style>
-        .howe-advertisement-container {
-            background-color: #2c3e50;
-            padding: 20px 10px; /* Reduced padding for less vertical space */
-            color: white;
-            font-family: 'Arial', sans-serif;
-        }
-
-        .howe-ad {
-            display: inline-block;
-            padding: 15px;  /* Reduced padding to make it more compact */
-            border-radius: 8px;
-            background-color: #34495e;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Lighter shadow for a more subtle effect */
-        }
 
         .ad-title {
             font-size: 1.5rem;  /* Slightly smaller title */
@@ -97,8 +76,34 @@
         .ad-btn:hover {
             background-color: #1abc9c;
         }
-    </style>
+  </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+{% block navbar %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-center">
+    <a class="navbar-brand" href="https://www.thehoweranch.com/">
+      <img src="/static/pic/logo2.jpg" alt="Logo" width="100" height="auto" class="d-inline-block align-text-top">
+      <!-- Optionally, add text here if needed -->
+    </a>
+  </nav>
+{% endblock %}
 
+<div class="container">
+    {% block content %}
+    <!-- Default content goes here -->
+    {% endblock %}
+</div>
+<footer class="bg-light text-center text-lg-start mt-auto">
+    <!-- Simplified and Compact Advertisement Section -->
+    <div class="howe-advertisement-container text-center">
+        <div class="howe-ad">
+            <h3 class="ad-title">Howe Tech Solutions</h3>
+            <p class="ad-description">
+                A mission-first approach to software development.
+            </p>
+            <a href="mailto:howeranchservices@gmail.com" class="ad-btn">Contact Us</a>
+        </div>
+    </div>
 
 </footer>
 
