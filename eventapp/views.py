@@ -50,10 +50,6 @@ def logout():
     return redirect(url_for('home'))
 
 
-
-
-
-
 @views.route('/')
 def home():
     # noinspection PyUnresolvedReferences
