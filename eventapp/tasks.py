@@ -93,6 +93,35 @@ def send_reminder_email(booking):
         print(f"Failed to send reminder email to {recipient}: {str(e)}")
 
 
+def send_personal_notification(booking):
+    subject = "Private Tour Booking Notification"
+    sender = current_app.config['MAIL_USERNAME']
+    recipient = "spencerahowe99@gmail.com"
+
+    html_content = f"""
+    <html>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <h2>Private Tour Booking Alert</h2>
+            <p>A booking has been made that appears to be a private tour:</p>
+            <ul>
+                <li><strong>Name:</strong> {booking.name}</li>
+                <li><strong>Email:</strong> {booking.email}</li>
+                <li><strong>Time Slot:</strong> {booking.time_slot.strftime('%Y-%m-%d %H:%M:%S')}</li>
+                <li><strong>Amount Paid:</strong> ${booking.amount_paid}</li>
+            </ul>
+            <p>This is for your records only.</p>
+        </body>
+    </html>
+    """
+
+    msg = Message(subject, sender=sender, recipients=[recipient], html=html_content)
+
+    try:
+        mail.send(msg)
+        print(f"Personal notification sent for private tour booking by {booking.name}")
+    except Exception as e:
+        print(f"Failed to send personal notification: {str(e)}")
+
 def check_and_send_reminders(app):
     with app.app_context():
         now = datetime.utcnow()
@@ -107,6 +136,10 @@ def check_and_send_reminders(app):
 
         for booking in bookings:
             send_reminder_email(booking)
+
+            # If this is a private tour (amount_paid == 250), send personal notification
+            if booking.amount_paid == 250:
+                send_personal_notification(booking)
 
         print(f"Checked and processed reminders for bookings between {now} and {end_time}")
 
