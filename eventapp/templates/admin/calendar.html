@@ -36,7 +36,7 @@
                         const events = data.map(booking => {
                             console.log('Processing booking:', booking);
                             // Ensure the date format is correct
-                            let startDate = new Date(booking.start).toISOString();
+                            let startDate = booking.start;
                             return {
                                 id: booking.id,
                                 title: booking.title,
