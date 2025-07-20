@@ -96,7 +96,7 @@ def send_reminder_email(booking):
 def send_personal_notification(booking):
     subject = "Private Tour Booking Notification"
     sender = current_app.config['MAIL_USERNAME']
-    recipient = "spencerahowe99@gmail.com"
+    recipient = ["spencerahowe99@gmail.com", "bixihowe@gmail.com"]
 
     html_content = f"""
     <html>
