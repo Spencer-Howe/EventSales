@@ -71,6 +71,12 @@ def send_reminder_email(booking):
                 If you have any questions or need assistance, please call or text Spencer Howe at 
                 <strong>(424) 219-4212</strong> or reply to this email.
             </p>
+                
+            <hr style="margin: 30px 0;">
+            <p><strong>Contributions (passes/hay)</strong> are free for guests under 1 year old, not transferable, not refundable, and cannot be rescheduled. As our focus is on animal care, we do not have the capacity to accommodate changes — please do not call to request exceptions.</p>
+
+            <p>We look forward to welcoming you to Howe Ranch.</p>
+                
 
             <hr style="margin: 30px 0;">
             <p>We look forward to welcoming you to Howe Ranch and sharing the magic of our animals with you.</p>
