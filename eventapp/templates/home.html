@@ -19,7 +19,7 @@
         <div class="card-body">
 <h5 class="card-title">🌟 Mini Moo Sunday Funday</h5>
 <ul class="card-text">
-  <li>🌿 Sundays: July 27, August 10, August 24, and September 7</li>
+  <li>🌿 Sunday August 24</li>
   <li>🕒 3:00 PM – 6:00 PM</li>
 </ul>
 <p class="card-text">
@@ -53,10 +53,58 @@
               <label for="event-date" class="form-label">Select a Date</label>
               <select class="form-control" id="event-date" name="event_id" required>
                 <option value="">Choose a Date</option>
-                  <option value="312">Sunday, July 27</option>
-                  <option value="357">Sunday, August 10</option>
                   <option value="358">Sunday, August 24</option>
+
+              </select>
+            </div>
+            <div class="form-group mb-3">
+              <label for="tickets" class="form-label">Party Size</label>
+              <input type="number" class="form-control" id="tickets" name="tickets" placeholder="Enter number of guests" required>
+            </div>
+            <button type="submit" class="btn btn-success w-100">Secure Your Spot</button>
+          </form>
+        </div>
+      </div>
+<!-- Card spooky moo -->
+        <div class="card">
+        <img src="static/pic/SpookyMooTime.jpg" class="card-img-top" alt="Spooky Moo time">
+        <div class="card-body">
+<h5 class="card-title">🎃 Spooky Moo Time at Howe Ranch</h5>
+<ul class="card-text">
+  <li>🗓️ Sundays: September 7 and 21, and October 5 and 19 </li>
+  <li>🕒 3:00 PM – 6:00 PM</li>
+</ul>
+<p class="card-text">
+  Celebrate the magic of fall at Howe Ranch during our special Spooky Moo Time open farm days! Bring friends and family for a fun-filled afternoon with our charming micro and mini Highland cows, playful mini goats, alpacas, and friendly donkeys — all set against a festive Halloween backdrop.
+</p>
+<p class="card-text">
+  <strong>✨ Your Spooky Moo Time Includes:</strong>
+</p>
+<ul class="card-text">
+  <li>🐮 Cuddles and kisses with our tiny Highland cows — Petunia, Mary Lou, and friends</li>
+  <li>🐐 Playtime with mini goats and alpacas for smiles and belly laughs</li>
+  <li>📸 Themed Halloween and fall photo backdrops for unforgettable pictures</li>
+  <li>🕹️ Halloween-themed scavenger hunt with prizes</li>
+  <li>🍬 "Trick-or-Treat Sweet Spot" — a special seasonal treat station for our young visitors in the pool sanctuary (no swimming included unless noted)</li>
+    <li>🎨 Halloween-themed coloring and crafts for all ages</li>
+    <li>☀️ On very hot days, we may open the pool for a refreshing swim!</li>
+    <li>👗 Costumes welcome for kids and adults — come dressed for fun!</li>
+</ul>
+<p class="card-text">
+  <strong>📍 Passes are limited: $35 per guest ages 1 and up.</strong>
+</p>
+<p class="card-text">
+  Secure your spot now for the ultimate fall farm experience at Howe Ranch!
+</p>
+          <form id="SpookyMoo" action="{{ url_for('views.calculate_price') }}" method="post">
+            <div class="form-group mb-3">
+              <label for="event-date" class="form-label">Select a Date</label>
+              <select class="form-control" id="event-date" name="event_id" required>
+                <option value="">Choose a Date</option>
                   <option value="359">Sunday, September 7</option>
+                  <option value="441">Sunday, September 21</option>
+                  <option value="442">Sunday, October 5</option>
+                  <option value="443">Sunday, October 19</option>
 
 
               </select>
