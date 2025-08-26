@@ -75,9 +75,12 @@ def calculate_price():
     if event:
         readable_start = event.start.strftime("%B %d, %Y, %I:%M %p")
         readable_time_slot = f'{event.title} - {readable_start}'
-        if event.title in ["Private Experience"]:
+        if event.title in ["Private Experience", "Private Boo & Moo"]:
             if tickets <= 10 and event.start > advance:
-                total_price = 250
+                if event.title == "Private Boo & Moo":
+                    total_price = 350
+                else:
+                    total_price = 250
 
             else:
                 error_message = (
