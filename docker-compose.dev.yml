@@ -14,9 +14,11 @@ services:
     build: .
     env_file:
       - .env.local
-    command: bash -c "python -m flask --app run.py db upgrade && python run.py"
+    command: bash -lc "flask --app run.py db upgrade && flask --app run.py run --host 0.0.0.0 --port 5000 --debug"
     environment:
       FLASK_APP: run.py
+      FLASK_DEBUG: "1"
+
     volumes:
       - .:/app
     ports:
