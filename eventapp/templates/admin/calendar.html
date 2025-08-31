@@ -14,74 +14,39 @@
 <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light.css" />
 
 <script>
-  // --- tiny on-page debug so you can see logs ---
-  (function setupDebug(){
-    const box = document.createElement('pre');
-    box.id = 'debugLog';
-    box.style.cssText = 'position:fixed;left:0;right:0;bottom:0;max-height:35vh;overflow:auto;margin:0;background:#111;color:#0f0;padding:8px;font:12px/1.4 monospace;z-index:99999;opacity:.95';
-    box.textContent = 'Debug log:\n';
-    document.addEventListener('DOMContentLoaded', ()=> document.body.appendChild(box));
-    window.__debug = function(){
-      const msg = Array.from(arguments).map(a => (typeof a === 'object' ? JSON.stringify(a) : String(a))).join(' ');
-      console.log.apply(console, arguments);
-      box.textContent += msg + '\n';
-    };
-    window.onerror = function(msg, src, line, col){
-      __debug('JS ERROR:', msg, 'at', src, line + ':' + col);
-    };
-  })();
-
   document.addEventListener('DOMContentLoaded', function () {
-    __debug('DOMContentLoaded');
-
     const calendarEl = document.getElementById('calendar');
-    if (!calendarEl) { __debug('No #calendar element'); return; }
+    if (!calendarEl) return;
 
     // Parse booking.start into a LOCAL time Date
     function parseStart(val) {
       if (val == null) return null;
       const s = String(val).trim().replace(/\.\d+$/, ''); // drop microseconds
 
-      // CASE 1: RFC1123 with GMT/UTC, e.g. "Fri, 27 Sep 2024 16:00:00 GMT"
-      // If your data uses this format but represents *local* time, IGNORE the "GMT" tag and build a local Date.
+      // RFC1123 with GMT/UTC, e.g. "Fri, 27 Sep 2024 16:00:00 GMT" -> treat as LOCAL clock time
       const rfc = s.match(/^\w{3}, (\d{2}) (\w{3}) (\d{4}) (\d{2}):(\d{2})(?::(\d{2}))? (GMT|UTC)$/i);
       if (rfc) {
         const months = {Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
-        const d = new Date(+rfc[3], months[rfc[2]], +rfc[1], +rfc[4], +rfc[5], +(rfc[6]||0)); // LOCAL
-        __debug('mode:rfc1123-as-local', s, '=>', d.toString());
-        return d;
+        return new Date(+rfc[3], months[rfc[2]], +rfc[1], +rfc[4], +rfc[5], +(rfc[6]||0)); // LOCAL
       }
 
-      // CASE 2: Timezone-aware ISO strings (ends with Z or ±HH:MM) — treat correctly
-      if (/Z$|[+-]\d{2}:\d{2}$/.test(s)) {
-        const d = new Date(s);
-        __debug('mode:tz-aware', s, '=>', d.toString());
-        return d;
-      }
+      // Timezone-aware ISO -> let Date handle correctly
+      if (/Z$|[+-]\d{2}:\d{2}$/.test(s)) return new Date(s);
 
-      // CASE 3: Naive DB formats -> build as LOCAL
+      // Naive DB formats -> build LOCAL Date
       const m = s.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})(?::(\d{2}))?$/);
-      if (m) {
-        const d = new Date(+m[1], +m[2]-1, +m[3], +m[4], +m[5], +(m[6]||0));
-        __debug('mode:naive-local', s, '=>', d.toString());
-        return d;
-      }
+      if (m) return new Date(+m[1], +m[2]-1, +m[3], +m[4], +m[5], +(m[6]||0));
 
-      // CASE 4: Date-only -> let FC handle as all-day
-      if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
-        __debug('mode:all-day', s, '=> (all-day)');
-        return s;
-      }
+      // Date-only -> treat as all-day
+      if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
 
       // Fallback
-      const d = new Date(s);
-      __debug('mode:fallback-Date', s, '=>', d.toString());
-      return d;
+      return new Date(s);
     }
 
     const calendar = new FullCalendar.Calendar(calendarEl, {
       initialView: 'dayGridMonth',
-      timeZone: 'local', // keep it simple
+      timeZone: 'local',
 
       headerToolbar: {
         left: 'prev,next today',
@@ -93,22 +58,18 @@
 
       events: function(fetchInfo, success, failure) {
         const url = `/api/bookings?start=${fetchInfo.startStr}&end=${fetchInfo.endStr}`;
-        __debug('Fetching:', url);
-
         fetch(url)
-          .then(r => { __debug('Fetch status:', r.status); if (!r.ok) throw new Error('Network ' + r.status); return r.json(); })
+          .then(r => { if (!r.ok) throw new Error('Network ' + r.status); return r.json(); })
           .then(data => {
             const list = Array.isArray(data) ? data : [];
             const events = [];
 
             for (const b of list) {
-              if (!b || !b.start) { __debug('skip: no start'); continue; }
-              const startVal = parseStart(b.start);
-              __debug('start in/out ->', b.start, '=>', (startVal instanceof Date ? startVal.toString() : String(startVal)));
+              if (!b || !b.start) continue;
               const e = {
                 id: b.id,
                 title: b.title,
-                start: startVal,
+                start: parseStart(b.start),
                 description:
                   `Amount Paid: ${b.amount_paid} ${b.currency}, ` +
                   `Tickets: ${b.tickets}, Order ID: ${b.order_id}, ` +
@@ -118,10 +79,9 @@
               events.push(e);
             }
 
-            __debug('Mapped events:', events.length);
             success(events);
           })
-          .catch(err => { __debug('Fetch/mapping error:', err && err.message ? err.message : String(err)); failure(err); });
+          .catch(failure);
       },
 
       eventClick: function(info) {
@@ -142,9 +102,7 @@
       }
     });
 
-    __debug('Rendering calendar…');
     calendar.render();
-    __debug('Calendar rendered');
   });
 </script>
 {% endblock %}
