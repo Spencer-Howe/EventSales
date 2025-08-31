@@ -8,5 +8,12 @@
       <jdbc-url>jdbc:postgresql://3.23.173.82:5432/productionranch</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="ranch_dev@127.0.0.1" uuid="1008bd5d-7a96-472f-93df-b19570a97a50">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://127.0.0.1:5433/ranch_dev</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>
