@@ -17,71 +17,50 @@ def send_reminder_email(booking):
     # Email content
     html_content = f"""
     <html>
-        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-            <h1 style="color: #2e6c80;">Important Safety and Arrival Notice</h1>
-            
-            <p>Hello {name},</p>
+      <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+        <h1 style="color: #2e6c80;">Preparing for Your Visit &amp; Farm Policies</h1>
 
-            <p>Thank you for booking a visit to Howe Ranch. Whether you're joining us for A Open Farm Day or a private tour, please review the following safety guidelines carefully:</p>
+        <p>Hello {name},</p>
 
-            <h2 style="color: #2e6c80;">Arrival Guidelines - No Early Arrivals</h2>
-            <p>
-                Due to ongoing issues related to early arrivals, we are implementing stricter guidelines for all guest visits. 
-                Entry is <strong>strictly prohibited before your scheduled time slot at {time_slot}.</strong>
-            </p>
-            <p>
-                Please <strong>do not arrive early</strong> or stage on the private road leading to the farm, as this disrupts our neighbors and compromises the safety of our staff and animals.
-            </p>
+        <p>Thank you for booking a visit to Howe Ranch — we look forward to hosting you! Please review the following safety guidelines and farm policies carefully, and confirm that you have read and shared them with your group. These experiences are only possible with the full support and cooperation of our guests.</p>
 
-            <h3 style="color: #2e6c80;">Why It’s Important:</h3>
-            <ul style="padding-left: 20px;">
-                <li><strong>Safety:</strong> Animals are being moved, and staff members are preparing for your arrival. We cannot accommodate early guests on the property, and the road is not a waiting area.</li>
-                <br>
-                <li><strong>Respect for Neighbors:</strong> Our farm is located on a private road. Please refrain from idling, parking, or gathering before the start time to maintain good relations with our neighbors.</li>
-                <br>
-                <li><strong>Stay On Schedule:</strong> Whether you're here for a private tour or Open Farm Day, our experiences are thoughtfully scheduled and you will not miss a thing by arriving on time or even after the scheduled start time.</li>
-            </ul>
+        <h2 style="color: #2e6c80;">Arrival Guidelines - No Early Arrivals</h2>
+        <ul style="padding-left:20px;">
+          <li><strong>EARLY ARRIVALS STRICTLY PROHIBITED:</strong> Guests must not arrive before the event start time. Entry is strictly prohibited before your scheduled time slot at {time_slot}. Early arrivals disrupt operations, compromise safety while moving animals, and will not be accommodated. Please arrive on time or after start time. You will not miss anything by arriving after your scheduled time.</li>
+          <br>
+          <li><strong>PRIVATE ROAD LAWS:</strong> Stopping or staging on the private farm road is prohibited. Strict 15 MPH speed limit on the monitored, unpaved street leading to Howe Ranch — speeding will result in loss of your pass(es).</li>
+          <br>
+          <li><strong>ARRIVAL:</strong> Turn left at the WELCOME sign, pass through the gate, and follow signage.</li>
+        </ul>
 
-<h2 style="color: #2e6c80;">Animal Interactions & Safety</h2>
-            <p>
-                For your safety and the safety of our animals, <strong>please do not enter any animal pens or approach any animals until staff has reviewed safety guidelines with you and is present.</strong>
-            </p>
-            <p>
-                If you arrive and do not see a staff member immediately, <strong>please call or text Spencer Howe at (424) 219-4212</strong> and remain in the designated waiting area. We might be assisting other guests or preparing animals for your experience.
-            </p>
+        <h2 style="color: #2e6c80;">Animal Interactions &amp; Safety</h2>
+        <ul style="padding-left:20px;">
+          <li><strong>NO DOGS:</strong> For the safety of our animals and guests, our farm cannot accommodate dogs. Most of our animals are prey species, their reactions would make the encounter unsafe for all, and we have trained livestock guardians to protect from unknown canines on site.</li>
+          <br>
+          <li><strong>SAFETY:</strong> Wear sunscreen, a hat, and closed-toed shoes. Important: Bring water for hydration.</li>
+          <br>
+          <li><strong>SUPERVISED ONLY:</strong> For your safety and the safety of our animals, please do not approach any animals until staff has reviewed safety guidelines with you and is present.</li>
+        </ul>
+        <p>If you arrive and do not see a staff member immediately, please call or text Spencer Howe at <strong>(424) 219-4212</strong> and remain in the designated waiting area. We might be assisting other guests or preparing animals for your experience.</p>
 
-          <h3 style="color: #2e6c80;">Arrival Confirmation:</h3>
-            <p>
-                To help us ensure a safe and smooth experience for all guests, please <strong>reply to this email to confirm that you have read and understood the safety notice above.</strong>
-            </p>
+        <h2 style="color: #2e6c80;">Transferable Only — No Refunds or Reschedules</h2>
+        <p>
+          Experiences (open farm day passes/private experiences) are transferable, but not refundable, and cannot be rescheduled. As our focus is on animal care and our resources are perpetually at capacity, we are unable to accommodate changes — please do not call to request exceptions. If you transfer your experience, we must receive the guest’s name prior to arrival.
+        </p>
 
-            <h2 style="color: #2e6c80;">What to Bring:</h2>
-            <ul style="padding-left: 20px;">
-                <li><strong>Closed-Toed Shoes:</strong> Required for safety in animal areas.</li>
-                <li><strong>Drinking Water:</strong> Stay hydrated, as we do not provide beverages on-site.</li>
-                <li><strong>Sunscreen and Hats:</strong> Protect yourself from the sun while interacting with the animals.</li>
-            </ul>
+        <h2 style="color: #2e6c80;">Location and Contact Information:</h2>
+        <p>
+          <strong>22053 Highland St<br>
+          Wildomar, CA 92595</strong>
+        </p>
+        <p>If you have any questions or need assistance, please call or text <strong>(424) 219-4212</strong> or reply to this email.</p>
 
-            <h2 style="color: #2e6c80;">Location and Contact Information:</h2>
-            <p>
-                <strong>22053 Highland St<br>
-                Wildomar, CA 92595</strong>
-            </p>
-            <p>
-                If you have any questions or need assistance, please call or text Spencer Howe at 
-                <strong>(424) 219-4212</strong> or reply to this email.
-            </p>
-                
-            <hr style="margin: 30px 0;">
-            <p><strong>Contributions (passes/hay)</strong> are free for guests under 1 year old, not transferable, not refundable, and cannot be rescheduled. As our focus is on animal care, we do not have the capacity to accommodate changes — please do not call to request exceptions.</p>
+        <hr style="margin:30px 0;">
+        <p>For additional details, please review our <a href="https://www.thehoweranch.com/_files/ugd/fca21d_8ac1fc676ea14f35bd0af74d441bbb4f.pdf" target="_blank">FAQ document here</a>.</p>
 
-            <p>We look forward to welcoming you to Howe Ranch.</p>
-                
-
-            <hr style="margin: 30px 0;">
-            <p>We look forward to welcoming you to Howe Ranch and sharing the magic of our animals with you.</p>
-            <p>Warm regards,<br>Spencer Howe</p>
-        </body>
+        <p>We look forward to welcoming you to Howe Ranch and sharing the magic of our animals with you.</p>
+        <p>Warm regards,<br>Spencer Howe</p>
+      </body>
     </html>
     """
 
