@@ -21,7 +21,7 @@
         <div class="card-body">
 <h5 class="card-title">🎃 Spooky Moo Time at Howe Ranch</h5>
 <ul class="card-text">
-  <li>🗓️ Sundays: October 5 and 19 </li>
+  <li>🗓️ Sundays: October 5, 19, and 26 </li>
   <li>🕒 3:00 PM – 6:00 PM</li>
 </ul>
 <p class="card-text">
@@ -51,9 +51,9 @@
               <label for="event-date" class="form-label">Select a Date</label>
               <select class="form-control" id="event-date" name="event_id" required>
                 <option value="">Choose a Date</option>
-                  <option value="441">September 21*Closed no more passes available. Please explore our other farm visits*</option>
                   <option value="442">Sunday, October 5</option>
                   <option value="443">Sunday, October 19</option>
+                  <option value="611">Sunday, October 26</option>
 
 
               </select>
@@ -63,6 +63,48 @@
               <input type="number" class="form-control" id="tickets" name="tickets" placeholder="Enter number of guests" required>
             </div>
             <button type="submit" class="btn btn-success w-100">Secure Your Spot</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Card: Halloween Spektacular -->
+      <div class="card">
+        <img src="static/pic/haloween2.jpg" class="card-img-top" alt="Halloween Spektacular at Howe Ranch">
+        <div class="card-body">
+          <h5 class="card-title">🎃 Halloween Spektacular at Howe Ranch — Halloween Night!</h5>
+          <ul class="card-text">
+            <li>🗓️ Thursday, October 31</li>
+            <li>🕓 4:00 PM – 7:00 PM</li>
+          </ul>
+          <p class="card-text">
+            Finish spooky season with a one-night-only Halloween celebration at Howe Ranch! Join our charming micro and mini Highland cows — starring their newest arrivals, the itty-bitty Mini Moo babies — and their barnyard friends for an evening of fall magic. Enjoy a cozy outdoor Halloween movie under the stars, trick-or-treat adventures, and endless photo-worthy moments with the tiniest, fluffiest calves of the season.
+          </p>
+          <p class="card-text">
+            <strong>✨ Your Halloween Spektacular Includes:</strong>
+          </p>
+          <ul class="card-text">
+            <li>🐮 Snuggle up with our newest Mini Moo babies while watching family-friendly Halloween classics on the big outdoor screen</li>
+            <li>🐐 Meet the sweet mini goats, alpacas, and friendly donkeys</li>
+            <li>🎬 Outdoor Halloween movie theater with cozy sand footing surrounded by the Mini Moos</li>
+            <li>🍬 Trick-or-treat stations for kids plus seasonal treats & sips for adults</li>
+            <li>🕵️ Haunted scavenger hunt through Halloween Town with prizes</li>
+            <li>📸 Magical Halloween photo spots and spooky costumed creatures</li>
+            <li>🎃 Costumes encouraged for kids & grown-ups alike — dress to impress (and for photos!)</li>
+          </ul>
+          <p class="card-text">
+            <strong>📍 Passes are limited: $35 per guest ages 1+</strong>
+          </p>
+          <p class="card-text">
+            Celebrate Halloween night somewhere unforgettable — love and feed the Mini Moos, watch Halloween classics under the stars, and make memories that last long after the candy's gone.
+          </p>
+          
+          <form id="HalloweenSpektacular" action="{{ url_for('views.calculate_price') }}" method="post">
+            <div class="form-group mb-3">
+              <label for="halloween-tickets" class="form-label">Party Size</label>
+              <input type="number" class="form-control" id="halloween-tickets" name="tickets" placeholder="Enter number of guests" required>
+              <input type="hidden" name="event_id" value="612">
+            </div>
+            <button type="submit" class="btn btn-success w-100">Book Your Halloween Adventure</button>
           </form>
         </div>
       </div>

@@ -56,7 +56,7 @@ def send_reminder_email(booking):
         <p>If you have any questions or need assistance, please call or text <strong>(424) 219-4212</strong> or reply to this email.</p>
 
         <hr style="margin:30px 0;">
-        <p>For additional details, please review our <a href="https://www.thehoweranch.com/_files/ugd/fca21d_8ac1fc676ea14f35bd0af74d441bbb4f.pdf" target="_blank">FAQ document here</a>.</p>
+        <p>For additional details, please review our <a href="https://www.thehoweranch.com/_files/ugd/fca21d_06885dfcc097472584d44afdc9cad7a1.pdf" target="_blank">FAQ document here</a>.</p>
 
         <p>We look forward to welcoming you to Howe Ranch and sharing the magic of our animals with you.</p>
         <p>Warm regards,<br>Spencer Howe</p>
