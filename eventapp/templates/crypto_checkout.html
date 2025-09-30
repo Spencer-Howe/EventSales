@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Crypto Payment{% endblock %}
+
+{% block content %}
+
+    <h1>Crypto Payment</h1>
+
+    <!-- Display Event Title and Description -->
+    <h2>{{ event_title }}</h2>
+    <p>{{ event_description }}</p>
+
+    <p>{{ time_slot }}</p>
+    <p>Number of Tickets: {{ tickets }}</p>
+    <p>Total Price: ${{ total_price }}</p>
+
+    <form id="crypto-payment-form" method="POST" action="{{ url_for('views.submit_crypto_payment') }}">
+        <div class="mb-3">
+            <label for="name" class="form-label">Full Name:</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        
+        <div class="mb-3">
+            <label for="email" class="form-label">Email:</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="phone" class="form-label">Phone Number:</label>
+            <small>We must have your verified phone number on file to complete your booking.</small><br>
+            <input type="tel" class="form-control" id="phone" name="phone" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="crypto_currency" class="form-label">Cryptocurrency:</label>
+            <select class="form-control" id="crypto_currency" name="crypto_currency" required onchange="updatePaymentAddress()">
+                <option value="">Select cryptocurrency</option>
+                <option value="BTC">Bitcoin (BTC)</option>
+                <option value="ETH">Ethereum (ETH)</option>
+                <option value="USDC">USD Coin (USDC)</option>
+                <option value="USDT">Tether (USDT)</option>
+            </select>
+        </div>
+
+        <div id="payment-info" style="display: none;">
+            <div class="alert alert-info">
+                <h4>Payment Instructions:</h4>
+                <p>Send exactly <strong>${{ total_price }} USD</strong> worth of <span id="selected-crypto"></span> to:</p>
+                <div class="mb-3">
+                    <label class="form-label">Payment Address:</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="payment-address" readonly>
+                        <button type="button" class="btn btn-outline-secondary" onclick="copyAddress()">Copy</button>
+                    </div>
+                </div>
+                <small class="text-muted">After sending payment, paste your transaction hash below and submit.</small>
+            </div>
+        </div>
+
+        <div class="mb-3" id="tx-hash-section" style="display: none;">
+            <label for="transaction_hash" class="form-label">Transaction Hash:</label>
+            <input type="text" class="form-control" id="transaction_hash" name="transaction_hash" 
+                   placeholder="Paste your transaction hash here after sending payment" required>
+        </div>
+
+        <!-- Hidden fields -->
+        <input type="hidden" name="event_id" value="{{ event_id }}">
+        <input type="hidden" name="tickets" value="{{ tickets }}">
+        <input type="hidden" name="total_price" value="{{ total_price }}">
+
+        <!-- Non-refundable notice -->
+        <p style="margin-top: 10px; font-size: 0.9em; color: #555;">
+        <strong>Contributions (passes/hay)</strong> are free for guests under 1 year old, are transferable,
+        not refundable, and cannot be rescheduled. As our focus is on animal care, we do not have the capacity
+        to accommodate changes — please do not call to request exceptions.
+        </p>
+
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary" id="submit-btn" style="display: none;">Submit Payment Info</button>
+        </div>
+    </form>
+
+    <script>
+        const addresses = {
+            'BTC': '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',  // Replace with your actual BTC address
+            'ETH': '0x742d35Cc6634C0532925a3b8D6b9DfA0DfA0DfA1',  // Replace with your actual ETH address
+            'USDC': '0x742d35Cc6634C0532925a3b8D6b9DfA0DfA0DfA1', // Replace with your actual USDC address
+            'USDT': '0x742d35Cc6634C0532925a3b8D6b9DfA0DfA0DfA1'  // Replace with your actual USDT address
+        };
+
+        function updatePaymentAddress() {
+            const cryptoSelect = document.getElementById('crypto_currency');
+            const selectedCrypto = cryptoSelect.value;
+            
+            if (selectedCrypto) {
+                document.getElementById('selected-crypto').textContent = selectedCrypto;
+                document.getElementById('payment-address').value = addresses[selectedCrypto];
+                document.getElementById('payment-info').style.display = 'block';
+                document.getElementById('tx-hash-section').style.display = 'block';
+                document.getElementById('submit-btn').style.display = 'block';
+            } else {
+                document.getElementById('payment-info').style.display = 'none';
+                document.getElementById('tx-hash-section').style.display = 'none';
+                document.getElementById('submit-btn').style.display = 'none';
+            }
+        }
+
+        function copyAddress() {
+            const addressInput = document.getElementById('payment-address');
+            addressInput.select();
+            addressInput.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(addressInput.value);
+            
+            const copyBtn = event.target;
+            const originalText = copyBtn.textContent;
+            copyBtn.textContent = 'Copied!';
+            setTimeout(() => {
+                copyBtn.textContent = originalText;
+            }, 2000);
+        }
+
+        document.getElementById('crypto-payment-form').addEventListener('submit', function(e) {
+            const txHash = document.getElementById('transaction_hash').value.trim();
+            if (!txHash) {
+                e.preventDefault();
+                alert('Please enter your transaction hash after sending the payment.');
+                return;
+            }
+        });
+    </script>
+
+{% endblock %}

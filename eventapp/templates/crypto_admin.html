@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}Crypto Payment Admin{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid mt-4">
+    <h2><i class="fas fa-bitcoin"></i> Crypto Payment Admin</h2>
+    <p class="text-muted">Manage pending crypto payments that require manual confirmation</p>
+
+    {% if bookings %}
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Event</th>
+                        <th>Amount</th>
+                        <th>Crypto</th>
+                        <th>Transaction Hash</th>
+                        <th>Submitted</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                    <tr>
+                        <td>
+                            <span class="badge badge-warning">{{ booking.order_id }}</span>
+                        </td>
+                        <td>
+                            <strong>{{ booking.name }}</strong><br>
+                            <small class="text-muted">{{ booking.email }}</small><br>
+                            <small class="text-muted">{{ booking.phone }}</small>
+                        </td>
+                        <td>
+                            <strong>{{ booking.time_slot.strftime('%B %d, %Y') }}</strong><br>
+                            <small class="text-muted">{{ booking.time_slot.strftime('%I:%M %p') }}</small><br>
+                            <span class="badge badge-info">{{ booking.tickets }} tickets</span>
+                        </td>
+                        <td>
+                            <strong>${{ "%.2f"|format(booking.amount_paid) }}</strong><br>
+                            <small class="text-muted">{{ booking.currency }}</small>
+                        </td>
+                        <td>
+                            <span class="badge badge-secondary">{{ booking.crypto_currency }}</span><br>
+                            <small class="text-muted" style="word-break: break-all;">
+                                To: {{ booking.crypto_address[:20] }}...
+                            </small>
+                        </td>
+                        <td>
+                            <div class="transaction-hash" style="max-width: 200px;">
+                                <small style="word-break: break-all;">{{ booking.transaction_hash }}</small>
+                                <button type="button" class="btn btn-sm btn-outline-secondary mt-1" 
+                                        onclick="copyToClipboard('{{ booking.transaction_hash }}')">
+                                    Copy
+                                </button>
+                            </div>
+                        </td>
+                        <td>
+                            <small class="text-muted">
+                                {{ booking.time_slot.strftime('%m/%d %H:%M') if booking.time_slot else 'N/A' }}
+                            </small>
+                        </td>
+                        <td>
+                            <div class="btn-group-vertical">
+                                <a href="{{ url_for('views.confirm_crypto_payment', order_id=booking.order_id) }}" 
+                                   class="btn btn-success btn-sm mb-1"
+                                   onclick="return confirm('Are you sure you want to confirm this payment? This will send a receipt to the customer.')">
+                                    <i class="fas fa-check"></i> Confirm Payment
+                                </a>
+                                
+                                {% if booking.crypto_currency == 'BTC' %}
+                                    <a href="https://blockstream.info/tx/{{ booking.transaction_hash }}" 
+                                       target="_blank" class="btn btn-info btn-sm mb-1">
+                                        <i class="fas fa-external-link-alt"></i> View on Blockchain
+                                    </a>
+                                {% elif booking.crypto_currency in ['ETH', 'USDC', 'USDT'] %}
+                                    <a href="https://etherscan.io/tx/{{ booking.transaction_hash }}" 
+                                       target="_blank" class="btn btn-info btn-sm mb-1">
+                                        <i class="fas fa-external-link-alt"></i> View on Etherscan
+                                    </a>
+                                {% endif %}
+                                
+                                <button type="button" class="btn btn-outline-danger btn-sm" 
+                                        onclick="rejectPayment('{{ booking.order_id }}')">
+                                    <i class="fas fa-times"></i> Reject
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            <h4>No pending crypto payments</h4>
+            <p>All crypto payments have been processed or there are no pending payments at this time.</p>
+        </div>
+    {% endif %}
+
+    <div class="mt-4">
+        <a href="{{ url_for('admin.index') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Admin
+        </a>
+    </div>
+</div>
+
+<script>
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(function() {
+        alert('Transaction hash copied to clipboard!');
+    }, function(err) {
+        console.error('Could not copy text: ', err);
+    });
+}
+
+function rejectPayment(orderId) {
+    if (confirm('Are you sure you want to reject this payment? This action cannot be undone.')) {
+        alert('Rejection functionality not yet implemented. Please handle manually.');
+    }
+}
+
+// Auto-refresh every 60 seconds to check for new payments
+setTimeout(function() {
+    location.reload();
+}, 60000);
+</script>
+
+<style>
+.transaction-hash {
+    font-family: 'Courier New', monospace;
+}
+
+.btn-group-vertical .btn {
+    margin-bottom: 2px;
+}
+
+.table td {
+    vertical-align: middle;
+}
+</style>
+
+{% endblock %}
