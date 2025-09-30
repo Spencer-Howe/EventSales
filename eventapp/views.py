@@ -55,65 +55,7 @@ def home():
     # noinspection PyUnresolvedReferences
     return render_template('home.html')
 
-@views.route('/calculate_price', methods=['POST'])
-def calculate_price():
-    from eventapp.models import Event
-    event_id = request.form['event_id']
-    tickets_str = request.form.get('tickets')
-    paypal_client_id = current_app.config['PAYPAL_CLIENT_ID']
-
-    try:
-        tickets = int(tickets_str)
-    except (ValueError, TypeError):
-        tickets = 0
-
-    # Query the event from the database
-    event = Event.query.filter_by(id=event_id).first()
-    error_message = None
-    now = datetime.utcnow()
-    advance = now + timedelta(hours=24)
-    if event:
-        readable_start = event.start.strftime("%B %d, %Y, %I:%M %p")
-        readable_time_slot = f'{event.title} - {readable_start}'
-        if event.title in ["Private Experience", "Private Boo & Moo"]:
-            if tickets <= 10 and event.start > advance:
-                if event.title == "Private Boo & Moo":
-                    total_price = 350
-                else:
-                    total_price = 250
-
-            else:
-                error_message = (
-                    "Private Experiences must be booked at least 24 hours in advance and are limited to groups of 10 or fewer. "
-                    "For larger groups, please contact us to arrange a special event."
-                )
-
-                total_price = None  # Optional: Set `total_price` to None or handle it differently
-        else:
-            total_price = tickets * event.price_per_ticket
-
-
-# Pass the title and description to the template
-        event_title = event.title
-        event_description = event.description
-
-        session['event_id'] = event_id  # Store event ID only
-        session['tickets'] = tickets
-    else:
-        readable_time_slot = 'Unknown Time Slot'
-        total_price = 0
-        event_title = 'Unknown Event'
-        event_description = 'No description available'
-
-    # Render the template and pass the required data
-    return render_template('some_template.html',
-                           time_slot=readable_time_slot,
-                           tickets=tickets,
-                           total_price=total_price,
-                           paypal_client_id=paypal_client_id,
-                           event_title=event_title,
-                           event_description=event_description,
-                            error_message=error_message)
+# Note: calculate_price route moved to booking.py blueprint
 
 
 

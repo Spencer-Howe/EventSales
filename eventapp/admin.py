@@ -28,6 +28,7 @@ class EventURLsView(BaseView):
     def index(self):
         events = Event.query.all()
 
+
         event_urls = []
         for event in events:
             # Construct the event URL
@@ -60,7 +61,7 @@ class EventModelView(ModelView):
             'format': '%Y-%m-%dT%H:%M'
         }
     }
-    form_columns = ['title', 'start', 'end', 'price_per_ticket', 'description', 'private', 'is_private', 'is_booked']
+    form_columns = ['title', 'start', 'end', 'price_per_ticket', 'max_capacity', 'description', 'private', 'is_private', 'is_booked']
 
     def is_accessible(self):
         return current_user.is_authenticated

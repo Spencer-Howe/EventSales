@@ -26,6 +26,7 @@ class Event(db.Model):
     private = db.Column(db.Boolean, nullable=False, default=False)
     is_private = db.Column(db.Boolean, nullable=True, default=False)
     is_booked = db.Column(db.Boolean, nullable=True, default=False)
+    max_capacity = db.Column(db.Integer, nullable=False, default=50)
 
 user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 

@@ -17,9 +17,20 @@ class Config:
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:///yourdatabase.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    # Mail configuration
-    MAIL_SERVER = 'smtp.gmail.com'
-    MAIL_PORT = 465
-    MAIL_USE_SSL = True
-    MAIL_USERNAME = os.getenv('GMAIL_USERNAME')
-    MAIL_PASSWORD = os.getenv('GMAIL_PASSWORD')
+    # Email configuration - switches based on environment
+    if env == 'production':
+        # Gmail for productiongot
+        MAIL_SERVER = 'smtp.gmail.com'
+        MAIL_PORT = 465
+        MAIL_USE_SSL = True
+        MAIL_USERNAME = os.getenv('GMAIL_USERNAME')
+        MAIL_PASSWORD = os.getenv('GMAIL_PASSWORD')
+        MAIL_DEFAULT_SENDER = os.getenv('GMAIL_USERNAME')
+    else:
+        # Mailtrap for development/testing
+        MAIL_SERVER = os.getenv('MAIL_SERVER', 'sandbox.smtp.mailtrap.io')
+        MAIL_PORT = int(os.getenv('MAIL_PORT', 2525))
+        MAIL_USE_TLS = True
+        MAIL_USERNAME = os.getenv('MAIL_USERNAME')
+        MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
+        MAIL_DEFAULT_SENDER = os.getenv('MAIL_DEFAULT_SENDER', 'test@fakeemail.com')

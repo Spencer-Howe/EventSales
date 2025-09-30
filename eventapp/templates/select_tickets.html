@@ -9,7 +9,7 @@
     <div class="d-flex flex-column flex-lg-row" style="min-height: 100vh;"> <!-- Ensure full screen height -->
         <div class="flex-grow-1 p-2" id='calendar'></div> <!-- Calendar takes available space -->
 
-            <form id="bookingForm" action="{{ url_for('views.calculate_price') }}" method="post">
+            <form id="bookingForm" action="{{ url_for('booking.calculate_price') }}" method="post">
                 <input type="hidden" id="date" name="date" required>
                 <input type="hidden" id="event_id" name="event_id" required>
                 <input type="hidden" id="tickets" name="tickets" min="1" required><br><br>

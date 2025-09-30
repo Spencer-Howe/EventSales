@@ -19,8 +19,10 @@ def configure_app(app, config_class=Config):
 def register_blueprints(app):
     from eventapp.views import views
     from eventapp.tasks import tasks
+    from eventapp.booking import booking_bp
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(tasks)
+    app.register_blueprint(booking_bp, url_prefix='/')
 
     #changed to main not admin because admi. initialized already exists
 
@@ -37,9 +39,17 @@ def create_app(config_class=Config, check_and_send_reminders=None, clear_old_boo
     register_blueprints(app)
 
     scheduler.init_app(app)
-    scheduler.add_job(func=check_and_send_reminders, trigger='interval', args=[app], hours=1, id='email_reminder')
-    scheduler.add_job(func=clear_old_bookings, trigger='interval', args=[app], hours=24, id='clear_bookings')
-    scheduler.start()
+    
+    # Only add jobs if functions are provided
+    if check_and_send_reminders is not None:
+        scheduler.add_job(func=check_and_send_reminders, trigger='interval', args=[app], hours=1, id='email_reminder')
+    
+    if clear_old_bookings is not None:
+        scheduler.add_job(func=clear_old_bookings, trigger='interval', args=[app], hours=24, id='clear_bookings')
+    
+    # Only start scheduler if it has jobs
+    if scheduler.get_jobs():
+        scheduler.start()
     app.config['PAYPAL_CLIENT_ID'] = os.getenv('PAYPAL_CLIENT_ID')
     app.config['PAYPAL_API_BASE'] = os.getenv('PAYPAL_API_BASE')
 
