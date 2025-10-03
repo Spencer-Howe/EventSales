@@ -44,9 +44,13 @@ class Booking(db.Model):
     email = db.Column(db.String(100), nullable=False)
     phone = db.Column(db.String(20), nullable=True)
     reminder_sent = db.Column(db.Boolean, nullable=True, default=False)
+    payment_method = db.Column(db.String(20), nullable=False)
+    crypto_currency = db.Column(db.String(10), nullable=True)
+    crypto_address = db.Column(db.String(200), nullable=True)
+    transaction_hash = db.Column(db.String(200), nullable=True)
 
 
-    def __init__(self, time_slot, tickets, order_id, amount_paid, currency, status, name, email, phone, reminder_sent):
+    def __init__(self, time_slot, tickets, order_id, amount_paid, currency, status, name, email, phone, reminder_sent, payment_method='paypal', crypto_currency=None, crypto_address=None, transaction_hash=None):
         self.time_slot = time_slot
         self.tickets = tickets
         self.order_id = order_id
@@ -57,6 +61,10 @@ class Booking(db.Model):
         self.email = email
         self.phone = phone
         self.reminder_sent = reminder_sent
+        self.payment_method = payment_method
+        self.crypto_currency = crypto_currency
+        self.crypto_address = crypto_address
+        self.transaction_hash = transaction_hash
 
     def serialize(self):
         return {

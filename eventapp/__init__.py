@@ -20,9 +20,11 @@ def register_blueprints(app):
     from eventapp.views import views
     from eventapp.tasks import tasks
     from eventapp.booking import booking_bp
+    from eventapp.crypto import crypto_bp
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(tasks)
     app.register_blueprint(booking_bp, url_prefix='/')
+    app.register_blueprint(crypto_bp, url_prefix='/')
 
     #changed to main not admin because admi. initialized already exists
 

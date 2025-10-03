@@ -14,7 +14,7 @@
     <p>Number of Tickets: {{ tickets }}</p>
     <p>Total Price: ${{ total_price }}</p>
 
-    <form id="crypto-payment-form" method="POST" action="{{ url_for('views.submit_crypto_payment') }}">
+    <form id="crypto-payment-form" method="POST" action="{{ url_for('crypto.submit_crypto_payment') }}">
         <div class="mb-3">
             <label for="name" class="form-label">Full Name:</label>
             <input type="text" class="form-control" id="name" name="name" required>
@@ -82,10 +82,10 @@
 
     <script>
         const addresses = {
-            'BTC': '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',  // Replace with your actual BTC address
-            'ETH': '0x742d35Cc6634C0532925a3b8D6b9DfA0DfA0DfA1',  // Replace with your actual ETH address
-            'USDC': '0x742d35Cc6634C0532925a3b8D6b9DfA0DfA0DfA1', // Replace with your actual USDC address
-            'USDT': '0x742d35Cc6634C0532925a3b8D6b9DfA0DfA0DfA1'  // Replace with your actual USDT address
+            'BTC': '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
+            'ETH': '0x742d35Cc6634C0532925a3b8D6b9DfA0DfA0DfA1',
+            'USDC': '0x742d35Cc6634C0532925a3b8D6b9DfA0DfA0DfA1',
+            'USDT': '0x742d35Cc6634C0532925a3b8D6b9DfA0DfA0DfA1'
         };
 
         function updatePaymentAddress() {

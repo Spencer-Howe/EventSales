@@ -32,8 +32,30 @@
 
     <div style="margin-top: 30px;"></div>
 
-    <div id="paypal-button-container"></div>
-    <p id="result-message"></p>
+    <!-- Payment Methods -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title"><i class="fab fa-paypal"></i> PayPal</h5>
+                    <div id="paypal-button-container"></div>
+                    <p id="result-message"></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title"><i class="fab fa-bitcoin"></i> Cryptocurrency</h5>
+                    <p class="text-muted">Bitcoin, Ethereum, USDC, USDT</p>
+                    <a href="{{ url_for('crypto.crypto_checkout') }}" 
+                       class="btn btn-warning btn-lg">
+                        <i class="fab fa-bitcoin"></i> Pay with Crypto
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- PayPal SDK Script -->
     <script src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id }}&currency=USD"></script>

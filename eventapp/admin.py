@@ -5,7 +5,7 @@ from flask_login import LoginManager, current_user, UserMixin, login_required, l
 from flask_sqlalchemy import SQLAlchemy
 from wtforms.fields import DateTimeLocalField, TextAreaField
 from .extensions import db
-from eventapp.models import Event  # Adjust this path based on where your models are defined
+from eventapp.models import Event, Booking  # Adjust this path based on where your models are defined
 
 
 
@@ -39,6 +39,28 @@ class EventURLsView(BaseView):
         return self.render('admin/event_urls.html', event_urls=event_urls)
 
     # Add access control logic if needed
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for('views.login'))
+
+class CryptoAdminView(BaseView):
+    @expose('/')
+    def index(self):
+        # Query for bookings with crypto payments that are pending confirmation
+        try:
+            # Filter for crypto payments - these would have payment_method='crypto'
+            crypto_bookings = Booking.query.filter(
+                Booking.payment_method == 'crypto',
+                Booking.status == 'pending_crypto'
+            ).all()
+        except Exception as e:
+            # Handle case where crypto fields don't exist yet
+            crypto_bookings = []
+        
+        return self.render('crypto_admin.html', bookings=crypto_bookings)
+
     def is_accessible(self):
         return current_user.is_authenticated
 
@@ -86,3 +108,4 @@ def setup_admin(app):
     admin.add_view(EventModelView(Event, db.session, name='Event Model'))
     admin.add_view(CalendarView(name='Calendar', endpoint='calendar'))
     admin.add_view(EventURLsView(name='Event URLs', endpoint='event_urls'))
+    admin.add_view(CryptoAdminView(name='Crypto Admin', endpoint='cryptoadmin'))

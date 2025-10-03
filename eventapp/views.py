@@ -195,7 +195,8 @@ def show_receipt(order_id):
             name=name,
             email=email,
             phone=phone,
-            reminder_sent=False)
+            reminder_sent=False,
+            payment_method='paypal')
         db.session.add(new_booking)
         db.session.commit()
         email_order_details = {
@@ -336,3 +337,4 @@ def create_receipt_email_content(order_details):
 
     """
     return html_content
+
