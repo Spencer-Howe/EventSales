@@ -36,9 +36,8 @@
             <select class="form-control" id="crypto_currency" name="crypto_currency" required onchange="updatePaymentAddress()">
                 <option value="">Select cryptocurrency</option>
                 <option value="BTC">Bitcoin (BTC)</option>
-                <option value="ETH">Ethereum (ETH)</option>
-                <option value="USDC">USD Coin (USDC)</option>
-                <option value="USDT">Tether (USDT)</option>
+                <option value="LTC">LTC</option>
+                <option value="XMR">Monero</option>
             </select>
         </div>
 
@@ -82,10 +81,9 @@
 
     <script>
         const addresses = {
-            'BTC': '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
-            'ETH': '0x742d35Cc6634C0532925a3b8D6b9DfA0DfA0DfA1',
-            'USDC': '0x742d35Cc6634C0532925a3b8D6b9DfA0DfA0DfA1',
-            'USDT': '0x742d35Cc6634C0532925a3b8D6b9DfA0DfA0DfA1'
+            'BTC': 'bc1qkttfrwweek9ajmcf772kz2yxt5wqnzxfa0x8d7',
+            'LTC': 'LPxKrKd2ShrijTrq2xJdBMnqxQ62mn4Pci',
+            'XMR': '48w9R7gh5zyeyUCERtxgxfbpzouoL5KNkY9VE25v7mV8eMGZxAuE994M2j9LXEC84JigNWT2bLC3HT5mD5Ebn4hNKFi9E7f',
         };
 
         function updatePaymentAddress() {

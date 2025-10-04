@@ -81,7 +81,10 @@ def submit_crypto_payment():
     db.session.add(new_booking)
     db.session.commit()
     
-    # Render pending confirmation page
+    # Crypto payments need admin approval first - no immediate receipt
+    # Receipt will be sent when admin confirms payment, which includes waiver link
+    
+    # Render pending confirmation page instead of redirecting to waiver
     return render_template('crypto_pending.html',
                           order_id=order_id,
                           name=name,
@@ -123,37 +126,77 @@ def confirm_crypto_payment(order_id):
 def get_crypto_address(crypto_currency):
     """Get the appropriate crypto address for the currency"""
     addresses = {
-        'BTC': '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
-        'ETH': '0x742d35Cc6634C0532925a3b8D6b9DfA0DfA0DfA1',
-        'USDC': '0x742d35Cc6634C0532925a3b8D6b9DfA0DfA0DfA1',
-        'USDT': '0x742d35Cc6634C0532925a3b8D6b9DfA0DfA0DfA1'
+        'BTC': 'bc1qkttfrwweek9ajmcf772kz2yxt5wqnzxfa0x8d7', #btc address
+        'LTC': 'LPxKrKd2ShrijTrq2xJdBMnqxQ62mn4Pci', #actual adress
+        'XMR': '48w9R7gh5zyeyUCERtxgxfbpzouoL5KNkY9VE25v7mV8eMGZxAuE994M2j9LXEC84JigNWT2bLC3HT5mD5Ebn4hNKFi9E7f',
     }
     return addresses.get(crypto_currency, '')
 
 def generate_receipt_html(booking):
     """Generate receipt HTML for crypto payment confirmation"""
+    # Create waiver URL for the booking
+    from flask import url_for
+    waiver_url = url_for('views.sign_waiver', order_id=booking.order_id, _external=True)
+    
     return f"""
+    
     <html>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-            <h1 style="color: #2e6c80;">Payment Confirmed - Mini Moos Experience</h1>
+            <h1 style="color: #2e6c80;">Payment Receipt</h1>
             <p><strong>Name:</strong> {booking.name}</p>
             <p><strong>Email:</strong> {booking.email}</p>
-            <p><strong>Phone:</strong> {booking.phone}</p>
+            <p><strong>Phone Number:</strong> {booking.phone}</p>
             <p><strong>Order ID:</strong> {booking.order_id}</p>
-            <p><strong>Amount:</strong> ${booking.amount_paid:.2f} {booking.currency}</p>
-            <p><strong>Time Slot:</strong> {booking.time_slot.strftime('%B %d, %Y at %I:%M %p') if booking.time_slot else 'N/A'}</p>
-            <p><strong>Tickets:</strong> {booking.tickets}</p>
-            
+            <p><strong>Total Amount:</strong> {booking.amount_paid}</p>
+            <p><strong>Currency:</strong> {booking.currency}</p>
+            <p><strong>Status:</strong> {booking.status}</p>
+            <p><strong>Time Slot:</strong> {booking.time_slot}</p>
+            <p><strong>Number of Tickets:</strong> {booking.tickets}</p>
+            <p>Please review and sign the waiver if you did not already finish the registration after checkout 
+                <a href="{waiver_url}" style="color: #1a73e8;">here</a>.
+            </p>
             <hr style="margin: 30px 0;">
-            <h2 style="color: #2e6c80;">Visit Information</h2>
-            <p><strong>Location:</strong><br>
-            22053 Highland St<br>
-            Wildomar, CA 92595</p>
-            
-            <p>Please arrive at your scheduled time. Bring water, wear closed-toe shoes, and dress comfortably.</p>
-            
-            <p>We're excited to welcome you to Howe Ranch!</p>
+            <h2 style="color: #2e6c80;">Thank You & Important Visit Information</h2>
+            <p>
+                Thank you for purchasing passes to the <strong>Mini Moos experience</strong> at Howe Ranch! You're officially on our guest list—just identify yourself at the welcome table when you arrive. 
+                Our event is held at:
+            </p>
+            <p>
+                <strong>22053 Highland St<br>
+                Wildomar, CA 92595</strong>
+            </p>
+            <p>
+                To help us ensure a smooth, safe, and enjoyable experience for all our guests and animals, please take a moment to review the visit guidelines below:
+            </p>
+            <ul style="padding-left: 20px;">
+                <li>
+                    <strong>Arrival Time:</strong><br>
+                    Please do <strong>not arrive earlier than your reserved time slot at {booking.time_slot}</strong>. Early arrivals are not permitted, as we are actively preparing the animals and property for your visit.<br><br>
+                    Please <strong>do not stage on the private road</strong>, as this creates a safety and liability concern.
+                </li>
+                <br>
+                <li>
+                    <strong>Best Time to Arrive:</strong><br>
+                    Animal interactions are available throughout your reserved window. Most guests find the sweet spot is arriving about 15–30 minutes after the start time to enjoy the full experience.
+                </li>
+                <br>
+                <li>
+                    <strong>Parking:</strong><br>
+                    Enter through the red gate <strong>after your start time</strong> and take the left at the welcome sign.
+                </li>
+                <br>
+                <li>
+    			<strong>What to Bring:</strong><br>
+    			Be sure to bring drinking water, wear closed-toed shoes, and dress comfortably for walking around the farm.
+		        </li>
+
+            </ul>
+            <p>
+                We're so excited to welcome you to the ranch and share the magic of our animals with you. Thank you for helping us keep the experience safe and enjoyable for all.
+            </p>
             <p>Warmly,<br>Spencer Howe</p>
         </body>
     </html>
+
+
     """
