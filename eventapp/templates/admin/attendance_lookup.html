@@ -1,0 +1,137 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+<div class="container-fluid">
+    <h2>Event Attendance Lookup</h2>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Select Event</h3>
+                </div>
+                <div class="panel-body">
+                    <form method="POST" action="{{ url_for('attendance_lookup.index') }}">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label for="event_id">Choose Event:</label>
+                                    <select class="form-control" id="event_id" name="event_id" required>
+                                        <option value="">-- Select an Event --</option>
+                                        {% for event in events %}
+                                        <option value="{{ event.id }}" {% if selected_event and selected_event.id == event.id %}selected{% endif %}>
+                                            {{ event.title }} - {{ event.start.strftime('%Y-%m-%d %H:%M') if event.start else 'No Date' }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>&nbsp;</label><br>
+                                    <button type="submit" class="btn btn-primary">Get Attendance Count</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if selected_event and attendance_data %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Attendance Results for: {{ selected_event.title }}</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Event Details</h4>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>Event Title:</th>
+                                    <td>{{ selected_event.title }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Date & Time:</th>
+                                    <td>{{ selected_event.start.strftime('%Y-%m-%d %H:%M') if selected_event.start else 'No Date' }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Price per Ticket:</th>
+                                    <td>${{ "%.2f"|format(selected_event.price_per_ticket) }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Max Capacity:</th>
+                                    <td>{{ selected_event.max_capacity or 'Unlimited' }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Attendance Summary</h4>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>Total Attendees:</th>
+                                    <td>
+                                        <span class="label label-primary" style="font-size: 14px; padding: 8px 12px;">
+                                            {{ attendance_data.total_attendees or 0 }} people
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Total Bookings:</th>
+                                    <td>{{ attendance_data.total_bookings or 0 }} bookings</td>
+                                </tr>
+                                <tr>
+                                    <th>Total Revenue:</th>
+                                    <td>
+                                        <span class="label label-success" style="font-size: 14px; padding: 8px 12px;">
+                                            ${{ "%.2f"|format(attendance_data.total_revenue or 0) }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% if selected_event.max_capacity %}
+                                <tr>
+                                    <th>Capacity Used:</th>
+                                    <td>
+                                        {% set capacity_percent = ((attendance_data.total_attendees or 0) / selected_event.max_capacity * 100) %}
+                                        {{ "%.1f"|format(capacity_percent) }}% 
+                                        ({{ attendance_data.total_attendees or 0 }}/{{ selected_event.max_capacity }})
+                                        <div class="progress" style="margin-top: 5px;">
+                                            <div class="progress-bar {% if capacity_percent > 90 %}progress-bar-danger{% elif capacity_percent > 70 %}progress-bar-warning{% else %}progress-bar-success{% endif %}" 
+                                                 style="width: {{ capacity_percent }}%"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                            </table>
+                        </div>
+                    </div>
+                    
+                    {% if attendance_data.total_attendees %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="alert alert-info">
+                                <strong>SQL Query Used:</strong> 
+                                <code>SELECT SUM(tickets) as total_attendees FROM bookings WHERE time_slot = '{{ selected_event.start }}' AND status IN ('confirmed', 'pending_crypto')</code>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% elif selected_event %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-warning">
+                <strong>No bookings found</strong> for this event yet.
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,195 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+<div class="container-fluid">
+    <h2>Reports</h2>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Generate Report</h3>
+                </div>
+                <div class="panel-body">
+                    <form method="POST" action="{{ url_for('reports.index') }}">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="report_type">Report Type:</label>
+                                    <select class="form-control" id="report_type" name="report_type">
+                                        <option value="sales" {% if report_type == 'sales' %}selected{% endif %}>Sales Report</option>
+                                        <option value="attendance" {% if report_type == 'attendance' %}selected{% endif %}>Attendance Summary</option>
+                                        <option value="payment_methods" {% if report_type == 'payment_methods' %}selected{% endif %}>Payment Methods</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="date_from">From Date:</label>
+                                    <input type="date" class="form-control" id="date_from" name="date_from" value="{{ date_from }}">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="date_to">To Date:</label>
+                                    <input type="date" class="form-control" id="date_to" name="date_to" value="{{ date_to }}">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>&nbsp;</label><br>
+                                    <button type="submit" class="btn btn-primary">Generate Report</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if report_data %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        {{ report_type|replace('_', ' ')|title }} Report
+                        <small class="pull-right">Generated: {{ report_generated.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    
+                    {% if report_type == 'sales' %}
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Date/Time</th>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Email</th>
+                                    <th>Tickets</th>
+                                    <th>Amount</th>
+                                    <th>Payment Method</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% set total_amount = 0 %}
+                                {% set total_tickets = 0 %}
+                                {% for booking in report_data %}
+                                    {% set total_amount = total_amount + booking.amount_paid %}
+                                    {% set total_tickets = total_tickets + booking.tickets %}
+                                <tr>
+                                    <td>{{ booking.time_slot.strftime('%Y-%m-%d %H:%M') if booking.time_slot else 'N/A' }}</td>
+                                    <td>{{ booking.order_id }}</td>
+                                    <td>{{ booking.name }}</td>
+                                    <td>{{ booking.email }}</td>
+                                    <td>{{ booking.tickets }}</td>
+                                    <td>${{ "%.2f"|format(booking.amount_paid) }}</td>
+                                    <td>{{ booking.payment_method|title }}</td>
+                                    <td>
+                                        <span class="label {% if booking.status == 'confirmed' %}label-success{% elif booking.status == 'pending_crypto' %}label-warning{% else %}label-default{% endif %}">
+                                            {{ booking.status|title }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr class="info">
+                                    <th colspan="4">TOTALS</th>
+                                    <th>{{ total_tickets }} tickets</th>
+                                    <th>${{ "%.2f"|format(total_amount) }}</th>
+                                    <th colspan="2"></th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    
+                    {% elif report_type == 'attendance' %}
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Event Date/Time</th>
+                                    <th>Total Bookings</th>
+                                    <th>Total Attendees</th>
+                                    <th>Total Revenue</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% set grand_total_bookings = 0 %}
+                                {% set grand_total_attendees = 0 %}
+                                {% set grand_total_revenue = 0 %}
+                                {% for row in report_data %}
+                                    {% set grand_total_bookings = grand_total_bookings + row.total_bookings %}
+                                    {% set grand_total_attendees = grand_total_attendees + (row.total_attendees or 0) %}
+                                    {% set grand_total_revenue = grand_total_revenue + (row.total_revenue or 0) %}
+                                <tr>
+                                    <td>{{ row.time_slot.strftime('%Y-%m-%d %H:%M') if row.time_slot else 'N/A' }}</td>
+                                    <td>{{ row.total_bookings }}</td>
+                                    <td>{{ row.total_attendees or 0 }}</td>
+                                    <td>${{ "%.2f"|format(row.total_revenue or 0) }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr class="info">
+                                    <th>TOTALS</th>
+                                    <th>{{ grand_total_bookings }}</th>
+                                    <th>{{ grand_total_attendees }}</th>
+                                    <th>${{ "%.2f"|format(grand_total_revenue) }}</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    
+                    {% elif report_type == 'payment_methods' %}
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Payment Method</th>
+                                    <th>Number of Bookings</th>
+                                    <th>Total Amount</th>
+                                    <th>Percentage of Revenue</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% set total_amount = report_data|sum(attribute='total_amount') %}
+                                {% for row in report_data %}
+                                <tr>
+                                    <td>{{ row.payment_method|title }}</td>
+                                    <td>{{ row.booking_count }}</td>
+                                    <td>${{ "%.2f"|format(row.total_amount or 0) }}</td>
+                                    <td>
+                                        {% if total_amount > 0 %}
+                                            {{ "%.1f"|format((row.total_amount or 0) / total_amount * 100) }}%
+                                        {% else %}
+                                            0%
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr class="info">
+                                    <th>TOTALS</th>
+                                    <th>{{ report_data|sum(attribute='booking_count') }}</th>
+                                    <th>${{ "%.2f"|format(total_amount) }}</th>
+                                    <th>100%</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    {% endif %}
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
