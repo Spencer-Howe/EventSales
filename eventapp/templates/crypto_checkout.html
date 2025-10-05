@@ -1,130 +1,555 @@
 {% extends "base.html" %}
 
-{% block title %}Crypto Payment{% endblock %}
+{% block title %}Cryptocurrency Payment - Howe Ranch{% endblock %}
 
 {% block content %}
+<style>
+/* Mobile-first crypto checkout */
 
-    <h1>Crypto Payment</h1>
+.crypto-hero {
+  background: linear-gradient(135deg, #f7931e 0%, #1b1b1b 100%);
+  color: white;
+  padding: 1.5rem 1rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
 
-    <!-- Display Event Title and Description -->
-    <h2>{{ event_title }}</h2>
-    <p>{{ event_description }}</p>
+.crypto-hero h1 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
 
-    <p>{{ time_slot }}</p>
-    <p>Number of Tickets: {{ tickets }}</p>
-    <p>Total Price: ${{ total_price }}</p>
+.crypto-hero .lead {
+  font-size: 0.9rem;
+}
 
+.crypto-card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  background: #ffffff;
+  margin-bottom: 1rem;
+}
+
+.currency-selector {
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  padding: 12px;
+  margin: 8px 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.currency-selector:active {
+  transform: scale(0.98);
+}
+
+.currency-selector.selected {
+  border-color: #f7931e;
+  background: linear-gradient(135deg, #fff8f0 0%, #ffffff 100%);
+}
+
+.crypto-icon {
+  font-size: 1.5rem;
+  margin-right: 8px;
+}
+
+.btc-icon { color: #f7931e; }
+.ltc-icon { color: #bfbbbb; }
+.xmr-icon { color: #ff6600; }
+
+.payment-info {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 1rem;
+  border-left: 4px solid #f7931e;
+  margin-top: 1rem;
+}
+
+.address-container {
+  background: #1b1b1b;
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  font-family: 'Courier New', monospace;
+  word-break: break-all;
+  font-size: 0.8rem;
+  position: relative;
+}
+
+.copy-btn {
+  background: #f7931e;
+  border: none;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  margin-top: 8px;
+  width: 100%;
+}
+
+.step-indicator {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.step {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #f7931e;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin: 0 5px;
+  position: relative;
+  font-size: 0.8rem;
+}
+
+.step.active {
+  background: #28a745;
+}
+
+.step::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  width: 10px;
+  height: 2px;
+  background: #ddd;
+  margin-left: 5px;
+}
+
+.step:last-child::after {
+  display: none;
+}
+
+.form-control {
+  border-radius: 8px;
+  border: 2px solid #e9ecef;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+}
+
+.form-control:focus {
+  border-color: #f7931e;
+  box-shadow: 0 0 0 0.2rem rgba(247, 147, 30, 0.25);
+}
+
+.btn-crypto-submit {
+  background: linear-gradient(45deg, #f7931e, #1b1b1b);
+  border: none;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 25px;
+  font-weight: bold;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.btn-crypto-submit:active {
+  transform: scale(0.98);
+  color: white;
+}
+
+.security-features {
+  background: #e8f5e8;
+  border-radius: 8px;
+  padding: 0.75rem;
+  margin: 0.75rem 0;
+}
+
+.security-features h6 {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.warning-box {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+
+.warning-box h6 {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Tablet styles - 768px and up */
+@media (min-width: 768px) {
+  .crypto-hero {
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .crypto-hero h1 {
+    font-size: 2rem;
+  }
+  
+  .crypto-hero .lead {
+    font-size: 1rem;
+  }
+  
+  .currency-selector {
+    padding: 15px;
+    margin: 10px 0;
+  }
+  
+  .crypto-icon {
+    font-size: 1.75rem;
+    margin-right: 10px;
+  }
+  
+  .payment-info {
+    padding: 1.25rem;
+  }
+  
+  .address-container {
+    padding: 15px;
+    font-size: 0.85rem;
+  }
+  
+  .copy-btn {
+    width: auto;
+    display: inline-block;
+  }
+  
+  .step {
+    width: 35px;
+    height: 35px;
+    margin: 0 8px;
+  }
+  
+  .step::after {
+    width: 15px;
+    margin-left: 8px;
+  }
+}
+
+/* Desktop styles - 992px and up */
+@media (min-width: 992px) {
+  .crypto-hero {
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+  }
+  
+  .crypto-hero h1 {
+    font-size: 2.5rem;
+  }
+  
+  .currency-selector {
+    padding: 20px;
+    margin: 10px 0;
+  }
+  
+  .currency-selector:hover {
+    border-color: #f7931e;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(247, 147, 30, 0.2);
+  }
+  
+  .crypto-icon {
+    font-size: 2rem;
+    margin-right: 15px;
+  }
+  
+  .payment-info {
+    padding: 2rem;
+  }
+  
+  .address-container {
+    font-size: 0.9rem;
+  }
+  
+  .btn-crypto-submit {
+    padding: 15px 30px;
+  }
+  
+  .btn-crypto-submit:hover {
+    transform: scale(1.02);
+  }
+  
+  .security-features {
+    padding: 1rem;
+  }
+  
+  .warning-box {
+    padding: 1rem;
+  }
+  
+  .step {
+    width: 40px;
+    height: 40px;
+    margin: 0 10px;
+    font-size: 1rem;
+  }
+  
+  .step::after {
+    width: 20px;
+    margin-left: 10px;
+  }
+}
+</style>
+
+<!-- Hero Section -->
+<div class="crypto-hero">
+  <div class="container">
+    <h1 class="fw-bold mb-1">₿ Crypto Payment</h1>
+    <p class="lead mb-0">Anonymous, secure, decentralized</p>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Progress Steps -->
+  <div class="step-indicator">
+    <div class="step">1</div>
+    <div class="step">2</div>
+    <div class="step active">3</div>
+  </div>
+  
+  <!-- Order Summary -->
+  <div class="crypto-card p-3 mb-3">
+    <h6 class="fw-bold mb-2">📋 Order Summary</h6>
+    <h6 class="text-primary fw-bold mb-1">{{ event_title }}</h6>
+    <small class="text-muted d-block mb-2">{{ event_description[:60] }}...</small>
+    
+    <div class="row text-center mb-2">
+      <div class="col-4">
+        <small class="text-muted d-block">📅 Date</small>
+        <strong style="font-size: 0.8rem;">{{ time_slot.split(' - ')[1].split(',')[0] if ' - ' in time_slot else time_slot[:10] }}</strong>
+      </div>
+      <div class="col-4">
+        <small class="text-muted d-block">👥 Guests</small>
+        <strong>{{ tickets }}</strong>
+      </div>
+      <div class="col-4">
+        <small class="text-muted d-block">💰 Total</small>
+        <strong class="text-success">${{ total_price }}</strong>
+      </div>
+    </div>
+    
+    <div class="security-features">
+      <h6 class="fw-bold text-success mb-1">🐐 Barn to blockchain</h6>
+      <small>
+        <small>We support private payments with different cryptocurrencies including Monero the default and recommended currency of The Howe Ranch.</small>
+      </small>
+    </div>
+  </div>
+
+
+  <!-- Payment Form -->
+  <div class="crypto-card p-3">
+    <h5 class="fw-bold mb-3 text-center">Payment Details</h5>
+    
     <form id="crypto-payment-form" method="POST" action="{{ url_for('crypto.submit_crypto_payment') }}">
-        <div class="mb-3">
-            <label for="name" class="form-label">Full Name:</label>
-            <input type="text" class="form-control" id="name" name="name" required>
+      <!-- Customer Information -->
+      <div class="mb-3">
+        <label for="name" class="form-label fw-bold">Full Name <span class="text-muted">(Optional)</span></label>
+        <input type="text" class="form-control" id="name" name="name" 
+               placeholder="Your full name (optional)">
+      </div>
+      
+      <div class="row mb-3">
+        <div class="col-6">
+          <label for="email" class="form-label fw-bold">Email <span class="text-muted">(Optional)</span></label>
+          <input type="email" class="form-control" id="email" name="email" 
+                 placeholder="your@email.com (optional)">
+        </div>
+        <div class="col-6">
+          <label for="phone" class="form-label fw-bold">Phone <span class="text-muted">(Optional)</span></label>
+          <input type="tel" class="form-control" id="phone" name="phone" 
+                 placeholder="Phone number (optional)">
+        </div>
+      </div>
+      
+      <div class="warning-box mb-3">
+        <h6 class="fw-bold">🔐 Privacy Notice</h6>
+        <small>
+          Personal information for crypto payments is <strong>optional</strong>. If you choose not to provide contact details:
+          <br>• <strong>Save your receipt page</strong> - you'll need it for entrance to the ranch
+          <br>• <strong>Check blockchain yourself</strong> - if transaction confirms, your booking is valid
+          <br>• Upon entrance, you will need to <strong>sign the paper waiver on-site</strong>
+          <br>• No email confirmations will be sent for anonymous bookings
+        </small>
+      </div>
+      
+      <!-- Cryptocurrency Selection -->
+      <h6 class="fw-bold mb-2">₿ Select Cryptocurrency</h6>
+          
+      <div id="currency-selection">
+        <div class="currency-selector mb-2" data-currency="BTC">
+          <div class="d-flex align-items-center">
+            <div class="crypto-icon btc-icon">₿</div>
+            <div>
+              <div class="fw-bold">Bitcoin</div>
+              <small class="text-muted">BTC • Most popular</small>
+            </div>
+          </div>
         </div>
         
-        <div class="mb-3">
-            <label for="email" class="form-label">Email:</label>
-            <input type="email" class="form-control" id="email" name="email" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="phone" class="form-label">Phone Number:</label>
-            <small>We must have your verified phone number on file to complete your booking.</small><br>
-            <input type="tel" class="form-control" id="phone" name="phone" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="crypto_currency" class="form-label">Cryptocurrency:</label>
-            <select class="form-control" id="crypto_currency" name="crypto_currency" required onchange="updatePaymentAddress()">
-                <option value="">Select cryptocurrency</option>
-                <option value="BTC">Bitcoin (BTC)</option>
-                <option value="LTC">LTC</option>
-                <option value="XMR">Monero</option>
-            </select>
-        </div>
-
-        <div id="payment-info" style="display: none;">
-            <div class="alert alert-info">
-                <h4>Payment Instructions:</h4>
-                <p>Send exactly <strong>${{ total_price }} USD</strong> worth of <span id="selected-crypto"></span> to:</p>
-                <div class="mb-3">
-                    <label class="form-label">Payment Address:</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="payment-address" readonly>
-                        <button type="button" class="btn btn-outline-secondary" onclick="copyAddress()">Copy</button>
-                    </div>
-                </div>
-                <small class="text-muted">After sending payment, paste your transaction hash below and submit.</small>
+        <div class="currency-selector mb-2" data-currency="LTC">
+          <div class="d-flex align-items-center">
+            <div class="crypto-icon ltc-icon">Ł</div>
+            <div>
+              <div class="fw-bold">Litecoin</div>
+              <small class="text-muted">LTC • Fast & cheap</small>
             </div>
+          </div>
         </div>
+        
+        <div class="currency-selector mb-3" data-currency="XMR">
+          <div class="d-flex align-items-center">
+            <div class="crypto-icon xmr-icon">ɱ</div>
+            <div>
+              <div class="fw-bold">Monero</div>
+              <small class="text-muted">XMR • Private</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <input type="hidden" id="crypto_currency" name="crypto_currency" required>
 
-        <div class="mb-3" id="tx-hash-section" style="display: none;">
-            <label for="transaction_hash" class="form-label">Transaction Hash:</label>
-            <input type="text" class="form-control" id="transaction_hash" name="transaction_hash" 
-                   placeholder="Paste your transaction hash here after sending payment" required>
+      <!-- Payment Instructions -->
+      <div id="payment-info" style="display: none;">
+        <div class="payment-info">
+          <h6 class="fw-bold mb-2">Payment Instructions</h6>
+          <div class="warning-box mb-3">
+            <small>Send <strong>${{ total_price }} USD</strong> worth of <span id="selected-crypto" class="fw-bold"></span> to the address below.</small>
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label fw-bold">📍 Payment Address</label>
+            <div class="address-container">
+              <div id="payment-address" class="mb-2"></div>
+              <button type="button" class="copy-btn" onclick="copyAddress()">
+                📋 Copy Address
+              </button>
+            </div>
+            <small class="text-muted d-block mt-2">⏰ After sending, paste your transaction hash below.</small>
+          </div>
         </div>
+      </div>
+          
+      <!-- Transaction Hash -->
+      <div class="mb-3" id="tx-hash-section" style="display: none;">
+        <label for="transaction_hash" class="form-label fw-bold">🔗 Transaction Hash</label>
+        <input type="text" class="form-control" id="transaction_hash" name="transaction_hash" 
+               placeholder="Paste transaction hash after sending" required>
+        <small class="text-muted">Find this in your wallet after sending payment.</small>
+      </div>
 
         <!-- Hidden fields -->
         <input type="hidden" name="event_id" value="{{ event_id }}">
         <input type="hidden" name="tickets" value="{{ tickets }}">
         <input type="hidden" name="total_price" value="{{ total_price }}">
 
-        <!-- Non-refundable notice -->
-        <p style="margin-top: 10px; font-size: 0.9em; color: #555;">
-        <strong>Contributions (passes/hay)</strong> are free for guests under 1 year old, are transferable,
-        not refundable, and cannot be rescheduled. As our focus is on animal care, we do not have the capacity
-        to accommodate changes — please do not call to request exceptions.
-        </p>
-
-        <div class="mb-3">
-            <button type="submit" class="btn btn-primary" id="submit-btn" style="display: none;">Submit Payment Info</button>
-        </div>
+      <!-- Terms Notice -->
+      <div class="warning-box mb-3">
+        <h6 class="fw-bold">📋 Booking Terms</h6>
+        <small>
+          <strong>Passes</strong> are free for guests under 1 year, transferable,
+          not refundable, and cannot be rescheduled. We focus on animal care and
+          cannot accommodate changes.
+        </small>
+      </div>
+      
+      <!-- Submit Button -->
+      <button type="submit" class="btn btn-crypto-submit" id="submit-btn" style="display: none;">
+        🚀 Complete Crypto Payment
+      </button>
+      
+      <!-- Hidden Fields -->
+      <input type="hidden" name="event_id" value="{{ event_id }}">
+      <input type="hidden" name="tickets" value="{{ tickets }}">
+      <input type="hidden" name="total_price" value="{{ total_price }}">
     </form>
+  </div>
+</div>
 
-    <script>
-        const addresses = {
-            'BTC': 'bc1qkttfrwweek9ajmcf772kz2yxt5wqnzxfa0x8d7',
-            'LTC': 'LPxKrKd2ShrijTrq2xJdBMnqxQ62mn4Pci',
-            'XMR': '48w9R7gh5zyeyUCERtxgxfbpzouoL5KNkY9VE25v7mV8eMGZxAuE994M2j9LXEC84JigNWT2bLC3HT5mD5Ebn4hNKFi9E7f',
-        };
+<script>
+// Modern crypto payment interface
+const addresses = {
+  'BTC': 'bc1qkttfrwweek9ajmcf772kz2yxt5wqnzxfa0x8d7',
+  'LTC': 'LPxKrKd2ShrijTrq2xJdBMnqxQ62mn4Pci',
+  'XMR': '48w9R7gh5zyeyUCERtxgxfbpzouoL5KNkY9VE25v7mV8eMGZxAuE994M2j9LXEC84JigNWT2bLC3HT5mD5Ebn4hNKFi9E7f',
+};
 
-        function updatePaymentAddress() {
-            const cryptoSelect = document.getElementById('crypto_currency');
-            const selectedCrypto = cryptoSelect.value;
-            
-            if (selectedCrypto) {
-                document.getElementById('selected-crypto').textContent = selectedCrypto;
-                document.getElementById('payment-address').value = addresses[selectedCrypto];
-                document.getElementById('payment-info').style.display = 'block';
-                document.getElementById('tx-hash-section').style.display = 'block';
-                document.getElementById('submit-btn').style.display = 'block';
-            } else {
-                document.getElementById('payment-info').style.display = 'none';
-                document.getElementById('tx-hash-section').style.display = 'none';
-                document.getElementById('submit-btn').style.display = 'none';
-            }
-        }
+// Currency selection handler
+document.addEventListener('DOMContentLoaded', function() {
+  const currencySelectors = document.querySelectorAll('.currency-selector');
+  
+  currencySelectors.forEach(selector => {
+    selector.addEventListener('click', function() {
+      // Remove selected class from all
+      currencySelectors.forEach(s => s.classList.remove('selected'));
+      // Add selected class to clicked
+      this.classList.add('selected');
+      
+      const currency = this.dataset.currency;
+      document.getElementById('crypto_currency').value = currency;
+      updatePaymentAddress(currency);
+    });
+  });
+});
 
-        function copyAddress() {
-            const addressInput = document.getElementById('payment-address');
-            addressInput.select();
-            addressInput.setSelectionRange(0, 99999);
-            navigator.clipboard.writeText(addressInput.value);
-            
-            const copyBtn = event.target;
-            const originalText = copyBtn.textContent;
-            copyBtn.textContent = 'Copied!';
-            setTimeout(() => {
-                copyBtn.textContent = originalText;
-            }, 2000);
-        }
+function updatePaymentAddress(selectedCrypto) {
+  if (selectedCrypto && addresses[selectedCrypto]) {
+    document.getElementById('selected-crypto').textContent = selectedCrypto;
+    document.getElementById('payment-address').textContent = addresses[selectedCrypto];
+    document.getElementById('payment-info').style.display = 'block';
+    document.getElementById('tx-hash-section').style.display = 'block';
+    document.getElementById('submit-btn').style.display = 'block';
+  } else {
+    document.getElementById('payment-info').style.display = 'none';
+    document.getElementById('tx-hash-section').style.display = 'none';
+    document.getElementById('submit-btn').style.display = 'none';
+  }
+}
 
-        document.getElementById('crypto-payment-form').addEventListener('submit', function(e) {
-            const txHash = document.getElementById('transaction_hash').value.trim();
-            if (!txHash) {
-                e.preventDefault();
-                alert('Please enter your transaction hash after sending the payment.');
-                return;
-            }
-        });
-    </script>
+function copyAddress() {
+  const address = document.getElementById('payment-address').textContent;
+  navigator.clipboard.writeText(address).then(() => {
+    const copyBtn = event.target;
+    const originalText = copyBtn.textContent;
+    copyBtn.textContent = '✅ Copied!';
+    copyBtn.style.background = '#28a745';
+    
+    setTimeout(() => {
+      copyBtn.textContent = originalText;
+      copyBtn.style.background = '#f7931e';
+    }, 2000);
+  });
+}
+
+// Form validation
+document.getElementById('crypto-payment-form').addEventListener('submit', function(e) {
+  const txHash = document.getElementById('transaction_hash').value.trim();
+  const currency = document.getElementById('crypto_currency').value;
+  
+  if (!currency) {
+    e.preventDefault();
+    alert('Please select a cryptocurrency first.');
+    return;
+  }
+  
+  if (!txHash) {
+    e.preventDefault();
+    alert('Please enter your transaction hash after sending the payment.');
+    return;
+  }
+  
+  // Show loading state
+  const submitBtn = document.getElementById('submit-btn');
+  submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+  submitBtn.disabled = true;
+});
+</script>
 
 {% endblock %}

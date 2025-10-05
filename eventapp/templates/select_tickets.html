@@ -1,97 +1,568 @@
 {% extends "base.html" %}
 
-{% block title %}Select Tickets{% endblock %}
+{% block title %}Book Your Experience - Howe Ranch{% endblock %}
 
 {% block content %}
+<style>
+/* Mobile-first calendar styles */
 
-   
-<div class="container-fluid p-0"> <!-- Use container-fluid for full width and remove padding -->
-    <div class="d-flex flex-column flex-lg-row" style="min-height: 100vh;"> <!-- Ensure full screen height -->
-        <div class="flex-grow-1 p-2" id='calendar'></div> <!-- Calendar takes available space -->
+.calendar-hero {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1.5rem 1rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
 
-            <form id="bookingForm" action="{{ url_for('booking.calculate_price') }}" method="post">
-                <input type="hidden" id="date" name="date" required>
-                <input type="hidden" id="event_id" name="event_id" required>
-                <input type="hidden" id="tickets" name="tickets" min="1" required><br><br>
-                <input type="hidden" id="event_price" name="event_price" required>
-                <button type="button" id="selectTicketsButton" style="display: none;" class="btn btn-primary">Select Tickets</button>
-                <input type="hidden" value="calculate_price">
-            </form>
-            
-     
-        </div>
+.calendar-hero h1 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.calendar-hero .lead {
+  font-size: 0.9rem;
+}
+
+.calendar-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  margin: 1rem;
+  overflow: hidden;
+}
+
+.calendar-header {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.calendar-instructions {
+  background: #e3f2fd;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #2196f3;
+}
+
+.calendar-instructions h6 {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+#calendar {
+  padding: 0.5rem;
+  min-height: 400px;
+}
+
+/* Custom FullCalendar mobile styles */
+.fc-toolbar {
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.fc-toolbar-chunk {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.fc-button {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  border-radius: 6px;
+  margin: 0 2px;
+}
+
+.fc-button-primary {
+  background: #667eea;
+  border-color: #667eea;
+}
+
+.fc-button-primary:hover {
+  background: #5a6fd8;
+  border-color: #5a6fd8;
+}
+
+.fc-event {
+  border-radius: 8px;
+  border: none;
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.fc-event:hover {
+  transform: scale(1.02);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.fc-day-today {
+  background: rgba(102, 126, 234, 0.1) !important;
+}
+
+.fc-daygrid-day:hover {
+  background: rgba(102, 126, 234, 0.05);
+}
+
+/* Mobile event modal */
+.event-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1050;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.event-modal-content {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  max-width: 400px;
+  width: 100%;
+  animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.event-modal h5 {
+  color: #667eea;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.guest-input {
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 1rem;
+  width: 100%;
+  margin: 0.5rem 0;
+}
+
+.guest-input:focus {
+  border-color: #667eea;
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.btn-book {
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  border: none;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: bold;
+  width: 100%;
+  margin-top: 1rem;
+  transition: all 0.2s ease;
+}
+
+.btn-book:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  color: white;
+}
+
+.btn-cancel {
+  background: #6c757d;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  margin-right: 0.5rem;
+}
+
+.quick-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.stat-item {
+  background: #f8f9fa;
+  padding: 0.75rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #667eea;
+}
+
+.stat-label {
+  font-size: 0.7rem;
+  color: #6c757d;
+  text-transform: uppercase;
+}
+
+/* Tablet styles - 768px and up */
+@media (min-width: 768px) {
+  .calendar-hero {
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .calendar-hero h1 {
+    font-size: 2rem;
+  }
+  
+  .calendar-hero .lead {
+    font-size: 1rem;
+  }
+  
+  .calendar-container {
+    margin: 1.5rem 2rem;
+  }
+  
+  .calendar-header {
+    padding: 1.5rem;
+  }
+  
+  #calendar {
+    padding: 1rem;
+    min-height: 500px;
+  }
+  
+  .fc-toolbar {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  
+  .fc-toolbar-chunk {
+    justify-content: flex-start;
+  }
+  
+  .event-modal-content {
+    padding: 2rem;
+    max-width: 500px;
+  }
+}
+
+/* Desktop styles - 992px and up */
+@media (min-width: 992px) {
+  .calendar-hero {
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+  }
+  
+  .calendar-hero h1 {
+    font-size: 2.5rem;
+  }
+  
+  .calendar-container {
+    margin: 2rem auto;
+    max-width: 1200px;
+  }
+  
+  #calendar {
+    min-height: 600px;
+  }
+  
+  .fc-event:hover {
+    transform: scale(1.05);
+  }
+}
+</style>
+
+<!-- Calendar Hero Section -->
+<div class="calendar-hero">
+  <div class="container">
+    <h1 class="fw-bold mb-1">📅 Book Your Experience</h1>
+    <p class="lead mb-0">Select a date and time that works for you</p>
+  </div>
+</div>
+
+<div class="calendar-container">
+  <!-- Calendar Header with Instructions -->
+  <div class="calendar-header">
+    <div class="calendar-instructions">
+      <h6 class="fw-bold mb-1">🎯 How to Book</h6>
+      <small>
+        Click event → View details → Select guests → Book
+      </small>
+    </div>
+
+  <!-- Calendar Container -->
+  <div id='calendar'></div>
+</div>
+
+<!-- Hidden Form -->
+<form id="bookingForm" action="{{ url_for('booking.calculate_price') }}" method="post">
+  <input type="hidden" id="date" name="date" required>
+  <input type="hidden" id="event_id" name="event_id" required>
+  <input type="hidden" id="tickets" name="tickets" min="1" required>
+  <input type="hidden" id="event_price" name="event_price" required>
+</form>
+    
+<!-- Modern Event Booking Modal -->
+<div class="event-modal" id="eventModal">
+  <div class="event-modal-content">
+    <h5 id="modalEventTitle">🎃 Event Details</h5>
+    <p id="modalEventDescription">Loading event details...</p>
+    
+    <div class="mb-3">
+      <label class="fw-bold mb-2">📅 Event Information</label>
+      <div id="modalEventInfo" class="small text-muted"></div>
     </div>
     
-    <div class="modal fade" id="eventDetailsModal" tabindex="-1" aria-labelledby="eventDetailsModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="eventDetailsModalLabel">Event Details</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <p id="eventDescription"></p>
-              <!-- Add any other event details you want to include here -->
-            </div>
-            <div class="modal-footer">
-              <input type="number" id="modalNumberOfTickets" placeholder="Number of Guests">
-              <button type="button" class="btn btn-primary" id="confirmGuestsButton">OK</button>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="mb-3">
+      <label for="modalGuestCount" class="fw-bold mb-2">👥 Number of Guests</label>
+      <input type="number" 
+             id="modalGuestCount" 
+             class="guest-input" 
+             placeholder="How many guests?" 
+             min="1" 
+             max="20" 
+             value="2">
+      <small class="text-muted">Ages 1+ (infants under 1 are free)</small>
+    </div>
+    
+    <div class="d-flex gap-2">
+      <button type="button" class="btn-cancel" onclick="closeEventModal()">Cancel</button>
+      <button type="button" class="btn-book" onclick="bookEvent()">📅 Book Now</button>
+    </div>
+  </div>
+</div>
       
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-    var calendarEl = document.getElementById('calendar');
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: window.innerWidth < 768 ? 'timeGridWeek' : 'dayGridMonth',
-        events: '/get_events',
-        slotMinTime: "09:00:00",
-        slotMaxTime: "20:00:00",
-        businessHours: {
-            daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
-            startTime: '09:00',
-            endTime: '19:00',
-        },
-        headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay'
-        },
-        eventContent: function(arg) {
-            let eventTitle = document.createElement('div');
-            eventTitle.innerHTML = `<b>${arg.event.title}</b>`; 
-            return { domNodes: [eventTitle] };
-        },
-        eventClick: function(info) {
-            var eventDescription = info.event.extendedProps.description || 'No description available';
-            var message = eventDescription + "\n\nHow many guests are in your group?";
+<script>
+// Modern calendar implementation
+let currentEvent = null;
+let calendar = null;
 
-            if(calendar.view.type !== 'timeGridDay') {
-                calendar.changeView('timeGridDay', info.event.startStr);
-            } else {
-                const numberOfTickets = prompt(message);
-                if (numberOfTickets) {
-                    document.getElementById('event_id').value = info.event.id;
-                    document.getElementById('tickets').value = numberOfTickets;
-                    document.getElementById('bookingForm').submit();
-                }
-            }
-        },
-        windowResize: function(view) {
-            if(window.innerWidth < 768) {
-                calendar.changeView('timeGridWeek');
-            } else {
-                calendar.changeView('dayGridMonth');
-            }
-        }
-    });
-
-    calendar.render();
+document.addEventListener('DOMContentLoaded', function() {
+  const calendarEl = document.getElementById('calendar');
+  
+  calendar = new FullCalendar.Calendar(calendarEl, {
+    // Responsive initial view
+    initialView: getInitialView(),
+    
+    // Event source
+    events: '/get_events',
+    
+    // Time settings
+    slotMinTime: "09:00:00",
+    slotMaxTime: "20:00:00",
+    
+    // Business hours
+    businessHours: {
+      daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
+      startTime: '09:00',
+      endTime: '19:00',
+    },
+    
+    // Modern toolbar
+    headerToolbar: {
+      left: 'prev,next today',
+      center: 'title',
+      right: window.innerWidth < 768 ? 'listWeek,dayGridMonth' : 'dayGridMonth,timeGridWeek,listWeek'
+    },
+    
+    // Custom height for mobile
+    height: window.innerWidth < 768 ? 'auto' : 600,
+    
+    // Event styling
+    eventDisplay: 'block',
+    eventClassNames: 'custom-event',
+    
+    // Custom event content
+    eventContent: function(arg) {
+      const isMobile = window.innerWidth < 768;
+      const eventEl = document.createElement('div');
+      
+      if (isMobile) {
+        eventEl.innerHTML = `
+          <div style="padding: 4px 8px;">
+            <div style="font-weight: bold; font-size: 0.8rem;">${arg.event.title}</div>
+            <div style="font-size: 0.7rem; opacity: 0.8;">${formatEventTime(arg.event)}</div>
+          </div>
+        `;
+      } else {
+        eventEl.innerHTML = `
+          <div style="padding: 6px 10px;">
+            <div style="font-weight: bold; font-size: 0.9rem;">${arg.event.title}</div>
+            <div style="font-size: 0.8rem; opacity: 0.9;">${formatEventTime(arg.event)}</div>
+            <div style="font-size: 0.7rem; opacity: 0.7;">Click to book</div>
+          </div>
+        `;
+      }
+      
+      return { domNodes: [eventEl] };
+    },
+    
+    // Event click handler
+    eventClick: function(info) {
+      info.jsEvent.preventDefault();
+      currentEvent = info.event;
+      showEventModal(info.event);
+    },
+    
+    // Day click handler for mobile
+    dateClick: function(info) {
+      if (window.innerWidth < 768 && calendar.view.type === 'dayGridMonth') {
+        calendar.changeView('listWeek', info.dateStr);
+      }
+    },
+    
+    // Window resize handler
+    windowResize: function() {
+      const newView = getInitialView();
+      if (calendar.view.type !== newView) {
+        calendar.changeView(newView);
+      }
+    },
+    
+    // Loading state
+    loading: function(isLoading) {
+      if (isLoading) {
+        calendarEl.style.opacity = '0.6';
+      } else {
+        calendarEl.style.opacity = '1';
+      }
+    }
+  });
+  
+  calendar.render();
 });
 
-        </script>
-        
+// Helper functions
+function getInitialView() {
+  if (window.innerWidth < 768) {
+    return 'listWeek';
+  } else if (window.innerWidth < 992) {
+    return 'timeGridWeek';
+  } else {
+    return 'dayGridMonth';
+  }
+}
+
+function formatEventTime(event) {
+  const start = new Date(event.start);
+  const end = new Date(event.end);
+  
+  const timeOptions = { 
+    hour: 'numeric', 
+    minute: '2-digit',
+    hour12: true 
+  };
+  
+  const startTime = start.toLocaleTimeString('en-US', timeOptions);
+  const endTime = end.toLocaleTimeString('en-US', timeOptions);
+  
+  return `${startTime} - ${endTime}`;
+}
+
+function showEventModal(event) {
+  const modal = document.getElementById('eventModal');
+  const title = document.getElementById('modalEventTitle');
+  const description = document.getElementById('modalEventDescription');
+  const info = document.getElementById('modalEventInfo');
+  const guestInput = document.getElementById('modalGuestCount');
+  
+  // Set event details
+  title.textContent = `🎃 ${event.title}`;
+  description.textContent = event.extendedProps.description || 'Join us for an amazing farm experience with Highland cows, mini goats, and alpacas!';
+  
+  // Format event info
+  const eventDate = new Date(event.start).toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+  
+  const eventTime = formatEventTime(event);
+  
+  info.innerHTML = `
+    📅 <strong>${eventDate}</strong><br>
+    🕐 <strong>${eventTime}</strong><br>
+    💰 <strong>$35 per guest</strong> (ages 1+)
+  `;
+  
+  // Reset and focus guest input
+  guestInput.value = '2';
+  
+  // Show modal with animation
+  modal.style.display = 'flex';
+  
+  // Focus input after animation
+  setTimeout(() => {
+    guestInput.focus();
+    guestInput.select();
+  }, 300);
+}
+
+function closeEventModal() {
+  const modal = document.getElementById('eventModal');
+  modal.style.display = 'none';
+  currentEvent = null;
+}
+
+function bookEvent() {
+  if (!currentEvent) return;
+  
+  const guestCount = document.getElementById('modalGuestCount').value;
+  const guestNum = parseInt(guestCount);
+  
+  // Validation
+  if (!guestNum || guestNum < 1 || guestNum > 20) {
+    alert('Please enter a valid number of guests (1-20)');
+    return;
+  }
+  
+  // Set form values
+  document.getElementById('event_id').value = currentEvent.id;
+  document.getElementById('tickets').value = guestNum;
+  document.getElementById('date').value = currentEvent.startStr;
+  
+  // Add loading state
+  const bookBtn = document.querySelector('.btn-book');
+  const originalText = bookBtn.innerHTML;
+  bookBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Booking...';
+  bookBtn.disabled = true;
+  
+  // Submit form
+  setTimeout(() => {
+    document.getElementById('bookingForm').submit();
+  }, 500);
+}
+
+// Close modal when clicking outside
+document.getElementById('eventModal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    closeEventModal();
+  }
+});
+
+// Enter key support for guest input
+document.getElementById('modalGuestCount').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') {
+    bookEvent();
+  }
+});
+
+</script>
+
 <script src="{{ url_for('static', filename='app.js') }}"></script>
 {% endblock %}

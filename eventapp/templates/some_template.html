@@ -1,61 +1,394 @@
 {% extends "base.html" %}
 
-{% block title %}Select Tickets{% endblock %}
+{% block title %}Secure Checkout - Howe Ranch{% endblock %}
 
 {% block content %}
+<style>
+/* Mobile-first checkout styles */
 
-    <h1>Confirm Your Purchase</h1>
+.checkout-hero {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1.5rem 1rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
 
-    <!-- Display Event Title and Description -->
-    <h2>{{ event_title }}</h2>
-    <p>{{ event_description }}</p>
+.checkout-hero h1 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
 
-    <p>{{ time_slot }}</p>
-    <p>Number of Tickets: {{ tickets }}</p>
-    {% if error_message %}
-        <div class="alert alert-warning">
-            {{ error_message }}
-        </div>
-    {% endif %}
-    <p>Total Price: ${{ total_price }}</p>
+.checkout-hero .lead {
+  font-size: 0.9rem;
+}
 
-    <label for="phone">Phone Number:</label>
-    <small>We must have your verified phone number on file to complete your booking.</small><br>
-    <input type="tel" id="phone" name="phone" required><br>
+.payment-card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  margin-bottom: 1rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
 
-    <!-- Non-refundable notice -->
-    <p style="margin-top: 10px; font-size: 0.9em; color: #555;">
-    <strong>Contributions (passes/hay)</strong> are free for guests under 1 year old, are transferable,
-    not refundable, and cannot be rescheduled. As our focus is on animal care, we do not have the capacity
-    to accommodate changes — please do not call to request exceptions.
-    </p>
+.payment-card:active {
+  transform: scale(0.98);
+}
 
-    <div style="margin-top: 30px;"></div>
+.payment-card.featured {
+  border: 2px solid #667eea;
+  background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+}
 
-    <!-- Payment Methods -->
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5 class="card-title"><i class="fab fa-paypal"></i> PayPal</h5>
-                    <div id="paypal-button-container"></div>
-                    <p id="result-message"></p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5 class="card-title"><i class="fab fa-bitcoin"></i> Cryptocurrency</h5>
-                    <p class="text-muted">Bitcoin, Ethereum, USDC, USDT</p>
-                    <a href="{{ url_for('crypto.crypto_checkout') }}" 
-                       class="btn btn-warning btn-lg">
-                        <i class="fab fa-bitcoin"></i> Pay with Crypto
-                    </a>
-                </div>
-            </div>
-        </div>
+.payment-card.featured::before {
+  content: 'RECOMMENDED';
+  position: absolute;
+  top: 8px;
+  right: -25px;
+  background: #667eea;
+  color: white;
+  padding: 3px 30px;
+  font-size: 0.6rem;
+  font-weight: bold;
+  transform: rotate(45deg);
+}
+
+.payment-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.paypal-icon {
+  color: #0070ba;
+}
+
+.crypto-icon {
+  background: linear-gradient(45deg, #f7931e, #1b1b1b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.btn-payment {
+  padding: 12px 20px;
+  border-radius: 25px;
+  font-weight: bold;
+  border: none;
+  width: 100%;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.btn-payment:active {
+  transform: scale(0.98);
+}
+
+.btn-paypal {
+  background: #0070ba;
+  color: white;
+}
+
+.btn-crypto {
+  background: linear-gradient(45deg, #f7931e, #1b1b1b);
+  color: white;
+}
+
+.order-summary {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 1rem;
+  border-left: 4px solid #667eea;
+  margin-bottom: 1rem;
+}
+
+.crypto-features {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.security-badge {
+  background: #e8f5e8;
+  color: #2d5f2d;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  display: inline-block;
+  margin: 2px;
+}
+
+.phone-section {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.phone-section h6 {
+  font-size: 0.9rem;
+}
+
+.step-indicator {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.step {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #667eea;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin: 0 5px;
+  position: relative;
+  font-size: 0.8rem;
+}
+
+.step.active {
+  background: #28a745;
+}
+
+.step::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  width: 10px;
+  height: 2px;
+  background: #ddd;
+  margin-left: 5px;
+}
+
+.step:last-child::after {
+  display: none;
+}
+
+/* Tablet styles - 768px and up */
+@media (min-width: 768px) {
+  .checkout-hero {
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .checkout-hero h1 {
+    font-size: 2rem;
+  }
+  
+  .checkout-hero .lead {
+    font-size: 1rem;
+  }
+  
+  .payment-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .order-summary {
+    padding: 1.5rem;
+  }
+  
+  .phone-section {
+    padding: 1.25rem;
+  }
+  
+  .step {
+    width: 35px;
+    height: 35px;
+    margin: 0 8px;
+  }
+  
+  .step::after {
+    width: 15px;
+    margin-left: 8px;
+  }
+}
+
+/* Desktop styles - 992px and up */
+@media (min-width: 992px) {
+  .checkout-hero {
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+  }
+  
+  .checkout-hero h1 {
+    font-size: 2.5rem;
+  }
+  
+  .payment-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+  }
+  
+  .payment-card.featured::before {
+    padding: 5px 40px;
+    font-size: 0.8rem;
+    right: -30px;
+  }
+  
+  .payment-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+  
+  .btn-payment {
+    padding: 15px 30px;
+    font-size: 1rem;
+  }
+  
+  .btn-payment:hover {
+    transform: scale(1.02);
+  }
+  
+  .order-summary {
+    padding: 2rem;
+  }
+  
+  .phone-section {
+    padding: 1.5rem;
+    margin: 2rem 0;
+  }
+  
+  .step {
+    width: 40px;
+    height: 40px;
+    margin: 0 10px;
+    font-size: 1rem;
+  }
+  
+  .step::after {
+    width: 20px;
+    margin-left: 10px;
+  }
+}
+</style>
+
+<!-- Hero Section -->
+<div class="checkout-hero">
+  <div class="container">
+    <h1 class="fw-bold mb-1">🛡️ Secure Checkout</h1>
+    <p class="lead mb-0">Complete your booking in a few taps</p>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Progress Steps -->
+  <div class="step-indicator">
+    <div class="step">1</div>
+    <div class="step active">2</div>
+    <div class="step">3</div>
+  </div>
+  
+  <!-- Order Summary -->
+  <div class="order-summary">
+    <h5 class="fw-bold mb-2">📋 Your Booking</h5>
+    <h6 class="text-primary fw-bold mb-1">{{ event_title }}</h6>
+    <small class="text-muted d-block mb-2">{{ event_description[:80] }}...</small>
+    
+    <div class="row text-center mb-2">
+      <div class="col-4">
+        <small class="text-muted d-block">📅 Date</small>
+        <strong style="font-size: 0.8rem;">{{ time_slot.split(' - ')[1].split(',')[0] if ' - ' in time_slot else time_slot[:10] }}</strong>
+      </div>
+      <div class="col-4">
+        <small class="text-muted d-block">👥 Guests</small>
+        <strong>{{ tickets }}</strong>
+      </div>
+      <div class="col-4">
+        <small class="text-muted d-block">💰 Total</small>
+        <strong class="text-success">${{ total_price }}</strong>
+      </div>
     </div>
+    
+    {% if error_message %}
+    <div class="alert alert-warning p-2 mt-2">
+      <small>{{ error_message }}</small>
+    </div>
+    {% endif %}
+    
+    <div class="text-center mt-2">
+      <div class="security-badge">🔒 SSL</div>
+      <div class="security-badge">🛡️ Secure</div>
+    </div>
+  </div>
+
+  <!-- Phone Number Section -->
+  <div class="phone-section">
+    <h6 class="fw-bold mb-2">📞 Phone Required</h6>
+    <small class="text-muted d-block mb-2">We need your phone for booking confirmation and updates.</small>
+    <div class="input-group">
+      <span class="input-group-text">📱</span>
+      <input type="tel" class="form-control" id="phone" name="phone" 
+             placeholder="Your phone number" required>
+    </div>
+  </div>
+
+  <!-- Payment Methods -->
+  <h5 class="fw-bold mb-3 text-center">💳 Choose Payment</h5>
+  
+  <!-- PayPal Payment -->
+  <div class="payment-card featured mb-3">
+    <div class="card-body text-center p-3">
+      <div class="payment-icon paypal-icon">
+        <i class="fab fa-paypal"></i>
+      </div>
+      <h6 class="fw-bold mb-2">PayPal</h6>
+      <small class="text-muted d-block mb-2">Quick & secure with buyer protection</small>
+      
+      <div class="mb-2">
+        <small class="text-success">✅ Instant</small>
+        <small class="text-success ms-2">✅ Protected</small>
+        <small class="text-success ms-2">✅ Popular</small>
+      </div>
+      
+      <div id="paypal-button-container"></div>
+      <p id="result-message"></p>
+    </div>
+  </div>
+  
+  <!-- Crypto Payment -->
+  <div class="payment-card mb-3">
+    <div class="card-body text-center p-3">
+      <div class="payment-icon crypto-icon">
+        <i class="fab fa-bitcoin"></i>
+      </div>
+      <h6 class="fw-bold mb-2">Cryptocurrency</h6>
+      <small class="text-muted d-block mb-2">Bitcoin, Litecoin, or Monero</small>
+      
+      <div class="crypto-features mb-2">
+        <small>₿ Bitcoin</small>
+        <small class="ms-2">Ł Litecoin</small>
+        <small class="ms-2">ɱ Monero</small>
+      </div>
+      
+      <a href="{{ url_for('crypto.crypto_checkout') }}" 
+         class="btn btn-crypto btn-payment">
+        ₿ Pay with Crypto
+      </a>
+      
+      <small class="text-muted mt-2 d-block">🔐 Anonymous & secure</small>
+    </div>
+  </div>
+      
+  <!-- Terms Notice -->
+  <div class="card border-warning bg-light mt-3">
+    <div class="card-body p-3">
+      <h6 class="fw-bold text-warning mb-2">⚠️ Booking Terms</h6>
+      <small>
+        <strong>Passes</strong> are free for guests under 1 year, transferable, 
+        not refundable, and cannot be rescheduled. We focus on animal care and 
+        cannot accommodate changes.
+      </small>
+    </div>
+  </div>
+</div>
 
     <!-- PayPal SDK Script -->
     <script src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id }}&currency=USD"></script>

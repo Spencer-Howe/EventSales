@@ -81,6 +81,35 @@ def submit_crypto_payment():
     db.session.add(new_booking)
     db.session.commit()
     
+    # Send notification email to admin if this is an anonymous booking
+    if not email or email.strip() == "":
+        try:
+            subject = f'Anonymous Crypto Booking - {crypto_currency}'
+            admin_email_body = f"""
+Anonymous crypto booking received:
+
+Order ID: {order_id}
+Currency: {crypto_currency}
+Amount: ${total_price}
+Transaction Hash: {transaction_hash}
+Event: {event.title}
+Date: {event.start.strftime("%B %d, %Y, %I:%M %p")}
+Guests: {tickets}
+
+No contact info provided - customer will bring receipt page for entrance.
+Review and confirm payment in crypto admin panel.
+            """
+            
+            msg = Message(
+                subject=subject,
+                recipients=['howeranchservices@gmail.com'],
+                body=admin_email_body,
+                sender=current_app.config['MAIL_DEFAULT_SENDER']
+            )
+            mail.send(msg)
+        except Exception as e:
+            print(f"Admin notification email failed: {e}")
+    
     # Crypto payments need admin approval first - no immediate receipt
     # Receipt will be sent when admin confirms payment, which includes waiver link
     
