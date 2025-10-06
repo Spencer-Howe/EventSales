@@ -8,9 +8,9 @@ crypto_bp = Blueprint('crypto', __name__)
 
 @crypto_bp.route('/crypto_checkout')
 def crypto_checkout():
-    # Get parameters from session (set in checkout route)
-    event_id = session.get('event_id')
-    tickets = session.get('tickets')
+    # Get parameters url
+    event_id = request.args.get('event_id')
+    tickets = request.args.get('tickets')
     
     if not event_id or not tickets:
         return redirect(url_for('views.home'))
@@ -39,19 +39,19 @@ def crypto_checkout():
                           tickets=tickets,
                           total_price=total_price)
 
-@crypto_bp.route('/submit_crypto_payment', methods=['POST'])
+@crypto_bp.route('/submit_crypto_payment', methods=['GET'])
 def submit_crypto_payment():
     from .models import Booking
     
-    # Get form data
-    name = request.form.get('name')
-    email = request.form.get('email')
-    phone = request.form.get('phone')
-    crypto_currency = request.form.get('crypto_currency')
-    transaction_hash = request.form.get('transaction_hash')
-    event_id = request.form.get('event_id')
-    tickets = int(request.form.get('tickets'))
-    total_price = float(request.form.get('total_price'))
+    # Get URL parameters
+    name = request.args.get('name')
+    email = request.args.get('email')
+    phone = request.args.get('phone')
+    crypto_currency = request.args.get('crypto_currency')
+    transaction_hash = request.args.get('transaction_hash')
+    event_id = request.args.get('event_id')
+    tickets = int(request.args.get('tickets'))
+    total_price = float(request.args.get('total_price'))
     
     # Get event details
     from .models import Event
@@ -110,17 +110,8 @@ Review and confirm payment in crypto admin panel.
         except Exception as e:
             print(f"Admin notification email failed: {e}")
     
-    # Crypto payments need admin approval first - no immediate receipt
-    # Receipt will be sent when admin confirms payment, which includes waiver link
-    
-    # Render pending confirmation page instead of redirecting to waiver
-    return render_template('crypto_pending.html',
-                          order_id=order_id,
-                          name=name,
-                          email=email,
-                          crypto_currency=crypto_currency,
-                          transaction_hash=transaction_hash,
-                          total_price=total_price)
+    # Redirect to receipt
+    return redirect(f'/receipt/{order_id}')
 
 @crypto_bp.route('/confirm_crypto_payment/<order_id>')
 @login_required

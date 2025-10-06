@@ -347,7 +347,7 @@
   <div class="crypto-card p-3">
     <h5 class="fw-bold mb-3 text-center">Payment Details</h5>
     
-    <form id="crypto-payment-form" method="POST" action="{{ url_for('crypto.submit_crypto_payment') }}">
+    <form id="crypto-payment-form" onsubmit="return submitCryptoPayment(event)")
       <!-- Customer Information -->
       <div class="mb-3">
         <label for="name" class="form-label fw-bold">Full Name <span class="text-muted">(Optional)</span></label>
@@ -528,28 +528,54 @@ function copyAddress() {
   });
 }
 
-// Form validation
-document.getElementById('crypto-payment-form').addEventListener('submit', function(e) {
+// Form submission handler
+function submitCryptoPayment(event) {
+  event.preventDefault();
+  
+  const form = event.target;
   const txHash = document.getElementById('transaction_hash').value.trim();
   const currency = document.getElementById('crypto_currency').value;
   
   if (!currency) {
-    e.preventDefault();
     alert('Please select a cryptocurrency first.');
-    return;
+    return false;
   }
   
   if (!txHash) {
-    e.preventDefault();
     alert('Please enter your transaction hash after sending the payment.');
-    return;
+    return false;
   }
   
   // Show loading state
   const submitBtn = document.getElementById('submit-btn');
   submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
   submitBtn.disabled = true;
-});
+  
+  // Get form data
+  const name = document.getElementById('name').value || '';
+  const email = document.getElementById('email').value || '';
+  const phone = document.getElementById('phone').value || '';
+  const eventId = '{{ event_id }}';
+  const tickets = '{{ tickets }}';
+  const totalPrice = '{{ total_price }}';
+  
+  // Create URL with all parameters
+  const params = new URLSearchParams({
+    event_id: eventId,
+    tickets: tickets,
+    total_price: totalPrice,
+    name: name,
+    email: email,
+    phone: phone,
+    crypto_currency: currency,
+    transaction_hash: txHash
+  });
+  
+  // Redirect to crypto submission with URL params
+  window.location.href = `/submit_crypto_payment?${params.toString()}`;
+  
+  return false;
+}
 </script>
 
 {% endblock %}

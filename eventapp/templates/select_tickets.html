@@ -308,13 +308,7 @@
   <div id='calendar'></div>
 </div>
 
-<!-- Hidden Form -->
-<form id="bookingForm" action="{{ url_for('booking.calculate_price') }}" method="post">
-  <input type="hidden" id="date" name="date" required>
-  <input type="hidden" id="event_id" name="event_id" required>
-  <input type="hidden" id="tickets" name="tickets" min="1" required>
-  <input type="hidden" id="event_price" name="event_price" required>
-</form>
+<!-- Hidden Form - No longer used, going direct to checkout with URL params -->
     
 <!-- Modern Event Booking Modal -->
 <div class="event-modal" id="eventModal">
@@ -531,20 +525,15 @@ function bookEvent() {
     return;
   }
   
-  // Set form values
-  document.getElementById('event_id').value = currentEvent.id;
-  document.getElementById('tickets').value = guestNum;
-  document.getElementById('date').value = currentEvent.startStr;
-  
   // Add loading state
   const bookBtn = document.querySelector('.btn-book');
   const originalText = bookBtn.innerHTML;
   bookBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Booking...';
   bookBtn.disabled = true;
   
-  // Submit form
+  // Go directly to checkout with URL params (no form submission)
   setTimeout(() => {
-    document.getElementById('bookingForm').submit();
+    window.location.href = `/checkout?event_id=${currentEvent.id}&tickets=${guestNum}`;
   }, 500);
 }
 
@@ -564,5 +553,4 @@ document.getElementById('modalGuestCount').addEventListener('keypress', function
 
 </script>
 
-<script src="{{ url_for('static', filename='app.js') }}"></script>
 {% endblock %}

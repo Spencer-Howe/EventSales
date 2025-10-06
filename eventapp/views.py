@@ -92,9 +92,6 @@ def checkout():
     from .models import Event
     event = Event.query.get_or_404(event_id)
 
-    session['event_id'] = event.id
-    session['tickets'] = tickets
-
     # Calculate the total price
     total_price = tickets * event.price_per_ticket
 
@@ -114,7 +111,6 @@ def checkout():
                            paypal_client_id=current_app.config['PAYPAL_CLIENT_ID'])
 
 
-
 @views.route('/verify_transaction', methods=['POST'])
 def verify_transaction():
     data = request.get_json()
@@ -125,7 +121,7 @@ def verify_transaction():
         return jsonify({"verified": False, "reason": "Failed to obtain access token"}), 500
     verified, order_details = verify_order_with_paypal(order_id, access_token)
     if verified:
-        session['phone'] = phone
+        # No longer storing in session - phone will be passed via URL parameters
         return jsonify({"verified": True, "orderID": order_id, "details": order_details})
     else:
         return jsonify({"verified": False, "reason": "Verification failed or order not completed"}), 400
@@ -162,31 +158,57 @@ def sign_waiver(order_id):
 @views.route('/receipt/<order_id>')
 def show_receipt(order_id):
     from eventapp.models import Booking, Event
+    
+    # Check if this booking already exists in database (crypto or existing PayPal)
+    existing_booking = Booking.query.filter_by(order_id=order_id).first()
+    if existing_booking:
+        # This is a completed booking - show receipt from database
+        return render_template('receipt.html', 
+                             order_id=existing_booking.order_id,
+                             name=existing_booking.name,
+                             email=existing_booking.email,
+                             time_slot=existing_booking.time_slot,
+                             tickets=existing_booking.tickets,
+                             amount=existing_booking.amount_paid,
+                             currency=existing_booking.currency,
+                             status=existing_booking.status,
+                             phone=existing_booking.phone)
+    
+    # No existing booking found - this must be a new PayPal payment
+    # Verify with PayPal and create booking if valid
     access_token = get_paypal_access_token()
     if not access_token:
         return "Failed to obtain access token", 500
+    
     verified, order_details = verify_order_with_paypal(order_id, access_token)
     if verified:
-        event_id = session.get('event_id')
-        tickets = session.get('tickets')
-        phone = session.get('phone')
-        session.pop('event_id', None)
-        session.pop('tickets', None)
-        session.pop('phone', None)
+        # Get event_id and tickets from URL parameters
+        event_id = request.args.get('event_id')
+        tickets = request.args.get('tickets')
+        phone = request.args.get('phone')
+        
+        if not event_id or not tickets:
+            return "Missing booking details", 400
+            
+        try:
+            tickets = int(tickets)
+        except (ValueError, TypeError):
+            return "Invalid ticket count", 400
+            
         event = Event.query.filter_by(id=event_id).first()
         if not event:
             return "Event not found", 404
-        if event.is_private:
-            event.is_booked = True
-        time_slot = event.start
+        
+        # Create new booking from PayPal details
         payer_info = order_details.get('payer', {})
         name = f"{payer_info.get('name').get('given_name')} {payer_info.get('name').get('surname')}"
         email = payer_info.get('email_address')
         amount = order_details['purchase_units'][0]['amount']['value']
         currency = order_details['purchase_units'][0]['amount']['currency_code']
         status = order_details.get('status')
+        
         new_booking = Booking(
-            time_slot=time_slot,
+            time_slot=event.start,
             tickets=tickets,
             order_id=order_id,
             amount_paid=amount,
@@ -196,9 +218,13 @@ def show_receipt(order_id):
             email=email,
             phone=phone,
             reminder_sent=False,
-            payment_method='paypal')
+            payment_method='paypal'
+        )
+        
         db.session.add(new_booking)
         db.session.commit()
+        
+        # Send confirmation email
         email_order_details = {
             'name': name,
             'email': email,
@@ -207,11 +233,10 @@ def show_receipt(order_id):
             'amount': amount,
             'currency': currency,
             'status': status,
-            'time_slot': time_slot,
+            'time_slot': event.start,
             'tickets': tickets
-
         }
-
+        
         waiver_url = url_for('views.sign_waiver', order_id=order_id, _external=True)
         email_order_details['waiver_url'] = waiver_url
         html_content = create_receipt_email_content(email_order_details)
@@ -220,12 +245,20 @@ def show_receipt(order_id):
         recipients = [email, sender]
         msg = Message(subject, sender=sender, recipients=recipients, html=html_content)
         mail.send(msg)
-        # noinspection PyUnresolvedReferences
-        return render_template('receipt.html', order_id=order_id, name=name, email=email,
-                               time_slot=time_slot, tickets=tickets, amount=amount,
-                               currency=currency, status=status, phone=phone)
+        
+        # Show receipt
+        return render_template('receipt.html', 
+                             order_id=order_id,
+                             name=name,
+                             email=email,
+                             time_slot=event.start,
+                             tickets=tickets,
+                             amount=amount,
+                             currency=currency,
+                             status=status,
+                             phone=phone)
     else:
-        return "Verification failed or order not completed", 400
+        return "PayPal verification failed or payment not completed", 400
 
 
 

@@ -368,7 +368,7 @@
         <small class="ms-2">ɱ Monero</small>
       </div>
       
-      <a href="{{ url_for('crypto.crypto_checkout') }}" 
+      <a href="{{ url_for('crypto.crypto_checkout') }}?event_id={{ event_id }}&tickets={{ tickets }}" 
          class="btn btn-crypto btn-payment">
         ₿ Pay with Crypto
       </a>
@@ -393,8 +393,12 @@
     <!-- PayPal SDK Script -->
     <script src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id }}&currency=USD"></script>
 
-    <!-- Inline Script to Define totalAmount -->
-    <script>var totalAmount = {{ total_price }};</script>
+    <!-- Inline Script to Define Variables -->
+    <script>
+        var totalAmount = {{ total_price }};
+        var eventId = {{ event_id }};
+        var tickets = {{ tickets }};
+    </script>
 
     <!-- External JavaScript File -->
     <script src="{{ url_for('static', filename='app.js') }}"></script>
