@@ -186,6 +186,7 @@ def show_receipt(order_id):
         event_id = request.args.get('event_id')
         tickets = request.args.get('tickets')
         phone = request.args.get('phone')
+        user_email = request.args.get('email')  # Optional user-provided email
         
         if not event_id or not tickets:
             return "Missing booking details", 400
@@ -202,7 +203,9 @@ def show_receipt(order_id):
         # Create new booking from PayPal details
         payer_info = order_details.get('payer', {})
         name = f"{payer_info.get('name').get('given_name')} {payer_info.get('name').get('surname')}"
-        email = payer_info.get('email_address')
+        paypal_email = payer_info.get('email_address')
+        # Use user-provided email if provided
+        email = user_email if user_email else paypal_email
         amount = order_details['purchase_units'][0]['amount']['value']
         currency = order_details['purchase_units'][0]['amount']['currency_code']
         status = order_details.get('status')
