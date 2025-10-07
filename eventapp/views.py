@@ -90,22 +90,22 @@ def checkout():
 
     # Query the event from the database
     from .models import Event
+    from .pricing import get_total_price, get_booking_summary
+    
     event = Event.query.get_or_404(event_id)
 
-    # Calculate the total price
-    total_price = tickets * event.price_per_ticket
+    # Calculate the total price using pricing module
+    total_price = get_total_price(event, tickets)
 
-    # Format the event start time
-    readable_start = event.start.strftime("%B %d, %Y, %I:%M %p")
-    readable_time_slot = f'{event.title} - {readable_start}'
+    # Get formatted booking summary
+    booking_summary = get_booking_summary(event, tickets, total_price)
 
-    # Pass event_id, event_title, event_description, and other details to the template
-    event_description = event.description  # Fetch event description from the database
+    # Pass all details to the template
     return render_template('some_template.html',
-                           event_id=event.id,  # Pass event ID
-                           event_title=event.title,  # Pass event title
-                           event_description=event_description,  # Pass event description
-                           time_slot=readable_time_slot,  # Pass formatted time slot
+                           event_id=event.id,
+                           event_title=booking_summary['event_title'],
+                           event_description=booking_summary['event_description'],
+                           time_slot=booking_summary['time_slot'],
                            tickets=tickets,
                            total_price=total_price,
                            paypal_client_id=current_app.config['PAYPAL_CLIENT_ID'])

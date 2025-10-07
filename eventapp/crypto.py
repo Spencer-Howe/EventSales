@@ -24,8 +24,9 @@ def crypto_checkout():
     from .models import Event
     event = Event.query.get_or_404(event_id)
     
-    # Calculate total price
-    total_price = tickets * event.price_per_ticket
+    # Calculate total price using unified pricing system
+    from .pricing import get_total_price
+    total_price = get_total_price(event, tickets)
     
     # Format event details
     readable_start = event.start.strftime("%B %d, %Y, %I:%M %p")
