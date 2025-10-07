@@ -14,69 +14,212 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=MuseoModerno:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <style>
-      body {
-          font-family: Arial, sans-serif;
-      }
-    
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: white;
+        }
+
         .footer-title {
             font-family: 'MuseoModerno', cursive;
-            font-size: 1rem; /* Smaller font size */
-            margin-bottom: 0.25rem !important; /* Minimize margin */
+            font-size: 1rem;
+            margin-bottom: 0.25rem !important;
         }
-         .howe-advertisement-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  background-color: #2c3e50;
-  padding: 20px 10px;
-  min-height: 150px;
-  color: white;
-  font-family: 'Arial', sans-serif;
-}
 
-.howe-ad {
-  display: block;
-  width: 100%;
-  max-width: 600px;
-  padding: 20px;
-  border-radius: 8px;
-  background-color: #34495e;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  overflow: visible;
-}
+        /* Hero Tech Banner */
+        .tech-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px 0;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
 
+        .tech-hero h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .tech-hero .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            opacity: 0.95;
+        }
+
+        .tech-hero .cta-buttons {
+            margin-top: 20px;
+        }
+
+        .tech-cta {
+            background: #ff6b6b;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            margin: 0 10px;
+            display: inline-block;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255,107,107,0.3);
+        }
+
+        .tech-cta:hover {
+            background: #ff5252;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255,107,107,0.4);
+            text-decoration: none;
+        }
+
+        .tech-cta.secondary {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+
+        .tech-cta.secondary:hover {
+            background: white;
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        /* FAQ Alert - Cross-browser compatible */
+        .faq-alert {
+            background-color: #fff3cd !important;
+            border: 1px solid #ffeaa7 !important;
+            color: #856404 !important;
+            padding: 15px !important;
+            margin: 20px 0 !important;
+            border-radius: 10px !important;
+            text-align: center !important;
+            font-weight: 500 !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+        }
+
+        .faq-alert h5 {
+            margin: 0 0 10px 0 !important;
+            font-size: 1.1rem !important;
+            color: #856404 !important;
+        }
+
+        .faq-alert a {
+            color: #856404 !important;
+            text-decoration: underline !important;
+            font-weight: bold !important;
+        }
+
+        .faq-alert a:hover {
+            color: #533f03 !important;
+        }
+
+        /* Subtle footer tech ad */
+        .howe-advertisement-container {
+            background: #f8f9fa;
+            padding: 15px 10px;
+            color: #6c757d;
+            text-align: center;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .howe-ad {
+            margin: 0 auto;
+            max-width: 500px;
+            padding: 15px;
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
 
         .ad-title {
-            font-size: 1.5rem;  /* Slightly smaller title */
-            margin-bottom: 10px;
-            font-weight: bold;
-            color: #ecf0f1;
+            font-size: 1.2rem;
+            margin: 0 0 8px 0;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .ad-subtitle {
+            font-size: 0.9rem;
+            margin: 0 0 8px 0;
+            color: #6c757d;
+            font-weight: 400;
         }
 
         .ad-description {
-            font-size: 0.9rem;  /* Smaller font size for the description */
-            margin-bottom: 15px;
-            color: #bdc3c7;
+            font-size: 0.85rem;
+            margin: 0 0 12px 0;
+            color: #6c757d;
+            line-height: 1.4;
         }
 
         .ad-btn {
-            background-color: #2980b9;
-            border: none;
-            padding: 8px 16px;  /* Reduced padding on the button */
-            font-size: 0.9rem;  /* Smaller button text */
+            background: #007bff;
             color: white;
-            cursor: pointer;
-            border-radius: 5px;
+            padding: 6px 16px;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 500;
             text-decoration: none;
-            transition: background-color 0.3s ease;
+            margin: 0 5px;
+            display: inline-block;
+            transition: background-color 0.2s ease;
         }
 
         .ad-btn:hover {
-            background-color: #1abc9c;
+            background: #0056b3;
+            color: white;
+            text-decoration: none;
         }
-  </style>
+
+        .ad-btn.secondary {
+            background: #6c757d;
+        }
+
+        .ad-btn.secondary:hover {
+            background: #545b62;
+        }
+
+        /* Content cards enhancement */
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border: none;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Ensure footer sticks to bottom */
+        .content-wrapper {
+            flex: 1 0 auto !important;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .tech-hero h1 {
+                font-size: 2rem;
+            }
+            .tech-hero .subtitle {
+                font-size: 1rem;
+            }
+            .tech-cta {
+                padding: 10px 20px;
+                font-size: 1rem;
+                margin: 5px;
+                display: block;
+                max-width: 250px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+    </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
 {% block navbar %}
@@ -88,20 +231,31 @@
   </nav>
 {% endblock %}
 
-<div class="container">
-    {% block content %}
-    <!-- Default content goes here -->
-    {% endblock %}
+<div class="content-wrapper">
+    <div class="container">
+        <!-- FAQ Alert - Shows on every page -->
+        <div class="faq-alert">
+            <h5>📋 Have Questions Before Booking?</h5>
+            <p>Read our <a href="https://www.thehoweranch.com/_files/ugd/fca21d_06885dfcc097472584d44afdc9cad7a1.pdf" target="_blank">Frequently Asked Questions</a> before booking to ensure you're prepared for your visit!</p>
+        </div>
+
+        {% block content %}
+        <!-- Default content goes here -->
+        {% endblock %}
+    </div>
 </div>
 <footer class="bg-light text-center text-lg-start mt-auto">
-    <!-- Simplified and Compact Advertisement Section -->
+    <!-- Enhanced Tech Services Advertisement -->
     <div class="howe-advertisement-container text-center">
         <div class="howe-ad">
-            <h3 class="ad-title">Howe Tech Solutions</h3>
+            <h3 class="ad-title">🚀 Howe Tech Solutions</h3>
+            <p class="ad-subtitle">Software Engineering Graduate 2025</p>
             <p class="ad-description">
-                A mission-first approach to software development.
+                Custom web applications • E-commerce platforms • Payment integrations • Database design • API development<br>
+                <strong>Mission-first approach to building software that actually works for your business.</strong>
             </p>
-            <a href="mailto:howeranchservices@gmail.com" class="ad-btn">Contact Us</a>
+            <a href="mailto:howeranchservices@gmail.com" class="ad-btn">Get Free Consultation</a>
+            <a href="https://github.com/Spencer-Howe" class="ad-btn secondary">View Portfolio</a>
         </div>
     </div>
 
