@@ -1,9 +1,13 @@
 import os
 import requests
 from datetime import datetime, timedelta
+import pytz
 from flask import jsonify, render_template, request, redirect, url_for, session, Blueprint, current_app
 from flask_mail import Message
 from flask_login import login_user, logout_user, login_required
+import qrcode
+import io
+import base64
 # noinspection PyUnresolvedReferences
 from .extensions import db, mail, login_manager
 
@@ -163,6 +167,9 @@ def show_receipt(order_id):
     existing_booking = Booking.query.filter_by(order_id=order_id).first()
     if existing_booking:
         # This is a completed booking - show receipt from database
+        qr_code = generate_qr_code(order_id)
+        booking_info_url = f"https://thehoweranchpayment.com/api/booking/{order_id}"
+        
         return render_template('receipt.html', 
                              order_id=existing_booking.order_id,
                              name=existing_booking.name,
@@ -172,7 +179,9 @@ def show_receipt(order_id):
                              amount=existing_booking.amount_paid,
                              currency=existing_booking.currency,
                              status=existing_booking.status,
-                             phone=existing_booking.phone)
+                             phone=existing_booking.phone,
+                             qr_code=qr_code,
+                             checkin_url=booking_info_url)
     
     # No existing booking found - this must be a new PayPal payment
     # Verify with PayPal and create booking if valid
@@ -242,6 +251,13 @@ def show_receipt(order_id):
         
         waiver_url = url_for('views.sign_waiver', order_id=order_id, _external=True)
         email_order_details['waiver_url'] = waiver_url
+        
+        # Add QR code to email
+        qr_code_base64 = generate_qr_code(order_id).split(',')[1]  # Remove data:image/png;base64, prefix
+        booking_info_url = f"https://thehoweranchpayment.com/api/booking/{order_id}"
+        email_order_details['qr_code_base64'] = qr_code_base64
+        email_order_details['checkin_url'] = booking_info_url
+        
         html_content = create_receipt_email_content(email_order_details)
         subject = "Your Payment Receipt"
         sender = current_app.config['MAIL_USERNAME']
@@ -249,7 +265,10 @@ def show_receipt(order_id):
         msg = Message(subject, sender=sender, recipients=recipients, html=html_content)
         mail.send(msg)
         
-        # Show receipt
+        # Show receipt with QR code
+        qr_code = generate_qr_code(order_id)
+        booking_info_url = f"https://thehoweranchpayment.com/api/booking/{order_id}"
+        
         return render_template('receipt.html', 
                              order_id=order_id,
                              name=name,
@@ -259,7 +278,9 @@ def show_receipt(order_id):
                              amount=amount,
                              currency=currency,
                              status=status,
-                             phone=phone)
+                             phone=phone,
+                             qr_code=qr_code,
+                             checkin_url=booking_info_url)
     else:
         return "PayPal verification failed or payment not completed", 400
 
@@ -288,6 +309,166 @@ def get_events():
         'description': event.description
     } for event in events]
     return jsonify(events_data)
+
+
+@views.route('/api/booking/<order_id>', methods=['GET'])
+def get_booking_info(order_id):
+    """Safe endpoint to get booking details without checking in"""
+    from eventapp.models import Booking
+    
+    booking = Booking.query.filter_by(order_id=order_id).first()
+    
+    if not booking:
+        return jsonify({"success": False, "reason": "Booking not found"}), 404
+    
+    return jsonify({
+        "success": True,
+        "order_id": booking.order_id,
+        "name": booking.name,
+        "email": booking.email,
+        "tickets": booking.tickets,
+        "event": booking.time_slot.strftime("%B %d, %Y at %I:%M %p") if booking.time_slot else "Unknown",
+        "event_timestamp": booking.time_slot.isoformat() if booking.time_slot else None,
+        "status": booking.status,
+        "amount_paid": booking.amount_paid,
+        "currency": booking.currency,
+        "checked_in": booking.checked_in if hasattr(booking, 'checked_in') else False,
+        "checkin_time": booking.checkin_time.isoformat() if hasattr(booking, 'checkin_time') and booking.checkin_time else None
+    })
+
+
+@views.route('/api/admin/login', methods=['POST'])
+def admin_api_login():
+    """API endpoint for staff/admin login for mobile app"""
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+    
+    from eventapp.models import User
+    user = User.query.filter_by(username=username).first()
+    
+    if user and user.password == password:
+        # Generate admin token (simple approach - in production use JWT)
+        admin_token = f"admin_{user.username}_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}"
+        
+        return jsonify({
+            "success": True,
+            "token": admin_token,
+            "staff_id": user.username,
+            "name": user.username  # You might want to add a name field to User model
+        })
+    else:
+        return jsonify({
+            "success": False,
+            "reason": "Invalid credentials"
+        }), 401
+
+
+@views.route('/api/admin/checkin/<order_id>', methods=['POST'])
+def admin_checkin_attendee(order_id):
+    """Admin-only endpoint for checking in attendees"""
+    from eventapp.models import Booking
+    from flask import request
+    
+    # Simple admin token check (you should implement proper auth)
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer '):
+        return jsonify({"success": False, "reason": "Admin authentication required"}), 401
+    
+    token = auth_header.replace('Bearer ', '')
+    # For now, accept any token that looks like "admin_" followed by something
+    # You should implement proper JWT tokens or session auth
+    if not token.startswith('admin_'):
+        return jsonify({"success": False, "reason": "Invalid admin token"}), 401
+    
+    booking = Booking.query.filter_by(order_id=order_id).first()
+    
+    if not booking:
+        return jsonify({"success": False, "reason": "Booking not found"}), 404
+    
+    # Check if event is currently happening (only allow check-in during event)
+    if booking.time_slot:
+        from eventapp.models import Event
+        now = datetime.utcnow()
+        event = Event.query.filter_by(start=booking.time_slot).first()
+        
+        if not event:
+            return jsonify({
+                "success": False, 
+                "reason": "Event not found"
+            }), 404
+        
+        event_start = event.start
+        event_end = event.end
+        
+        if now < event_start:
+            return jsonify({
+                "success": False, 
+                "reason": "Check-in not yet available",
+                "message": f"Check-in opens when event starts at {event_start.strftime('%I:%M %p')}"
+            }), 400
+        
+        if now > event_end:
+            return jsonify({
+                "success": False, 
+                "reason": "Check-in window closed",
+                "message": f"Check-in closed when event ended at {event_end.strftime('%I:%M %p')}"
+            }), 400
+    
+    if hasattr(booking, 'checked_in') and booking.checked_in:
+        return jsonify({
+            "success": False, 
+            "reason": "Already checked in",
+            "name": booking.name,
+            "checkin_time": booking.checkin_time.isoformat() if hasattr(booking, 'checkin_time') else None
+        }), 400
+    
+    # Get request data for logging
+    request_data = request.get_json() or {}
+    staff_id = request_data.get('staff_id', 'unknown')
+    location = request_data.get('location', 'entrance')
+    
+    # Mark as checked in with local time (Pacific/Los Angeles timezone)
+    booking.checked_in = True
+    pacific_tz = pytz.timezone('America/Los_Angeles')
+    booking.checkin_time = datetime.now(pacific_tz).replace(tzinfo=None)  # Store as naive datetime in local time
+    db.session.commit()
+    
+    return jsonify({
+        "success": True,
+        "name": booking.name,
+        "tickets": booking.tickets,
+        "event": booking.time_slot.strftime("%B %d, %Y at %I:%M %p") if booking.time_slot else "Unknown",
+        "checkin_time": booking.checkin_time.isoformat(),
+        "staff_id": staff_id,
+        "location": location
+    })
+
+
+def generate_qr_code(order_id):
+    """Generate QR code for booking info (safe for public access)"""
+    # QR code now contains the safe booking info URL instead of direct check-in
+    booking_info_url = f"https://thehoweranchpayment.com/api/booking/{order_id}"
+    
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(booking_info_url)
+    qr.make(fit=True)
+    
+    # Generate the QR code image
+    img = qr.make_image(fill_color="black", back_color="white")
+    
+    # Convert to base64 for embedding in HTML
+    buffer = io.BytesIO()
+    img.save(buffer, format='PNG')
+    buffer.seek(0)
+    qr_code_base64 = base64.b64encode(buffer.getvalue()).decode()
+    
+    return f"data:image/png;base64,{qr_code_base64}"
 
 
 def get_paypal_access_token():
@@ -327,6 +508,17 @@ def create_receipt_email_content(order_details):
             <p>Please review and sign the waiver if you did not already finish the registration after checkout 
                 <a href="{order_details['waiver_url']}" style="color: #1a73e8;">here</a>.
             </p>
+            
+            <!-- QR Code for Check-in -->
+            <div style="text-align: center; border: 2px dashed #007bff; padding: 20px; border-radius: 10px; background-color: #f8f9fa; margin: 20px 0;">
+                <h3 style="color: #007bff; margin-bottom: 15px;">📱 Quick Check-In</h3>
+                <p style="margin-bottom: 15px;"><strong>Show this QR code when you arrive for instant check-in!</strong></p>
+                <img src="data:image/png;base64,{order_details.get('qr_code_base64', '')}" alt="Check-in QR Code" style="width: 200px; height: 200px; margin: 10px;">
+                <p style="margin-top: 10px; font-size: 0.9rem; color: #6c757d;">
+                    Or visit: <a href="{order_details.get('checkin_url', '')}" style="color: #007bff;">{order_details.get('checkin_url', '')}</a>
+                </p>
+            </div>
+            
             <hr style="margin: 30px 0;">
             <h2 style="color: #2e6c80;">Thank You & Important Visit Information</h2>
             <p>

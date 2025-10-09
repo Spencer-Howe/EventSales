@@ -18,6 +18,18 @@
     <a href="{{ url_for('views.sign_waiver', order_id=order_id) }}" class="btn btn-primary">Please Complete Registration</a>
 </div>
 
+<!-- QR Code for Check-in -->
+<div class="text-center mb-4" style="border: 2px dashed #007bff; padding: 20px; border-radius: 10px; background-color: #f8f9fa;">
+    <h3 style="color: #007bff; margin-bottom: 15px;">📱 Quick Check-In</h3>
+    <p><strong>Show this QR code when you arrive for instant check-in!</strong></p>
+    {% if qr_code %}
+        <img src="{{ qr_code }}" alt="Check-in QR Code" style="width: 200px; height: 200px; margin: 10px;">
+    {% endif %}
+    <p style="margin-top: 10px; font-size: 0.9rem; color: #6c757d;">
+        Or visit: <code>{{ checkin_url }}</code>
+    </p>
+</div>
+
 <hr>
 
 <h2>Thank You for Your Purchase!</h2>

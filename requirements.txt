@@ -13,4 +13,7 @@ Flask-APScheduler
 pytest
 pytest-flask
 pytest-cov
+qrcode
+pillow
+pytz
 

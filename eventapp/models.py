@@ -27,66 +27,68 @@ class Event(db.Model):
     is_private = db.Column(db.Boolean, nullable=True, default=False)
     is_booked = db.Column(db.Boolean, nullable=True, default=False)
     max_capacity = db.Column(db.Integer, nullable=False, default=50)
+    
+    # Foreign key
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    
+    # Relationships
+    user = db.relationship('User', backref=db.backref('events', lazy=True))
+    bookings = db.relationship('Booking', backref='event', lazy=True)
 
-user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-
-user = db.relationship('User', backref=db.backref('events', lazy=True))
-
-class Booking(db.Model):
+# Customer model - normalized customer data
+class Customer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    time_slot = db.Column(db.DateTime(50), nullable=False)
-    tickets = db.Column(db.Integer, nullable=False)
-    order_id = db.Column(db.String(120), unique=True, nullable=False)
-    amount_paid = db.Column(db.Float, nullable=False)
-    currency = db.Column(db.String(10), nullable=False)
-    status = db.Column(db.String(20), nullable=False)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), nullable=False)
     phone = db.Column(db.String(20), nullable=True)
-    reminder_sent = db.Column(db.Boolean, nullable=True, default=False)
+    created_at = db.Column(db.DateTime, default=db.func.now())
+    
+    # Relationships
+    bookings = db.relationship('Booking', backref='customer', lazy=True)
+    waivers = db.relationship('Waiver', backref='customer', lazy=True)
+
+# Booking model - links customer to event
+class Booking(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.String(120), unique=True, nullable=False)
+    tickets = db.Column(db.Integer, nullable=False)
+    booking_date = db.Column(db.DateTime, default=db.func.now())
+    reminder_sent = db.Column(db.Boolean, default=False)
+    checked_in = db.Column(db.Boolean, default=False)
+    checkin_time = db.Column(db.DateTime, nullable=True)
+    
+    # Foreign keys
+    customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
+    event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
+    
+    # Relationships
+    payments = db.relationship('Payment', backref='booking', lazy=True)
+
+# Payment model - separate payment details
+class Payment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    amount_paid = db.Column(db.Float, nullable=False)
+    currency = db.Column(db.String(10), nullable=False, default='USD')
+    status = db.Column(db.String(20), nullable=False)
     payment_method = db.Column(db.String(20), nullable=False)
+    payment_date = db.Column(db.DateTime, default=db.func.now())
+    
+    # PayPal specific
+    paypal_order_id = db.Column(db.String(120), nullable=True)
+    
+    # Crypto specific
     crypto_currency = db.Column(db.String(10), nullable=True)
     crypto_address = db.Column(db.String(200), nullable=True)
     transaction_hash = db.Column(db.String(200), nullable=True)
+    
+    # Foreign key
+    booking_id = db.Column(db.Integer, db.ForeignKey('booking.id'), nullable=False)
 
-
-    def __init__(self, time_slot, tickets, order_id, amount_paid, currency, status, name, email, phone, reminder_sent, payment_method='paypal', crypto_currency=None, crypto_address=None, transaction_hash=None):
-        self.time_slot = time_slot
-        self.tickets = tickets
-        self.order_id = order_id
-        self.amount_paid = amount_paid
-        self.currency = currency
-        self.status = status
-        self.name = name
-        self.email = email
-        self.phone = phone
-        self.reminder_sent = reminder_sent
-        self.payment_method = payment_method
-        self.crypto_currency = crypto_currency
-        self.crypto_address = crypto_address
-        self.transaction_hash = transaction_hash
-
-    def serialize(self):
-        return {
-            'id': self.id,
-            'start': self.time_slot,
-            'tickets': self.tickets,
-            'order_id': self.order_id,
-            'amount_paid': self.amount_paid,
-            'currency': self.currency,
-            'status': self.status,
-            'title': self.name,
-            'email': self.email,
-            'phone': self.phone
-        }
-
+# Waiver model - updated to use customer relationship
 class Waiver(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    order_id = db.Column(db.String(120), unique=True, nullable=False)
     signature = db.Column(db.String(500), nullable=False)
     signed_date = db.Column(db.DateTime, nullable=False)
-
-    def __init__(self, order_id, signature, signed_date):
-        self.order_id = order_id
-        self.signature = signature
-        self.signed_date = signed_date
+    
+    # Foreign key
+    customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
