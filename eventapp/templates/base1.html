@@ -5,14 +5,14 @@
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">Booking ID: {{ booking.id }}</h5>
-            <p class="card-text"><strong>Time Slot:</strong> {{ booking.time_slot }}</p>
+            <p class="card-text"><strong>Event:</strong> {{ booking.event.start.strftime('%B %d, %Y at %I:%M %p') if booking.event and booking.event.start else 'No event scheduled' }}</p>
             <p class="card-text"><strong>Tickets:</strong> {{ booking.tickets }}</p>
             <p class="card-text"><strong>Order ID:</strong> {{ booking.order_id }}</p>
-            <p class="card-text"><strong>Amount Paid:</strong> {{ booking.amount_paid }} {{ booking.currency }}</p>
-            <p class="card-text"><strong>Status:</strong> {{ booking.status }}</p>
-            <p class="card-text"><strong>Name:</strong> {{ booking.name }}</p>
-            <p class="card-text"><strong>Email:</strong> {{ booking.email }}</p>
-            <p><strong>Phone:</strong> {{ booking.phone }}</p>
+            <p class="card-text"><strong>Amount Paid:</strong> {{ booking.payments[0].amount_paid if booking.payments else 'No payment' }} {{ booking.payments[0].currency if booking.payments else '' }}</p>
+            <p class="card-text"><strong>Status:</strong> {{ booking.payments[0].status if booking.payments else 'No payment' }}</p>
+            <p class="card-text"><strong>Name:</strong> {{ booking.customer.name if booking.customer else 'No customer info' }}</p>
+            <p class="card-text"><strong>Email:</strong> {{ booking.customer.email if booking.customer else 'No email' }}</p>
+            <p><strong>Phone:</strong> {{ booking.customer.phone if booking.customer else 'No phone' }}</p>
             <a href="{{ url_for('calendar.index') }}" class="btn btn-primary">Back to Calendar</a>
         </div>
     </div>

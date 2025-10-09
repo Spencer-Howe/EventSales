@@ -115,7 +115,7 @@
                         <div class="col-md-12">
                             <div class="alert alert-info">
                                 <strong>SQL Query Used:</strong> 
-                                <code>SELECT SUM(tickets) as total_attendees FROM bookings WHERE time_slot = '{{ selected_event.start }}' AND status IN ('confirmed', 'pending_crypto')</code>
+                                <code>SELECT SUM(b.tickets) as total_attendees FROM bookings b JOIN events e ON b.event_id = e.id JOIN payments p ON b.id = p.booking_id WHERE e.start = '{{ selected_event.start }}' AND p.status IN ('confirmed', 'pending_crypto')</code>
                             </div>
                         </div>
                     </div>

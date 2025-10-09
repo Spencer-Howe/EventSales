@@ -71,16 +71,16 @@
                                 {% for booking in search_results %}
                                 <tr>
                                     <td>{{ booking.order_id }}</td>
-                                    <td>{{ booking.name }}</td>
-                                    <td>{{ booking.email }}</td>
-                                    <td>{{ booking.phone }}</td>
-                                    <td>{{ booking.time_slot.strftime('%Y-%m-%d %H:%M') if booking.time_slot else 'N/A' }}</td>
+                                    <td>{{ booking.customer.name if booking.customer else 'No customer' }}</td>
+                                    <td>{{ booking.customer.email if booking.customer else 'No email' }}</td>
+                                    <td>{{ booking.customer.phone if booking.customer else 'No phone' }}</td>
+                                    <td>{{ booking.event.start.strftime('%Y-%m-%d %H:%M') if booking.event and booking.event.start else 'N/A' }}</td>
                                     <td>{{ booking.tickets }}</td>
-                                    <td>${{ "%.2f"|format(booking.amount_paid) }}</td>
-                                    <td>{{ booking.payment_method|title }}</td>
+                                    <td>${{ "%.2f"|format(booking.payments[0].amount_paid) if booking.payments else 'No payment' }}</td>
+                                    <td>{{ booking.payments[0].payment_method|title if booking.payments else 'No payment method' }}</td>
                                     <td>
-                                        <span class="label {% if booking.status == 'confirmed' %}label-success{% elif booking.status == 'pending_crypto' %}label-warning{% else %}label-default{% endif %}">
-                                            {{ booking.status|title }}
+                                        <span class="label {% if booking.payments and booking.payments[0].status == 'confirmed' %}label-success{% elif booking.payments and booking.payments[0].status == 'pending_crypto' %}label-warning{% else %}label-default{% endif %}">
+                                            {{ booking.payments[0].status|title if booking.payments else 'No status' }}
                                         </span>
                                     </td>
                                 </tr>

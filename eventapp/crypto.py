@@ -16,6 +16,11 @@ def crypto_checkout():
         return redirect(url_for('views.home'))
     
     try:
+        event_id = int(event_id)  # Convert event_id to integer
+    except (ValueError, TypeError):
+        return "Invalid event ID", 400
+        
+    try:
         tickets = int(tickets)
     except (ValueError, TypeError):
         tickets = 1
@@ -53,6 +58,11 @@ def submit_crypto_payment():
     event_id = request.args.get('event_id')
     tickets = int(request.args.get('tickets'))
     total_price = float(request.args.get('total_price'))
+    
+    try:
+        event_id = int(event_id)  # Convert event_id to integer
+    except (ValueError, TypeError):
+        return "Invalid event ID", 400
     
     # Get event details
     from .models import Event

@@ -161,7 +161,7 @@
         <small class="text-muted">Pending Payments</small>
       </div>
       <div class="col-md-3">
-        <div class="h4 text-success fw-bold">${{ "%.2f"|format(bookings|sum(attribute='amount_paid') or 0) }}</div>
+        <div class="h4 text-success fw-bold">${{ "%.2f"|format(bookings|selectattr('payments')|map(attribute='payments')|map('first')|selectattr('amount_paid')|map(attribute='amount_paid')|sum or 0) }}</div>
         <small class="text-muted">Total Value</small>
       </div>
       <div class="col-md-3">
@@ -182,7 +182,7 @@
       {% for booking in bookings %}
       <div class="col-lg-6 col-xl-4 mb-4">
         <div class="pending-card position-relative">
-          <div class="crypto-badge">{{ booking.crypto_currency }}</div>
+          <div class="crypto-badge">{{ booking.payments[0].crypto_currency if booking.payments else 'No crypto' }}</div>
           
           <div class="card-body p-4">
             <!-- Order Header -->
@@ -190,7 +190,7 @@
               <div>
                 <h5 class="fw-bold text-primary mb-1">{{ booking.order_id }}</h5>
                 <small class="text-muted">
-                  📅 {{ booking.time_slot.strftime('%Y-%m-%d %H:%M') if booking.time_slot else 'No date' }}
+                  📅 {{ booking.event.start.strftime('%Y-%m-%d %H:%M') if booking.event and booking.event.start else 'No date' }}
                 </small>
               </div>
               <span class="badge bg-warning text-dark">PENDING</span>
@@ -200,9 +200,9 @@
             <div class="customer-info mb-3">
               <h6 class="fw-bold mb-2">👤 Customer Details</h6>
               <div class="small">
-                <strong>{{ booking.name }}</strong><br>
-                📧 {{ booking.email }}<br>
-                📱 {{ booking.phone }}
+                <strong>{{ booking.customer.name if booking.customer else 'No name' }}</strong><br>
+                📧 {{ booking.customer.email if booking.customer else 'No email' }}<br>
+                📱 {{ booking.customer.phone if booking.customer else 'No phone' }}
               </div>
             </div>
             
@@ -210,33 +210,33 @@
             <div class="mb-3">
               <h6 class="fw-bold mb-2">🎟️ Event Details</h6>
               <div class="d-flex justify-content-between">
-                <span>👥 Tickets:</span>
+                <span>👥 Tickets:</span>doc
                 <strong>{{ booking.tickets }}</strong>
               </div>
               <div class="d-flex justify-content-between">
                 <span>💰 Amount:</span>
-                <strong class="text-success">${{ "%.2f"|format(booking.amount_paid) }}</strong>
+                <strong class="text-success">${{ "%.2f"|format(booking.payments[0].amount_paid) if booking.payments else 'No payment' }}</strong>
               </div>
               <small class="text-muted">
-                📅 {{ booking.time_slot.strftime('%B %d, %Y at %I:%M %p') if booking.time_slot else 'No time set' }}
+                📅 {{ booking.event.start.strftime('%B %d, %Y at %I:%M %p') if booking.event and booking.event.start else 'No time set' }}
               </small>
             </div>
             
             <!-- Crypto Info -->
             <div class="crypto-info mb-3">
               <h6 class="fw-bold mb-2">₿ Payment Info</h6>
-              {% if booking.transaction_hash %}
+              {% if booking.payments and booking.payments[0].transaction_hash %}
                 <small class="text-muted d-block mb-1">🔗 Transaction Hash:</small>
                 <div class="hash-display mb-2">
-                  {{ booking.transaction_hash }}
-                  <button type="button" class="copy-hash-btn" onclick="copyToClipboard('{{ booking.transaction_hash }}')">
+                  {{ booking.payments[0].transaction_hash }}
+                  <button type="button" class="copy-hash-btn" onclick="copyToClipboard('{{ booking.payments[0].transaction_hash }}')">
                     📋
                   </button>
                 </div>
               {% endif %}
-              {% if booking.crypto_address %}
+              {% if booking.payments and booking.payments[0].crypto_address %}
                 <small class="text-muted d-block mb-1">📍 Payment Address:</small>
-                <div class="hash-display">{{ booking.crypto_address }}</div>
+                <div class="hash-display">{{ booking.payments[0].crypto_address }}</div>
               {% endif %}
             </div>
             
@@ -244,22 +244,22 @@
             <div class="text-center">
               <a href="{{ url_for('crypto.confirm_crypto_payment', order_id=booking.order_id) }}" 
                  class="confirm-btn w-100 mb-2"
-                 onclick="return confirm('🚀 Confirm this {{ booking.crypto_currency }} payment for ${{ \"%.2f\"|format(booking.amount_paid) }}?\n\nThis will:\n✅ Mark payment as confirmed\n📧 Send receipt email to customer\n🎟️ Activate their booking')">
+                 onclick="return confirm('🚀 Confirm this {{ booking.payments[0].crypto_currency if booking.payments else 'crypto' }} payment for ${{ \"%.2f\"|format(booking.payments[0].amount_paid) if booking.payments else 0 }}?\n\nThis will:\n✅ Mark payment as confirmed\n📧 Send receipt email to customer\n🎟️ Activate their booking')">
                 <span class="me-2">✅</span>Confirm Payment
               </a>
               
               <div class="mt-2">
-                {% if booking.crypto_currency == 'BTC' %}
-                  <a href="https://blockstream.info/tx/{{ booking.transaction_hash }}" 
+                {% if booking.payments and booking.payments[0].crypto_currency == 'BTC' %}
+                  <a href="https://blockstream.info/tx/{{ booking.payments[0].transaction_hash }}" 
                      target="_blank" class="blockchain-btn">
                     🔍 View on Blockchain
                   </a>
-                {% elif booking.crypto_currency == 'LTC' %}
-                  <a href="https://blockchair.com/litecoin/transaction/{{ booking.transaction_hash }}" 
+                {% elif booking.payments and booking.payments[0].crypto_currency == 'LTC' %}
+                  <a href="https://blockchair.com/litecoin/transaction/{{ booking.payments[0].transaction_hash }}" 
                      target="_blank" class="blockchain-btn">
                     🔍 View on Blockchair
                   </a>
-                {% elif booking.crypto_currency == 'XMR' %}
+                {% elif booking.payments and booking.payments[0].crypto_currency == 'XMR' %}
                   <span class="blockchain-btn" style="background: #666;">
                     🔒 Private Transaction
                   </span>

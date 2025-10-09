@@ -71,9 +71,9 @@
                 title: b.title,
                 start: parseStart(b.start),
                 description:
-                  `Amount Paid: ${b.amount_paid} ${b.currency}, ` +
-                  `Tickets: ${b.tickets}, Order ID: ${b.order_id}, ` +
-                  `Phone: ${b.phone || 'N/A'}, Status: ${b.status}, Email: ${b.email}`
+                  `Amount Paid: ${b.amount_paid || 0} ${b.currency || 'USD'}, ` +
+                  `Tickets: ${b.tickets || 0}, Order ID: ${b.order_id || 'N/A'}, ` +
+                  `Phone: ${b.phone || 'N/A'}, Status: ${b.status || 'unknown'}, Email: ${b.email || 'N/A'}`
               };
               if (b.end) e.end = parseStart(b.end);
               events.push(e);

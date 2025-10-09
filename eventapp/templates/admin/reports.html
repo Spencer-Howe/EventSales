@@ -79,19 +79,19 @@
                                 {% set total_amount = 0 %}
                                 {% set total_tickets = 0 %}
                                 {% for booking in report_data %}
-                                    {% set total_amount = total_amount + booking.amount_paid %}
+                                    {% set total_amount = total_amount + (booking.payments[0].amount_paid if booking.payments else 0) %}
                                     {% set total_tickets = total_tickets + booking.tickets %}
                                 <tr>
-                                    <td>{{ booking.time_slot.strftime('%Y-%m-%d %H:%M') if booking.time_slot else 'N/A' }}</td>
+                                    <td>{{ booking.event.start.strftime('%Y-%m-%d %H:%M') if booking.event and booking.event.start else 'N/A' }}</td>
                                     <td>{{ booking.order_id }}</td>
-                                    <td>{{ booking.name }}</td>
-                                    <td>{{ booking.email }}</td>
+                                    <td>{{ booking.customer.name if booking.customer else 'No customer' }}</td>
+                                    <td>{{ booking.customer.email if booking.customer else 'No email' }}</td>
                                     <td>{{ booking.tickets }}</td>
-                                    <td>${{ "%.2f"|format(booking.amount_paid) }}</td>
-                                    <td>{{ booking.payment_method|title }}</td>
+                                    <td>${{ "%.2f"|format(booking.payments[0].amount_paid) if booking.payments else 'No payment' }}</td>
+                                    <td>{{ booking.payments[0].payment_method|title if booking.payments else 'No payment method' }}</td>
                                     <td>
-                                        <span class="label {% if booking.status == 'confirmed' %}label-success{% elif booking.status == 'pending_crypto' %}label-warning{% else %}label-default{% endif %}">
-                                            {{ booking.status|title }}
+                                        <span class="label {% if booking.payments and booking.payments[0].status == 'confirmed' %}label-success{% elif booking.payments and booking.payments[0].status == 'pending_crypto' %}label-warning{% else %}label-default{% endif %}">
+                                            {{ booking.payments[0].status|title if booking.payments else 'No status' }}
                                         </span>
                                     </td>
                                 </tr>
@@ -128,7 +128,7 @@
                                     {% set grand_total_attendees = grand_total_attendees + (row.total_attendees or 0) %}
                                     {% set grand_total_revenue = grand_total_revenue + (row.total_revenue or 0) %}
                                 <tr>
-                                    <td>{{ row.time_slot.strftime('%Y-%m-%d %H:%M') if row.time_slot else 'N/A' }}</td>
+                                    <td>{{ row.event.start.strftime('%Y-%m-%d %H:%M') if row.event and row.event.start else 'N/A' }}</td>
                                     <td>{{ row.total_bookings }}</td>
                                     <td>{{ row.total_attendees or 0 }}</td>
                                     <td>${{ "%.2f"|format(row.total_revenue or 0) }}</td>

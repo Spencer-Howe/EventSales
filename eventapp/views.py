@@ -19,35 +19,6 @@ views = Blueprint('views', __name__)
 
 
 
-@views.route('/api/bookings')
-def bookings():
-    from eventapp.models import Booking
-    bookings = Booking.query.all()
-    return jsonify([{
-        'id': b.id,
-        'order_id': b.order_id,
-        'tickets': b.tickets,
-        'booking_date': b.booking_date.isoformat() if b.booking_date else None,
-        'checked_in': b.checked_in,
-        'checkin_time': b.checkin_time.isoformat() if b.checkin_time else None,
-        'customer': {
-            'name': b.customer.name if b.customer else None,
-            'email': b.customer.email if b.customer else None,
-            'phone': b.customer.phone if b.customer else None
-        },
-        'event': {
-            'title': b.event.title if b.event else None,
-            'start': b.event.start.isoformat() if b.event and b.event.start else None,
-            'end': b.event.end.isoformat() if b.event and b.event.end else None
-        },
-        'payments': [{
-            'amount_paid': p.amount_paid,
-            'currency': p.currency,
-            'status': p.status,
-            'payment_method': p.payment_method,
-            'payment_date': p.payment_date.isoformat() if p.payment_date else None
-        } for p in b.payments]
-    } for b in bookings])
 @views.route('/admin/booking/<int:booking_id>')
 @login_required
 def booking_detail(booking_id):
@@ -111,6 +82,11 @@ def checkout():
     event_id = request.args.get('event_id')
     tickets = request.args.get('tickets')
 
+    try:
+        event_id = int(event_id)  # Convert event_id to integer
+    except (ValueError, TypeError):
+        return "Invalid event ID", 400
+        
     try:
         tickets = int(float(tickets))  # Convert to float first, then cast to int
     except (ValueError, TypeError):
@@ -367,134 +343,10 @@ def get_events():
     return jsonify(events_data)
 
 
-@views.route('/api/booking/<order_id>', methods=['GET'])
-def get_booking_info(order_id):
-    """Safe endpoint to get booking details without checking in"""
-    from eventapp.models import Booking
-    
-    booking = Booking.query.filter_by(order_id=order_id).first()
-    
-    if not booking:
-        return jsonify({"success": False, "reason": "Booking not found"}), 404
-    
-    # Get latest payment for status and amount
-    latest_payment = booking.payments[0] if booking.payments else None
-    
-    return jsonify({
-        "success": True,
-        "order_id": booking.order_id,
-        "name": booking.customer.name if booking.customer else "Unknown",
-        "email": booking.customer.email if booking.customer else "Unknown",
-        "tickets": booking.tickets,
-        "event": booking.event.start.strftime("%B %d, %Y at %I:%M %p") if booking.event and booking.event.start else "Unknown",
-        "event_timestamp": booking.event.start.isoformat() if booking.event and booking.event.start else None,
-        "status": latest_payment.status if latest_payment else "Unknown",
-        "amount_paid": latest_payment.amount_paid if latest_payment else 0,
-        "currency": latest_payment.currency if latest_payment else "USD",
-        "checked_in": booking.checked_in,
-        "checkin_time": booking.checkin_time.isoformat() if booking.checkin_time else None
-    })
 
 
-@views.route('/api/admin/login', methods=['POST'])
-def admin_api_login():
-    """API endpoint for staff/admin login for mobile app"""
-    data = request.get_json()
-    username = data.get('username')
-    password = data.get('password')
-    
-    from eventapp.models import User
-    user = User.query.filter_by(username=username).first()
-    
-    if user and user.password == password:
-        # Generate admin token (simple approach - in production use JWT)
-        admin_token = f"admin_{user.username}_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}"
-        
-        return jsonify({
-            "success": True,
-            "token": admin_token,
-            "staff_id": user.username,
-            "name": user.username  # You might want to add a name field to User model
-        })
-    else:
-        return jsonify({
-            "success": False,
-            "reason": "Invalid credentials"
-        }), 401
 
 
-@views.route('/api/admin/checkin/<order_id>', methods=['POST'])
-def admin_checkin_attendee(order_id):
-    """Admin-only endpoint for checking in attendees"""
-    from eventapp.models import Booking
-    from flask import request
-    
-    # Simple admin token check (you should implement proper auth)
-    auth_header = request.headers.get('Authorization')
-    if not auth_header or not auth_header.startswith('Bearer '):
-        return jsonify({"success": False, "reason": "Admin authentication required"}), 401
-    
-    token = auth_header.replace('Bearer ', '')
-    # For now, accept any token that looks like "admin_" followed by something
-    # You should implement proper JWT tokens or session auth
-    if not token.startswith('admin_'):
-        return jsonify({"success": False, "reason": "Invalid admin token"}), 401
-    
-    booking = Booking.query.filter_by(order_id=order_id).first()
-    
-    if not booking:
-        return jsonify({"success": False, "reason": "Booking not found"}), 404
-    
-    # Check if event is currently happening (only allow check-in during event)
-    if booking.event:
-        now = datetime.utcnow()
-        event = booking.event
-        
-        event_start = event.start
-        event_end = event.end
-        
-        if now < event_start:
-            return jsonify({
-                "success": False, 
-                "reason": "Check-in not yet available",
-                "message": f"Check-in opens when event starts at {event_start.strftime('%I:%M %p')}"
-            }), 400
-        
-        if now > event_end:
-            return jsonify({
-                "success": False, 
-                "reason": "Check-in window closed",
-                "message": f"Check-in closed when event ended at {event_end.strftime('%I:%M %p')}"
-            }), 400
-    
-    if booking.checked_in:
-        return jsonify({
-            "success": False, 
-            "reason": "Already checked in",
-            "name": booking.customer.name if booking.customer else "Unknown",
-            "checkin_time": booking.checkin_time.isoformat() if booking.checkin_time else None
-        }), 400
-    
-    # Get request data for logging
-    request_data = request.get_json() or {}
-    staff_id = request_data.get('staff_id', 'unknown')
-    location = request_data.get('location', 'entrance')
-    
-    # Mark as checked in with local time (Pacific/Los Angeles timezone)
-    booking.checked_in = True
-    pacific_tz = pytz.timezone('America/Los_Angeles')
-    booking.checkin_time = datetime.now(pacific_tz).replace(tzinfo=None)  # Store as naive datetime in local time
-    db.session.commit()
-    
-    return jsonify({
-        "success": True,
-        "name": booking.customer.name if booking.customer else "Unknown",
-        "tickets": booking.tickets,
-        "event": booking.event.start.strftime("%B %d, %Y at %I:%M %p") if booking.event and booking.event.start else "Unknown",
-        "checkin_time": booking.checkin_time.isoformat(),
-        "staff_id": staff_id,
-        "location": location
-    })
 
 
 def generate_qr_code(order_id):
