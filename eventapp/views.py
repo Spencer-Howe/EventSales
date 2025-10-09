@@ -23,7 +23,31 @@ views = Blueprint('views', __name__)
 def bookings():
     from eventapp.models import Booking
     bookings = Booking.query.all()
-    return jsonify([b.serialize() for b in bookings])
+    return jsonify([{
+        'id': b.id,
+        'order_id': b.order_id,
+        'tickets': b.tickets,
+        'booking_date': b.booking_date.isoformat() if b.booking_date else None,
+        'checked_in': b.checked_in,
+        'checkin_time': b.checkin_time.isoformat() if b.checkin_time else None,
+        'customer': {
+            'name': b.customer.name if b.customer else None,
+            'email': b.customer.email if b.customer else None,
+            'phone': b.customer.phone if b.customer else None
+        },
+        'event': {
+            'title': b.event.title if b.event else None,
+            'start': b.event.start.isoformat() if b.event and b.event.start else None,
+            'end': b.event.end.isoformat() if b.event and b.event.end else None
+        },
+        'payments': [{
+            'amount_paid': p.amount_paid,
+            'currency': p.currency,
+            'status': p.status,
+            'payment_method': p.payment_method,
+            'payment_date': p.payment_date.isoformat() if p.payment_date else None
+        } for p in b.payments]
+    } for b in bookings])
 @views.route('/admin/booking/<int:booking_id>')
 @login_required
 def booking_detail(booking_id):
@@ -133,10 +157,20 @@ def verify_transaction():
 
 @views.route('/waiver/<order_id>', methods=['GET', 'POST'])
 def sign_waiver(order_id):
-    from eventapp.models import Waiver
+    from eventapp.models import Waiver, Booking
     if request.method == 'POST':
         signature = request.form.get('signature')
-        new_waiver = Waiver(order_id=order_id, signature=signature, signed_date=datetime.utcnow())
+        
+        # Find booking to get customer
+        booking = Booking.query.filter_by(order_id=order_id).first()
+        if not booking or not booking.customer:
+            return "Booking not found", 404
+            
+        new_waiver = Waiver(
+            customer_id=booking.customer.id,
+            signature=signature, 
+            signed_date=datetime.utcnow()
+        )
         db.session.add(new_waiver)
         db.session.commit()
         subject = f"New Waiver Submitted: {order_id}"
@@ -170,16 +204,19 @@ def show_receipt(order_id):
         qr_code = generate_qr_code(order_id)
         booking_info_url = f"https://thehoweranchpayment.com/api/booking/{order_id}"
         
+        # Get latest payment for display
+        latest_payment = existing_booking.payments[0] if existing_booking.payments else None
+        
         return render_template('receipt.html', 
                              order_id=existing_booking.order_id,
-                             name=existing_booking.name,
-                             email=existing_booking.email,
-                             time_slot=existing_booking.time_slot,
+                             name=existing_booking.customer.name if existing_booking.customer else "Unknown",
+                             email=existing_booking.customer.email if existing_booking.customer else "Unknown",
+                             time_slot=existing_booking.event.start if existing_booking.event else None,
                              tickets=existing_booking.tickets,
-                             amount=existing_booking.amount_paid,
-                             currency=existing_booking.currency,
-                             status=existing_booking.status,
-                             phone=existing_booking.phone,
+                             amount=latest_payment.amount_paid if latest_payment else 0,
+                             currency=latest_payment.currency if latest_payment else "USD",
+                             status=latest_payment.status if latest_payment else "Unknown",
+                             phone=existing_booking.customer.phone if existing_booking.customer else None,
                              qr_code=qr_code,
                              checkin_url=booking_info_url)
     
@@ -210,6 +247,8 @@ def show_receipt(order_id):
             return "Event not found", 404
         
         # Create new booking from PayPal details
+        from eventapp.models import Customer, Payment
+        
         payer_info = order_details.get('payer', {})
         name = f"{payer_info.get('name').get('given_name')} {payer_info.get('name').get('surname')}"
         paypal_email = payer_info.get('email_address')
@@ -219,28 +258,45 @@ def show_receipt(order_id):
         currency = order_details['purchase_units'][0]['amount']['currency_code']
         status = order_details.get('status')
         
+        # Find or create customer
+        customer = Customer.query.filter_by(email=email).first()
+        if not customer:
+            customer = Customer(
+                name=name,
+                email=email,
+                phone=phone
+            )
+            db.session.add(customer)
+            db.session.flush()  # Get customer.id
+        
+        # Create booking
         new_booking = Booking(
-            time_slot=event.start,
+            customer_id=customer.id,
+            event_id=event.id,
             tickets=tickets,
             order_id=order_id,
-            amount_paid=amount,
+            reminder_sent=False
+        )
+        db.session.add(new_booking)
+        db.session.flush()  # Get booking.id
+        
+        # Create payment record
+        payment = Payment(
+            booking_id=new_booking.id,
+            amount_paid=float(amount),
             currency=currency,
             status=status,
-            name=name,
-            email=email,
-            phone=phone,
-            reminder_sent=False,
-            payment_method='paypal'
+            payment_method='paypal',
+            paypal_order_id=order_id
         )
-        
-        db.session.add(new_booking)
+        db.session.add(payment)
         db.session.commit()
         
         # Send confirmation email
         email_order_details = {
-            'name': name,
-            'email': email,
-            'phone': phone,
+            'name': customer.name,
+            'email': customer.email,
+            'phone': customer.phone,
             'order_id': order_id,
             'amount': amount,
             'currency': currency,
@@ -321,19 +377,22 @@ def get_booking_info(order_id):
     if not booking:
         return jsonify({"success": False, "reason": "Booking not found"}), 404
     
+    # Get latest payment for status and amount
+    latest_payment = booking.payments[0] if booking.payments else None
+    
     return jsonify({
         "success": True,
         "order_id": booking.order_id,
-        "name": booking.name,
-        "email": booking.email,
+        "name": booking.customer.name if booking.customer else "Unknown",
+        "email": booking.customer.email if booking.customer else "Unknown",
         "tickets": booking.tickets,
-        "event": booking.time_slot.strftime("%B %d, %Y at %I:%M %p") if booking.time_slot else "Unknown",
-        "event_timestamp": booking.time_slot.isoformat() if booking.time_slot else None,
-        "status": booking.status,
-        "amount_paid": booking.amount_paid,
-        "currency": booking.currency,
-        "checked_in": booking.checked_in if hasattr(booking, 'checked_in') else False,
-        "checkin_time": booking.checkin_time.isoformat() if hasattr(booking, 'checkin_time') and booking.checkin_time else None
+        "event": booking.event.start.strftime("%B %d, %Y at %I:%M %p") if booking.event and booking.event.start else "Unknown",
+        "event_timestamp": booking.event.start.isoformat() if booking.event and booking.event.start else None,
+        "status": latest_payment.status if latest_payment else "Unknown",
+        "amount_paid": latest_payment.amount_paid if latest_payment else 0,
+        "currency": latest_payment.currency if latest_payment else "USD",
+        "checked_in": booking.checked_in,
+        "checkin_time": booking.checkin_time.isoformat() if booking.checkin_time else None
     })
 
 
@@ -387,16 +446,9 @@ def admin_checkin_attendee(order_id):
         return jsonify({"success": False, "reason": "Booking not found"}), 404
     
     # Check if event is currently happening (only allow check-in during event)
-    if booking.time_slot:
-        from eventapp.models import Event
+    if booking.event:
         now = datetime.utcnow()
-        event = Event.query.filter_by(start=booking.time_slot).first()
-        
-        if not event:
-            return jsonify({
-                "success": False, 
-                "reason": "Event not found"
-            }), 404
+        event = booking.event
         
         event_start = event.start
         event_end = event.end
@@ -415,12 +467,12 @@ def admin_checkin_attendee(order_id):
                 "message": f"Check-in closed when event ended at {event_end.strftime('%I:%M %p')}"
             }), 400
     
-    if hasattr(booking, 'checked_in') and booking.checked_in:
+    if booking.checked_in:
         return jsonify({
             "success": False, 
             "reason": "Already checked in",
-            "name": booking.name,
-            "checkin_time": booking.checkin_time.isoformat() if hasattr(booking, 'checkin_time') else None
+            "name": booking.customer.name if booking.customer else "Unknown",
+            "checkin_time": booking.checkin_time.isoformat() if booking.checkin_time else None
         }), 400
     
     # Get request data for logging
@@ -436,9 +488,9 @@ def admin_checkin_attendee(order_id):
     
     return jsonify({
         "success": True,
-        "name": booking.name,
+        "name": booking.customer.name if booking.customer else "Unknown",
         "tickets": booking.tickets,
-        "event": booking.time_slot.strftime("%B %d, %Y at %I:%M %p") if booking.time_slot else "Unknown",
+        "event": booking.event.start.strftime("%B %d, %Y at %I:%M %p") if booking.event and booking.event.start else "Unknown",
         "checkin_time": booking.checkin_time.isoformat(),
         "staff_id": staff_id,
         "location": location

@@ -42,7 +42,7 @@ def crypto_checkout():
 
 @crypto_bp.route('/submit_crypto_payment', methods=['GET'])
 def submit_crypto_payment():
-    from .models import Booking
+    from .models import Booking, Customer, Payment
     
     # Get URL parameters
     name = request.args.get('name')
@@ -61,25 +61,40 @@ def submit_crypto_payment():
     # Create order ID
     order_id = f"CRYPTO_{uuid.uuid4().hex[:8].upper()}"
     
-    # Create booking with pending status
+    # Find or create customer
+    customer = Customer.query.filter_by(email=email).first() if email else None
+    if not customer:
+        customer = Customer(
+            name=name or "Anonymous",
+            email=email or "",
+            phone=phone
+        )
+        db.session.add(customer)
+        db.session.flush()  # Get customer.id
+    
+    # Create booking
     new_booking = Booking(
-        time_slot=event.start,
+        customer_id=customer.id,
+        event_id=event.id,
         tickets=tickets,
         order_id=order_id,
+        reminder_sent=False
+    )
+    db.session.add(new_booking)
+    db.session.flush()  # Get booking.id
+    
+    # Create payment record
+    payment = Payment(
+        booking_id=new_booking.id,
         amount_paid=total_price,
         currency='USD',
         status='pending_crypto',
-        name=name,
-        email=email,
-        phone=phone,
-        reminder_sent=False,
         payment_method='crypto',
         crypto_currency=crypto_currency,
         crypto_address=get_crypto_address(crypto_currency),
         transaction_hash=transaction_hash
     )
-    
-    db.session.add(new_booking)
+    db.session.add(payment)
     db.session.commit()
     
     # Send notification email to admin if this is an anonymous booking
@@ -123,8 +138,10 @@ def confirm_crypto_payment(order_id):
     if not booking:
         return "Booking not found", 404
     
-    # Update booking status to confirmed
-    booking.status = 'confirmed'
+    # Update payment status to confirmed
+    for payment in booking.payments:
+        if payment.payment_method == 'crypto':
+            payment.status = 'confirmed'
     db.session.commit()
     
     # Send confirmation email
@@ -132,12 +149,14 @@ def confirm_crypto_payment(order_id):
         subject = 'Payment Confirmed - Howe Ranch'
         html_content = generate_receipt_html(booking)
         
-        msg = Message(
-            subject=subject,
-            recipients=[booking.email],
-            html=html_content,
-            sender=current_app.config['MAIL_DEFAULT_SENDER']
-        )
+        recipient_email = booking.customer.email if booking.customer else None
+        if recipient_email:
+            msg = Message(
+                subject=subject,
+                recipients=[recipient_email],
+                html=html_content,
+                sender=current_app.config['MAIL_DEFAULT_SENDER']
+            )
         mail.send(msg)
     except Exception as e:
         print(f"Email sending failed: {e}")
@@ -159,19 +178,22 @@ def generate_receipt_html(booking):
     from flask import url_for
     waiver_url = url_for('views.sign_waiver', order_id=booking.order_id, _external=True)
     
+    # Get latest payment details
+    latest_payment = booking.payments[0] if booking.payments else None
+    
     return f"""
     
     <html>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
             <h1 style="color: #2e6c80;">Payment Receipt</h1>
-            <p><strong>Name:</strong> {booking.name}</p>
-            <p><strong>Email:</strong> {booking.email}</p>
-            <p><strong>Phone Number:</strong> {booking.phone}</p>
+            <p><strong>Name:</strong> {booking.customer.name if booking.customer else "Unknown"}</p>
+            <p><strong>Email:</strong> {booking.customer.email if booking.customer else "Unknown"}</p>
+            <p><strong>Phone Number:</strong> {booking.customer.phone if booking.customer else "Unknown"}</p>
             <p><strong>Order ID:</strong> {booking.order_id}</p>
-            <p><strong>Total Amount:</strong> {booking.amount_paid}</p>
-            <p><strong>Currency:</strong> {booking.currency}</p>
-            <p><strong>Status:</strong> {booking.status}</p>
-            <p><strong>Time Slot:</strong> {booking.time_slot}</p>
+            <p><strong>Total Amount:</strong> {latest_payment.amount_paid if latest_payment else 0}</p>
+            <p><strong>Currency:</strong> {latest_payment.currency if latest_payment else "USD"}</p>
+            <p><strong>Status:</strong> {latest_payment.status if latest_payment else "Unknown"}</p>
+            <p><strong>Time Slot:</strong> {booking.event.start if booking.event else "Unknown"}</p>
             <p><strong>Number of Tickets:</strong> {booking.tickets}</p>
             <p>Please review and sign the waiver if you did not already finish the registration after checkout 
                 <a href="{waiver_url}" style="color: #1a73e8;">here</a>.
@@ -192,7 +214,7 @@ def generate_receipt_html(booking):
             <ul style="padding-left: 20px;">
                 <li>
                     <strong>Arrival Time:</strong><br>
-                    Please do <strong>not arrive earlier than your reserved time slot at {booking.time_slot}</strong>. Early arrivals are not permitted, as we are actively preparing the animals and property for your visit.<br><br>
+                    Please do <strong>not arrive earlier than your reserved time slot at {booking.event.start if booking.event else "Unknown"}</strong>. Early arrivals are not permitted, as we are actively preparing the animals and property for your visit.<br><br>
                     Please <strong>do not stage on the private road</strong>, as this creates a safety and liability concern.
                 </li>
                 <br>

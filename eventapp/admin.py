@@ -52,10 +52,11 @@ class CryptoAdminView(BaseView):
     def index(self):
         # look for open crypto payments
         try:
-            # Filter for crypto payments - these would have payment_method='crypto'
-            crypto_bookings = Booking.query.filter(
-                Booking.payment_method == 'crypto',
-                Booking.status == 'pending_crypto'
+            # Filter for crypto payments using the new Payment table
+            from eventapp.models import Payment
+            crypto_bookings = Booking.query.join(Payment).filter(
+                Payment.payment_method == 'crypto',
+                Payment.status == 'pending_crypto'
             ).all()
         except Exception as e:
             # field doesnt exist yet
@@ -81,21 +82,22 @@ class SearchBookingsView(BaseView):
             search_type = request.form.get('search_type', 'name')
             
             if search_term:
+                from eventapp.models import Customer
                 if search_type == 'name':
-                    search_results = Booking.query.filter(
-                        Booking.name.ilike(f'%{search_term}%')
+                    search_results = Booking.query.join(Customer).filter(
+                        Customer.name.ilike(f'%{search_term}%')
                     ).all()
                 elif search_type == 'email':
-                    search_results = Booking.query.filter(
-                        Booking.email.ilike(f'%{search_term}%')
+                    search_results = Booking.query.join(Customer).filter(
+                        Customer.email.ilike(f'%{search_term}%')
                     ).all()
                 elif search_type == 'order_id':
                     search_results = Booking.query.filter(
                         Booking.order_id.ilike(f'%{search_term}%')
                     ).all()
                 elif search_type == 'phone':
-                    search_results = Booking.query.filter(
-                        Booking.phone.ilike(f'%{search_term}%')
+                    search_results = Booking.query.join(Customer).filter(
+                        Customer.phone.ilike(f'%{search_term}%')
                     ).all()
         
         return self.render('admin/search_bookings.html', 
@@ -126,39 +128,47 @@ class ReportsView(BaseView):
             # base
             query = Booking.query
             
-            # add filters
+            # add filters - join with Event for date filtering
+            from eventapp.models import Event
+            query = query.join(Event)
+            
             if date_from:
                 date_from_obj = datetime.strptime(date_from, '%Y-%m-%d')
-                query = query.filter(Booking.time_slot >= date_from_obj)
+                query = query.filter(Event.start >= date_from_obj)
             
             if date_to:
                 date_to_obj = datetime.strptime(date_to, '%Y-%m-%d')
                 # Add 1 day to include the end date
                 date_to_obj = date_to_obj + timedelta(days=1)
-                query = query.filter(Booking.time_slot < date_to_obj)
+                query = query.filter(Event.start < date_to_obj)
             
             if report_type == 'sales':
-                # Sales report
-                report_data = query.filter(Booking.status.in_(['confirmed', 'pending_crypto'])).all()
+                # Sales report - filter by payment status
+                from eventapp.models import Payment
+                report_data = query.join(Payment).filter(
+                    Payment.status.in_(['confirmed', 'pending_crypto'])
+                ).all()
             elif report_type == 'attendance':
                 # check booking numbers
+                from eventapp.models import Payment, Event
                 report_data = db.session.query(
-                    Booking.time_slot,
+                    Event.start,
                     func.count(Booking.id).label('total_bookings'),
                     func.sum(Booking.tickets).label('total_attendees'),
-                    func.sum(Booking.amount_paid).label('total_revenue')
-                ).filter(
-                    Booking.status.in_(['confirmed', 'pending_crypto'])
-                ).group_by(Booking.time_slot).all()
+                    func.sum(Payment.amount_paid).label('total_revenue')
+                ).join(Event).join(Payment).filter(
+                    Payment.status.in_(['confirmed', 'pending_crypto'])
+                ).group_by(Event.start).all()
             elif report_type == 'payment_methods':
-                # check paymnent methods to see crypto buisness needs
+                # check payment methods to see crypto business needs
+                from eventapp.models import Payment
                 report_data = db.session.query(
-                    Booking.payment_method,
+                    Payment.payment_method,
                     func.count(Booking.id).label('booking_count'),
-                    func.sum(Booking.amount_paid).label('total_amount')
-                ).filter(
-                    Booking.status.in_(['confirmed', 'pending_crypto'])
-                ).group_by(Booking.payment_method).all()
+                    func.sum(Payment.amount_paid).label('total_amount')
+                ).join(Payment).filter(
+                    Payment.status.in_(['confirmed', 'pending_crypto'])
+                ).group_by(Payment.payment_method).all()
         
         return self.render('admin/reports.html',
                          report_data=report_data,
@@ -186,13 +196,14 @@ class AttendanceLookupView(BaseView):
                 selected_event = Event.query.get(event_id)
                 if selected_event:
                     # Get attendance count for this specific event
+                    from eventapp.models import Payment
                     attendance_data = db.session.query(
                         func.sum(Booking.tickets).label('total_attendees'),
                         func.count(Booking.id).label('total_bookings'),
-                        func.sum(Booking.amount_paid).label('total_revenue')
-                    ).filter(
-                        Booking.time_slot == selected_event.start,
-                        Booking.status.in_(['confirmed', 'pending_crypto'])
+                        func.sum(Payment.amount_paid).label('total_revenue')
+                    ).join(Payment).filter(
+                        Booking.event_id == selected_event.id,
+                        Payment.status.in_(['confirmed', 'pending_crypto'])
                     ).first()
         
         return self.render('admin/attendance_lookup.html',

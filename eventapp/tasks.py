@@ -10,9 +10,9 @@ tasks = Blueprint('tasks', __name__)
 def send_reminder_email(booking):
     subject = "Booking Reminder - Upcoming Event at Howe Ranch"
     sender = current_app.config['MAIL_USERNAME']
-    recipient = booking.email
-    time_slot = booking.time_slot.strftime('%Y-%m-%d %H:%M:%S')
-    name = booking.name
+    recipient = booking.customer.email if booking.customer else "unknown@email.com"
+    time_slot = booking.event.start.strftime('%Y-%m-%d %H:%M:%S') if booking.event else "Unknown"
+    name = booking.customer.name if booking.customer else "Unknown"
 
     # Email content
     html_content = f"""
@@ -83,16 +83,20 @@ def send_personal_notification(booking):
     sender = current_app.config['MAIL_USERNAME']
     recipient = ["spencerahowe99@gmail.com", "bixihowe@gmail.com"]
 
+    # Get latest payment for amount
+    latest_payment = booking.payments[0] if booking.payments else None
+    amount_paid = latest_payment.amount_paid if latest_payment else 0
+    
     html_content = f"""
     <html>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
             <h2>Private Tour Booking Alert</h2>
             <p>A booking has been made that appears to be a private tour:</p>
             <ul>
-                <li><strong>Name:</strong> {booking.name}</li>
-                <li><strong>Email:</strong> {booking.email}</li>
-                <li><strong>Time Slot:</strong> {booking.time_slot.strftime('%Y-%m-%d %H:%M:%S')}</li>
-                <li><strong>Amount Paid:</strong> ${booking.amount_paid}</li>
+                <li><strong>Name:</strong> {booking.customer.name if booking.customer else "Unknown"}</li>
+                <li><strong>Email:</strong> {booking.customer.email if booking.customer else "Unknown"}</li>
+                <li><strong>Time Slot:</strong> {booking.event.start.strftime('%Y-%m-%d %H:%M:%S') if booking.event else "Unknown"}</li>
+                <li><strong>Amount Paid:</strong> ${amount_paid}</li>
             </ul>
             <p>This is for your records only.</p>
         </body>
@@ -103,7 +107,7 @@ def send_personal_notification(booking):
 
     try:
         mail.send(msg)
-        print(f"Personal notification sent for private tour booking by {booking.name}")
+        print(f"Personal notification sent for private tour booking by {booking.customer.name if booking.customer else 'Unknown'}")
     except Exception as e:
         print(f"Failed to send personal notification: {str(e)}")
 
@@ -113,9 +117,11 @@ def check_and_send_reminders(app):
         end_time = now + timedelta(hours=24)
 
         # Query bookings within the 24-hour window that haven't been sent a reminder
-        bookings = Booking.query.filter(
-            Booking.time_slot >= now,
-            Booking.time_slot < end_time,
+        # Join with Event to check event start times
+        from eventapp.models import Event
+        bookings = Booking.query.join(Event).filter(
+            Event.start >= now,
+            Event.start < end_time,
             Booking.reminder_sent == False  # Only unsent reminders
         ).all()
 
@@ -123,7 +129,8 @@ def check_and_send_reminders(app):
             send_reminder_email(booking)
 
             # If this is a private tour (amount_paid == 250), send personal notification
-            if booking.amount_paid == 250:
+            latest_payment = booking.payments[0] if booking.payments else None
+            if latest_payment and latest_payment.amount_paid == 250:
                 send_personal_notification(booking)
 
         print(f"Checked and processed reminders for bookings between {now} and {end_time}")
