@@ -18,16 +18,16 @@ def get_total_price(event, tickets):
 
 def check_capacity(event, tickets):
     """Check if booking fits capacity"""
-    from .models import Booking
+    from .models import Booking, Payment
     
     # Private events don't use capacity system
     if 'private' in event.title.lower():
         return True, None
     
-    # Get current bookings for this time slot
-    current_bookings = db.session.query(db.func.sum(Booking.tickets)).filter(
-        Booking.time_slot == event.start,
-        Booking.status == 'COMPLETED'
+    # Get current bookings for this event using new schema
+    current_bookings = db.session.query(db.func.sum(Booking.tickets)).join(Payment).filter(
+        Booking.event_id == event.id,
+        Payment.status.in_(['COMPLETED', 'pending_crypto'])
     ).scalar() or 0
     
     # Open farm days: allow 10% overage buffer for flexibility
