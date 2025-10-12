@@ -23,7 +23,7 @@ class CalendarView(BaseView):
         return current_user.is_authenticated
 
     def inaccessible_callback(self, name, **kwargs):
-        return redirect(url_for('login'))
+        return redirect(url_for('views.login_view'))
 
 class EventURLsView(BaseView):
     @expose('/')
@@ -45,7 +45,7 @@ class EventURLsView(BaseView):
         return current_user.is_authenticated
 
     def inaccessible_callback(self, name, **kwargs):
-        return redirect(url_for('views.login'))
+        return redirect(url_for('views.login_view'))
 
 class CryptoAdminView(BaseView):
     @expose('/')
@@ -68,7 +68,7 @@ class CryptoAdminView(BaseView):
         return current_user.is_authenticated
 
     def inaccessible_callback(self, name, **kwargs):
-        return redirect(url_for('views.login'))
+        return redirect(url_for('views.login_view'))
 
 class SearchBookingsView(BaseView):
     @expose('/', methods=['GET', 'POST'])
@@ -109,7 +109,7 @@ class SearchBookingsView(BaseView):
         return current_user.is_authenticated
 
     def inaccessible_callback(self, name, **kwargs):
-        return redirect(url_for('views.login'))
+        return redirect(url_for('views.login_view'))
 
 class ReportsView(BaseView):
     @expose('/', methods=['GET', 'POST'])
@@ -146,19 +146,20 @@ class ReportsView(BaseView):
                 # Sales report - filter by payment status
                 from eventapp.models import Payment
                 report_data = query.join(Payment).filter(
-                    Payment.status.in_(['confirmed', 'pending_crypto'])
+                    Payment.status.in_(['COMPLETED', 'pending_crypto'])
                 ).all()
             elif report_type == 'attendance':
                 # check booking numbers
                 from eventapp.models import Payment, Event
                 report_data = db.session.query(
                     Event.start,
+                    Event.title,
                     func.count(Booking.id).label('total_bookings'),
                     func.sum(Booking.tickets).label('total_attendees'),
                     func.sum(Payment.amount_paid).label('total_revenue')
                 ).join(Event).join(Payment).filter(
-                    Payment.status.in_(['confirmed', 'pending_crypto'])
-                ).group_by(Event.start).all()
+                    Payment.status.in_(['COMPLETED', 'pending_crypto'])
+                ).group_by(Event.id, Event.start, Event.title).all()
             elif report_type == 'payment_methods':
                 # check payment methods to see crypto business needs
                 from eventapp.models import Payment
@@ -166,8 +167,8 @@ class ReportsView(BaseView):
                     Payment.payment_method,
                     func.count(Booking.id).label('booking_count'),
                     func.sum(Payment.amount_paid).label('total_amount')
-                ).join(Payment).filter(
-                    Payment.status.in_(['confirmed', 'pending_crypto'])
+                ).join(Booking).filter(
+                    Payment.status.in_(['COMPLETED', 'pending_crypto'])
                 ).group_by(Payment.payment_method).all()
         
         return self.render('admin/reports.html',
@@ -181,7 +182,7 @@ class ReportsView(BaseView):
         return current_user.is_authenticated
 
     def inaccessible_callback(self, name, **kwargs):
-        return redirect(url_for('views.login'))
+        return redirect(url_for('views.login_view'))
 
 class AttendanceLookupView(BaseView):
     @expose('/', methods=['GET', 'POST'])
@@ -203,7 +204,7 @@ class AttendanceLookupView(BaseView):
                         func.sum(Payment.amount_paid).label('total_revenue')
                     ).join(Payment).filter(
                         Booking.event_id == selected_event.id,
-                        Payment.status.in_(['confirmed', 'pending_crypto'])
+                        Payment.status.in_(['COMPLETED', 'pending_crypto'])
                     ).first()
         
         return self.render('admin/attendance_lookup.html',
@@ -215,7 +216,7 @@ class AttendanceLookupView(BaseView):
         return current_user.is_authenticated
 
     def inaccessible_callback(self, name, **kwargs):
-        return redirect(url_for('views.login'))
+        return redirect(url_for('views.login_view'))
 
 
 # EventModelView for Flask-Admin
@@ -239,7 +240,7 @@ class EventModelView(ModelView):
         return current_user.is_authenticated
 
     def inaccessible_callback(self, name, **kwargs):
-        return redirect(url_for('views.login'))
+        return redirect(url_for('views.login_view'))
 
 
 # Custom AdminIndexView
@@ -248,7 +249,7 @@ class MyAdminIndexView(AdminIndexView):
         return current_user.is_authenticated
 
     def inaccessible_callback(self, name, **kwargs):
-        return redirect(url_for('views.login'))
+        return redirect(url_for('views.login_view'))
 
 def setup_admin(app):
     from eventapp.models import Event

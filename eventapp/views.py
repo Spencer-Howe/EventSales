@@ -144,6 +144,7 @@ def sign_waiver(order_id):
             
         new_waiver = Waiver(
             customer_id=booking.customer.id,
+            order_id=order_id,
             signature=signature, 
             signed_date=datetime.utcnow()
         )

@@ -87,6 +87,7 @@ class Payment(db.Model):
 # Waiver model - updated to use customer relationship
 class Waiver(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.String(120), nullable=False)
     signature = db.Column(db.String(500), nullable=False)
     signed_date = db.Column(db.DateTime, nullable=False)
     

@@ -1,364 +1,43 @@
 {% extends "base.html" %}
 
-{% block title %}Crypto Payment Admin{% endblock %}
+{% block title %}Crypto Admin{% endblock %}
 
 {% block content %}
-<style>
-.crypto-admin-header {
-  background: linear-gradient(135deg, #f7931e 0%, #1b1b1b 100%);
-  color: white;
-  padding: 2rem;
-  border-radius: 15px;
-  margin-bottom: 2rem;
-}
-
-.pending-card {
-  border: none;
-  border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-  margin-bottom: 1.5rem;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.pending-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-}
-
-.crypto-badge {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: #f7931e;
-  color: white;
-  padding: 8px 15px;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: bold;
-}
-
-.confirm-btn {
-  background: linear-gradient(45deg, #28a745, #20c997);
-  border: none;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 25px;
-  font-weight: bold;
-  transition: all 0.3s ease;
-  text-decoration: none;
-  display: inline-block;
-}
-
-.confirm-btn:hover {
-  transform: scale(1.05);
-  color: white;
-  text-decoration: none;
-}
-
-.blockchain-btn {
-  background: linear-gradient(45deg, #007bff, #0056b3);
-  border: none;
-  color: white;
-  padding: 8px 15px;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  margin: 2px;
-  text-decoration: none;
-  display: inline-block;
-}
-
-.blockchain-btn:hover {
-  color: white;
-  text-decoration: none;
-}
-
-.reject-btn {
-  background: linear-gradient(45deg, #dc3545, #c82333);
-  border: none;
-  color: white;
-  padding: 8px 15px;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  margin: 2px;
-}
-
-.crypto-info {
-  background: #f8f9fa;
-  border-radius: 10px;
-  padding: 1rem;
-}
-
-.hash-display {
-  background: #1b1b1b;
-  color: #f7931e;
-  padding: 10px;
-  border-radius: 8px;
-  font-family: 'Courier New', monospace;
-  word-break: break-all;
-  font-size: 0.9rem;
-  position: relative;
-}
-
-.copy-hash-btn {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  background: #f7931e;
-  border: none;
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 0.7rem;
-}
-
-.customer-info {
-  background: linear-gradient(135deg, #e3f2fd 0%, #ffffff 100%);
-  border-radius: 10px;
-  padding: 1rem;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 3rem;
-  color: #6c757d;
-}
-
-.stats-row {
-  background: #f8f9fa;
-  border-radius: 10px;
-  padding: 1rem;
-  margin-bottom: 2rem;
-}
-
-.refresh-notice {
-  background: #fff3cd;
-  border: 1px solid #ffeaa7;
-  border-radius: 10px;
-  padding: 1rem;
-  margin-bottom: 2rem;
-  text-center;
-}
-</style>
-
-<div class="container-fluid">
-  <!-- Header -->
-  <div class="crypto-admin-header text-center">
-    <h1 class="display-6 fw-bold mb-2">₿ Cryptocurrency Admin</h1>
-    <p class="lead mb-0">Manage and confirm cryptocurrency payments</p>
-  </div>
+<div class="container">
+  <h1>Crypto Payment Admin</h1>
   
-  <!-- Auto-refresh notice -->
-  <div class="refresh-notice">
-    <small>🔄 This page auto-refreshes every 60 seconds to show new payments</small>
-  </div>
-  
-  <!-- Stats Row -->
-  <div class="stats-row">
-    <div class="row text-center">
-      <div class="col-md-3">
-        <div class="h4 text-warning fw-bold">{{ bookings|length }}</div>
-        <small class="text-muted">Pending Payments</small>
-      </div>
-      <div class="col-md-3">
-        <div class="h4 text-success fw-bold">${{ "%.2f"|format(bookings|selectattr('payments')|map(attribute='payments')|map('first')|selectattr('amount_paid')|map(attribute='amount_paid')|sum or 0) }}</div>
-        <small class="text-muted">Total Value</small>
-      </div>
-      <div class="col-md-3">
-        <div class="h4 text-info fw-bold">Multi-Chain</div>
-        <small class="text-muted">Supported</small>
-      </div>
-      <div class="col-md-3">
-        <div class="h4 text-primary fw-bold">Instant</div>
-        <small class="text-muted">Verification</small>
-      </div>
-    </div>
-  </div>
-
   {% if bookings %}
-    <h3 class="fw-bold mb-4">⏳ Pending Crypto Payments</h3>
+    <p>Found {{ bookings|length }} pending crypto payments</p>
     
-    <div class="row">
-      {% for booking in bookings %}
-      <div class="col-lg-6 col-xl-4 mb-4">
-        <div class="pending-card position-relative">
-          <div class="crypto-badge">{{ booking.payments[0].crypto_currency if booking.payments else 'No crypto' }}</div>
-          
-          <div class="card-body p-4">
-            <!-- Order Header -->
-            <div class="d-flex justify-content-between align-items-start mb-3">
-              <div>
-                <h5 class="fw-bold text-primary mb-1">{{ booking.order_id }}</h5>
-                <small class="text-muted">
-                  📅 {{ booking.event.start.strftime('%Y-%m-%d %H:%M') if booking.event and booking.event.start else 'No date' }}
-                </small>
-              </div>
-              <span class="badge bg-warning text-dark">PENDING</span>
-            </div>
-            
-            <!-- Customer Info -->
-            <div class="customer-info mb-3">
-              <h6 class="fw-bold mb-2">👤 Customer Details</h6>
-              <div class="small">
-                <strong>{{ booking.customer.name if booking.customer else 'No name' }}</strong><br>
-                📧 {{ booking.customer.email if booking.customer else 'No email' }}<br>
-                📱 {{ booking.customer.phone if booking.customer else 'No phone' }}
-              </div>
-            </div>
-            
-            <!-- Event Info -->
-            <div class="mb-3">
-              <h6 class="fw-bold mb-2">🎟️ Event Details</h6>
-              <div class="d-flex justify-content-between">
-                <span>👥 Tickets:</span>doc
-                <strong>{{ booking.tickets }}</strong>
-              </div>
-              <div class="d-flex justify-content-between">
-                <span>💰 Amount:</span>
-                <strong class="text-success">${{ "%.2f"|format(booking.payments[0].amount_paid) if booking.payments else 'No payment' }}</strong>
-              </div>
-              <small class="text-muted">
-                📅 {{ booking.event.start.strftime('%B %d, %Y at %I:%M %p') if booking.event and booking.event.start else 'No time set' }}
-              </small>
-            </div>
-            
-            <!-- Crypto Info -->
-            <div class="crypto-info mb-3">
-              <h6 class="fw-bold mb-2">₿ Payment Info</h6>
-              {% if booking.payments and booking.payments[0].transaction_hash %}
-                <small class="text-muted d-block mb-1">🔗 Transaction Hash:</small>
-                <div class="hash-display mb-2">
-                  {{ booking.payments[0].transaction_hash }}
-                  <button type="button" class="copy-hash-btn" onclick="copyToClipboard('{{ booking.payments[0].transaction_hash }}')">
-                    📋
-                  </button>
-                </div>
-              {% endif %}
-              {% if booking.payments and booking.payments[0].crypto_address %}
-                <small class="text-muted d-block mb-1">📍 Payment Address:</small>
-                <div class="hash-display">{{ booking.payments[0].crypto_address }}</div>
-              {% endif %}
-            </div>
-            
-            <!-- Action Buttons -->
-            <div class="text-center">
-              <a href="{{ url_for('crypto.confirm_crypto_payment', order_id=booking.order_id) }}" 
-                 class="confirm-btn w-100 mb-2"
-                 onclick="return confirm('🚀 Confirm this {{ booking.payments[0].crypto_currency if booking.payments else 'crypto' }} payment for ${{ \"%.2f\"|format(booking.payments[0].amount_paid) if booking.payments else 0 }}?\n\nThis will:\n✅ Mark payment as confirmed\n📧 Send receipt email to customer\n🎟️ Activate their booking')">
-                <span class="me-2">✅</span>Confirm Payment
-              </a>
-              
-              <div class="mt-2">
-                {% if booking.payments and booking.payments[0].crypto_currency == 'BTC' %}
-                  <a href="https://blockstream.info/tx/{{ booking.payments[0].transaction_hash }}" 
-                     target="_blank" class="blockchain-btn">
-                    🔍 View on Blockchain
-                  </a>
-                {% elif booking.payments and booking.payments[0].crypto_currency == 'LTC' %}
-                  <a href="https://blockchair.com/litecoin/transaction/{{ booking.payments[0].transaction_hash }}" 
-                     target="_blank" class="blockchain-btn">
-                    🔍 View on Blockchair
-                  </a>
-                {% elif booking.payments and booking.payments[0].crypto_currency == 'XMR' %}
-                  <span class="blockchain-btn" style="background: #666;">
-                    🔒 Private Transaction
-                  </span>
-                {% endif %}
-                
-                <button type="button" class="reject-btn" onclick="rejectPayment('{{ booking.order_id }}')">
-                  ❌ Reject
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+    {% for booking in bookings %}
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5>Order: {{ booking.order_id }}</h5>
+        
+        <p><strong>Customer:</strong> {{ booking.customer.name if booking.customer else 'No name' }}</p>
+        <p><strong>Email:</strong> {{ booking.customer.email if booking.customer else 'No email' }}</p>
+        <p><strong>Tickets:</strong> {{ booking.tickets }}</p>
+        
+        {% if booking.payments %}
+          <p><strong>Amount:</strong> ${{ booking.payments[0].amount_paid }}</p>
+          <p><strong>Currency:</strong> {{ booking.payments[0].crypto_currency }}</p>
+          {% if booking.payments[0].transaction_hash %}
+            <p><strong>Hash:</strong> {{ booking.payments[0].transaction_hash }}</p>
+          {% endif %}
+        {% endif %}
+        
+        <a href="{{ url_for('crypto.confirm_crypto_payment', order_id=booking.order_id) }}" 
+           class="btn btn-success"
+           onclick="return confirm('Confirm this payment?')">
+          Confirm Payment
+        </a>
       </div>
-      {% endfor %}
     </div>
+    {% endfor %}
   {% else %}
-    <div class="empty-state">
-      <div class="mb-4">
-        <i class="fab fa-bitcoin" style="font-size: 4rem; color: #f7931e;"></i>
-      </div>
-      <h4 class="fw-bold mb-3">No Pending Crypto Payments</h4>
-      <p class="text-muted mb-4">All cryptocurrency payments have been processed or there are no crypto payments at this time.</p>
-      <div class="row justify-content-center">
-        <div class="col-md-8">
-          <div class="card border-0 bg-light">
-            <div class="card-body p-4">
-              <h6 class="fw-bold mb-3">📊 Supported Cryptocurrencies</h6>
-              <div class="row text-center">
-                <div class="col-4">
-                  <div class="h3 text-warning">₿</div>
-                  <small>Bitcoin</small>
-                </div>
-                <div class="col-4">
-                  <div class="h3 text-secondary">Ł</div>
-                  <small>Litecoin</small>
-                </div>
-                <div class="col-4">
-                  <div class="h3 text-danger">ɱ</div>
-                  <small>Monero</small>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <p>No pending crypto payments.</p>
   {% endif %}
   
-  <!-- Back Button -->
-  <div class="text-center mt-4">
-    <a href="{{ url_for('admin.index') }}" class="btn btn-secondary">
-      ← Back to Admin Dashboard
-    </a>
-  </div>
+  <a href="{{ url_for('admin.index') }}" class="btn btn-secondary">Back to Admin</a>
 </div>
-
-<script>
-function copyToClipboard(text) {
-  navigator.clipboard.writeText(text).then(function() {
-    // Show success feedback
-    const event = window.event;
-    const btn = event.target;
-    const originalText = btn.textContent;
-    btn.textContent = '✓';
-    btn.style.background = '#28a745';
-    
-    setTimeout(() => {
-      btn.textContent = originalText;
-      btn.style.background = '#f7931e';
-    }, 2000);
-  }, function(err) {
-    console.error('Could not copy text: ', err);
-    alert('Failed to copy. Please copy manually.');
-  });
-}
-
-function rejectPayment(orderId) {
-  if (confirm('⚠️ Are you sure you want to reject this payment?\n\nThis action cannot be undone and the customer will need to submit a new payment.')) {
-    alert('🚧 Rejection functionality not yet implemented.\n\nPlease handle manually by:\n1. Not confirming the payment\n2. Contacting the customer directly\n3. Requesting a new payment if needed');
-  }
-}
-
-// Auto-refresh every 60 seconds
-setTimeout(function() {
-  location.reload();
-}, 60000);
-
-// Add loading states to confirm buttons
-document.addEventListener('DOMContentLoaded', function() {
-  const confirmButtons = document.querySelectorAll('.confirm-btn');
-  confirmButtons.forEach(btn => {
-    btn.addEventListener('click', function() {
-      if (this.onclick && this.onclick()) {
-        this.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
-        this.style.pointerEvents = 'none';
-      }
-    });
-  });
-});
-</script>
-
 {% endblock %}

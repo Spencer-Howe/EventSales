@@ -106,7 +106,9 @@ def admin_checkin_attendee(order_id):
     
     # Check if event is currently happening (only allow check-in during event)
     if booking.event:
-        now = datetime.utcnow()
+        # Use local time (Pacific timezone) for comparison since events are stored in local time
+        pacific_tz = pytz.timezone('America/Los_Angeles')
+        now = datetime.now(pacific_tz).replace(tzinfo=None)  # Convert to naive datetime for comparison
         event = booking.event
         
         event_start = event.start
@@ -255,4 +257,99 @@ def get_all_bookings():
                 'payment_date': p.payment_date.isoformat() if p.payment_date else None
             } for p in b.payments]
         } for b in bookings]
+    })
+
+
+@android_api.route('/admin/events/checkin-stats', methods=['GET'])
+def get_events_checkin_stats():
+    """Get events with check-in statistics for admin"""
+    from eventapp.models import Event, Booking
+    from sqlalchemy import func
+    
+    # Simple admin check
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer admin_'):
+        return jsonify({"success": False, "reason": "Admin authentication required"}), 401
+    
+    # Get events that have bookings
+    events_with_stats = db.session.query(
+        Event.id,
+        Event.title,
+        Event.start,
+        Event.end,
+        func.count(Booking.id).label('total_bookings'),
+        func.sum(func.case([(Booking.checked_in == True, 1)], else_=0)).label('checked_in_count'),
+        func.sum(Booking.tickets).label('total_tickets')
+    ).join(Booking).group_by(Event.id).all()
+    
+    events_data = []
+    for event_stat in events_with_stats:
+        checked_in = event_stat.checked_in_count or 0
+        remaining = event_stat.total_bookings - checked_in
+        
+        events_data.append({
+            'event_id': event_stat.id,
+            'title': event_stat.title,
+            'start': event_stat.start.isoformat() if event_stat.start else None,
+            'end': event_stat.end.isoformat() if event_stat.end else None,
+            'total_bookings': event_stat.total_bookings,
+            'total_tickets': event_stat.total_tickets or 0,
+            'checked_in_count': checked_in,
+            'remaining_count': remaining,
+            'completion_percentage': round((checked_in / event_stat.total_bookings) * 100, 1) if event_stat.total_bookings > 0 else 0
+        })
+    
+    return jsonify({
+        "success": True,
+        "events": events_data
+    })
+
+
+@android_api.route('/admin/events/<int:event_id>/bookings', methods=['GET'])
+def get_event_bookings(event_id):
+    """Get all bookings for a specific event with check-in status"""
+    from eventapp.models import Event, Booking
+    
+    # Simple admin check
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer admin_'):
+        return jsonify({"success": False, "reason": "Admin authentication required"}), 401
+    
+    event = Event.query.get_or_404(event_id)
+    bookings = Booking.query.filter_by(event_id=event_id).all()
+    
+    bookings_data = []
+    for booking in bookings:
+        latest_payment = booking.payments[0] if booking.payments else None
+        
+        bookings_data.append({
+            'booking_id': booking.id,
+            'order_id': booking.order_id,
+            'customer_name': booking.customer.name if booking.customer else "Unknown",
+            'customer_email': booking.customer.email if booking.customer else "Unknown",
+            'customer_phone': booking.customer.phone if booking.customer else None,
+            'tickets': booking.tickets,
+            'checked_in': booking.checked_in,
+            'checkin_time': booking.checkin_time.isoformat() if booking.checkin_time else None,
+            'booking_date': booking.booking_date.isoformat() if booking.booking_date else None,
+            'amount_paid': latest_payment.amount_paid if latest_payment else 0,
+            'currency': latest_payment.currency if latest_payment else 'USD',
+            'status': latest_payment.status if latest_payment else 'unknown'
+        })
+    
+    return jsonify({
+        "success": True,
+        "event": {
+            "id": event.id,
+            "title": event.title,
+            "start": event.start.isoformat() if event.start else None,
+            "end": event.end.isoformat() if event.end else None
+        },
+        "bookings": bookings_data,
+        "summary": {
+            "total_bookings": len(bookings),
+            "checked_in": sum(1 for b in bookings if b.checked_in),
+            "remaining": sum(1 for b in bookings if not b.checked_in),
+            "total_tickets": sum(b.tickets for b in bookings)
+        }
     })
