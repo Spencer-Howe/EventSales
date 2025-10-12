@@ -94,9 +94,21 @@ def checkout():
 
     # Query the event from the database
     from .models import Event
-    from .pricing import get_total_price, get_booking_summary
+    from .pricing import get_total_price, get_booking_summary, check_capacity
     
     event = Event.query.get_or_404(event_id)
+
+    # Check capacity first
+    can_book, capacity_error = check_capacity(event, tickets)
+    if not can_book:
+        return render_template('checkout.html',
+                             time_slot='Event Full',
+                             tickets=tickets,
+                             total_price=0,
+                             paypal_client_id=current_app.config['PAYPAL_CLIENT_ID'],
+                             event_title=event.title,
+                             event_description=event.description,
+                             error_message=capacity_error)
 
     # Calculate the total price using pricing module
     total_price = get_total_price(event, tickets)
@@ -105,14 +117,15 @@ def checkout():
     booking_summary = get_booking_summary(event, tickets, total_price)
 
     # Pass all details to the template
-    return render_template('some_template.html',
+    return render_template('checkout.html',
                            event_id=event.id,
                            event_title=booking_summary['event_title'],
                            event_description=booking_summary['event_description'],
                            time_slot=booking_summary['time_slot'],
                            tickets=tickets,
                            total_price=total_price,
-                           paypal_client_id=current_app.config['PAYPAL_CLIENT_ID'])
+                           paypal_client_id=current_app.config['PAYPAL_CLIENT_ID'],
+                           error_message=None)
 
 
 @views.route('/verify_transaction', methods=['POST'])

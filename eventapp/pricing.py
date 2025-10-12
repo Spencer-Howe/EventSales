@@ -6,11 +6,9 @@ from .extensions import db
 
 def get_total_price(event, tickets):
     """Calculate total price for any event"""
-    # Private events: flat rate regardless of ticket count
-    if 'private boo' in event.title.lower() and 'moo' in event.title.lower():
+    # Private events: flat $350 rate regardless of ticket count
+    if event.is_private:
         return 350
-    if 'private experience' in event.title.lower():
-        return 250
     
     # Regular events: price per ticket
     return tickets * event.price_per_ticket
@@ -19,30 +17,41 @@ def get_total_price(event, tickets):
 def check_capacity(event, tickets):
     """Check if booking fits capacity"""
     from .models import Booking, Payment
+    from datetime import datetime, timedelta
     
-    # Private events don't use capacity system
-    if 'private' in event.title.lower():
+    # Private events don't use capacity system but need 24hr notice and max 10 people
+    if event.is_private:
+        # Check guest count limit for private events
+        if tickets > 10:
+            return False, f"Private events accommodate up to 10 guests maximum. Please contact us for larger groups."
+        
+        # Check 24-hour advance booking requirement using Pacific time
+        import pytz
+        pacific_tz = pytz.timezone('America/Los_Angeles')
+        now = datetime.now(pacific_tz).replace(tzinfo=None)  # Convert to naive datetime for comparison
+        if event.start <= now + timedelta(hours=24):
+            return False, f"Private events require at least 24 hours advance notice due to staffing."
         return True, None
     
-    # Get current bookings for this event using new schema
+    # For open farm days only: Limit to one family unit per booking
+    if tickets > 7:
+        return False, f"One family unit per booking, no large groups due to liability. If your immediate family is more than 7 please contact us for an exception."
+    
+    # Get current bookings for this event - same logic as admin query that works
     current_bookings = db.session.query(db.func.sum(Booking.tickets)).join(Payment).filter(
         Booking.event_id == event.id,
-        Payment.status.in_(['COMPLETED', 'pending_crypto'])
+        Payment.status == 'COMPLETED'
     ).scalar() or 0
     
-    # Open farm days: allow 10% overage buffer for flexibility
-    overage_allowed = max(5, int(event.max_capacity * 0.1))
-    max_total_capacity = event.max_capacity + overage_allowed
-    available_spots = event.max_capacity - current_bookings
+    # Simple check: if already at/over capacity, block new bookings
+    if current_bookings >= event.max_capacity:
+        return False, f"Sorry, this event has reached capacity, please check our other offerings."
     
-    # Check if sold out (no spots at base capacity)
-    if available_spots <= 0:
-        return False, f"Sorry, this event is sold out. Maximum capacity is {event.max_capacity}."
-    
-    # Check if this booking would exceed safe overage limit
+    # Check if this booking would put us over capacity
     final_bookings = current_bookings + tickets
-    if final_bookings > max_total_capacity:
-        return False, f"Sorry, your group of {tickets} would exceed our safe capacity limit. We have {available_spots} spots remaining (capacity: {event.max_capacity})."
+    if final_bookings > event.max_capacity:
+        available_spots = event.max_capacity - current_bookings
+        return False, f"Sorry, this event has reached capacity, please check our other offerings."
     
     return True, None
 

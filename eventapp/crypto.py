@@ -107,9 +107,9 @@ def submit_crypto_payment():
     db.session.add(payment)
     db.session.commit()
     
-    # Send notification email to admin if this is an anonymous booking
-    if not email or email.strip() == "":
-        try:
+    # Send notification email to admin for ALL crypto payments (need manual verification)
+    try:
+        if not email or email.strip() == "":
             subject = f'Anonymous Crypto Booking - {crypto_currency}'
             admin_email_body = f"""
 Anonymous crypto booking received:
@@ -125,16 +125,34 @@ Guests: {tickets}
 No contact info provided - customer will bring receipt page for entrance.
 Review and confirm payment in crypto admin panel.
             """
-            
-            msg = Message(
-                subject=subject,
-                recipients=['howeranchservices@gmail.com'],
-                body=admin_email_body,
-                sender=current_app.config['MAIL_DEFAULT_SENDER']
-            )
-            mail.send(msg)
-        except Exception as e:
-            print(f"Admin notification email failed: {e}")
+        else:
+            subject = f'Crypto Payment Pending Verification - {crypto_currency}'
+            admin_email_body = f"""
+Crypto payment received - requires verification:
+
+Order ID: {order_id}
+Customer: {name}
+Email: {email}
+Phone: {phone}
+Currency: {crypto_currency}
+Amount: ${total_price}
+Transaction Hash: {transaction_hash}
+Event: {event.title}
+Date: {event.start.strftime("%B %d, %Y, %I:%M %p")}
+Guests: {tickets}
+
+Go to crypto admin panel to verify payment and send confirmation email to customer.
+            """
+        
+        msg = Message(
+            subject=subject,
+            recipients=['howeranchservices@gmail.com'],
+            body=admin_email_body,
+            sender=current_app.config['MAIL_DEFAULT_SENDER']
+        )
+        mail.send(msg)
+    except Exception as e:
+        print(f"Admin notification email failed: {e}")
     
     # Redirect to receipt
     return redirect(f'/receipt/{order_id}')

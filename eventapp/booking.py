@@ -24,7 +24,7 @@ def calculate_price():
     event = Event.query.filter_by(id=event_id).first()
     
     if not event:
-        return render_template('some_template.html',
+        return render_template('checkout.html',
                              time_slot='Unknown Time Slot',
                              tickets=tickets,
                              total_price=0,
@@ -36,7 +36,7 @@ def calculate_price():
     # Check capacity first
     can_book, capacity_error = check_capacity(event, tickets)
     if not can_book:
-        return render_template('some_template.html',
+        return render_template('checkout.html',
                              time_slot='Event Full',
                              tickets=tickets,
                              total_price=0,
@@ -52,7 +52,7 @@ def calculate_price():
     booking_summary = get_booking_summary(event, tickets, total_price)
 
     # Render template with all data
-    return render_template('some_template.html',
+    return render_template('checkout.html',
                           time_slot=booking_summary['time_slot'],
                           tickets=booking_summary['tickets'],
                           total_price=booking_summary['total_price'],
