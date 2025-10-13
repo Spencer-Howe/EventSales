@@ -72,11 +72,11 @@ def submit_crypto_payment():
     order_id = f"CRYPTO_{uuid.uuid4().hex[:8].upper()}"
     
     # Find or create customer
-    customer = Customer.query.filter_by(email=email).first() if email else None
+    customer = Customer.query.filter_by(email=email).first() if email and email.strip() else None
     if not customer:
         customer = Customer(
             name=name or "Anonymous",
-            email=email or "",
+            email=email or "anonymous@crypto.booking",
             phone=phone
         )
         db.session.add(customer)
@@ -170,6 +170,11 @@ def confirm_crypto_payment(order_id):
     for payment in booking.payments:
         if payment.payment_method == 'crypto':
             payment.status = 'confirmed'
+    
+    # Mark private event as booked when crypto payment is confirmed
+    if booking.event.is_private:
+        booking.event.is_booked = True
+    
     db.session.commit()
     
     # Send confirmation email

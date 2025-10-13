@@ -460,6 +460,7 @@
         </small>
       </div>
       
+      
       <!-- Submit Button -->
       <button type="submit" class="btn btn-crypto-submit" id="submit-btn" style="display: none;">
         🚀 Complete Crypto Payment
@@ -547,6 +548,7 @@ function submitCryptoPayment(event) {
     return false;
   }
   
+  
   // Show loading state
   const submitBtn = document.getElementById('submit-btn');
   submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
@@ -569,7 +571,7 @@ function submitCryptoPayment(event) {
     email: email,
     phone: phone,
     crypto_currency: currency,
-    transaction_hash: txHash
+    transaction_hash: txHash,
   });
   
   // Redirect to crypto submission with URL params

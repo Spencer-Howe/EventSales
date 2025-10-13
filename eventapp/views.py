@@ -280,6 +280,11 @@ def show_receipt(order_id):
             paypal_order_id=order_id
         )
         db.session.add(payment)
+        
+        # Mark private event as booked when PayPal payment is completed
+        if event.is_private and status == 'COMPLETED':
+            event.is_booked = True
+        
         db.session.commit()
         
         # Send confirmation email
