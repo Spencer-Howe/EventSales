@@ -44,7 +44,7 @@
             Celebrate Halloween night somewhere unforgettable — love and feed the Mini Moos, watch Halloween classics under the stars, and make memories that last long after the candy's gone.
           </p>
           
-          <form id="HalloweenSpektacular" action="{{ url_for('views.calculate_price') }}" method="post">
+          <form id="HalloweenSpektacular" action="{{ url_for('booking.calculate_price') }}" method="post">
             <div class="form-group mb-3">
               <label for="halloween-tickets" class="form-label">Party Size</label>
               <input type="number" class="form-control" id="halloween-tickets" name="tickets" placeholder="Enter number of guests" required>
@@ -86,7 +86,7 @@
 <p class="card-text">
   Secure your spot now for the ultimate fall farm experience at Howe Ranch!
 </p>
-          <form id="SpookyMoo" action="{{ url_for('views.calculate_price') }}" method="post">
+          <form id="SpookyMoo" action="{{ url_for('booking.calculate_price') }}" method="post">
             <div class="form-group mb-3">
               <label for="event-date" class="form-label">Select a Date</label>
               <select class="form-control" id="event-date" name="event_id" required>
