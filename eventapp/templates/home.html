@@ -44,14 +44,13 @@
             Celebrate Halloween night somewhere unforgettable — love and feed the Mini Moos, watch Halloween classics under the stars, and make memories that last long after the candy's gone.
           </p>
           
-          <form id="HalloweenSpektacular" action="{{ url_for('booking.calculate_price') }}" method="post">
+          <div>
             <div class="form-group mb-3">
               <label for="halloween-tickets" class="form-label">Party Size</label>
-              <input type="number" class="form-control" id="halloween-tickets" name="tickets" placeholder="Enter number of guests" required>
-              <input type="hidden" name="event_id" value="612">
+              <input type="number" class="form-control" id="halloween-tickets" placeholder="Enter number of guests" required>
             </div>
-            <button type="submit" class="btn btn-success w-100">Book Your Halloween Adventure</button>
-          </form>
+            <button onclick="goToCheckout('halloween')" class="btn btn-success w-100">Book Your Halloween Adventure</button>
+          </div>
         </div>
       </div>
 
@@ -86,21 +85,21 @@
 <p class="card-text">
   Secure your spot now for the ultimate fall farm experience at Howe Ranch!
 </p>
-          <form id="SpookyMoo" action="{{ url_for('booking.calculate_price') }}" method="post">
+          <div>
             <div class="form-group mb-3">
-              <label for="event-date" class="form-label">Select a Date</label>
-              <select class="form-control" id="event-date" name="event_id" required>
+              <label for="spooky-event-date" class="form-label">Select a Date</label>
+              <select class="form-control" id="spooky-event-date" required>
                 <option value="">Choose a Date</option>
                   <option value="611">Sunday, October 26</option>
                   <option value="657">Sunday, November 9</option>
               </select>
             </div>
             <div class="form-group mb-3">
-              <label for="tickets" class="form-label">Party Size</label>
-              <input type="number" class="form-control" id="tickets" name="tickets" placeholder="Enter number of guests" required>
+              <label for="spooky-tickets" class="form-label">Party Size</label>
+              <input type="number" class="form-control" id="spooky-tickets" placeholder="Enter number of guests" required>
             </div>
-            <button type="submit" class="btn btn-success w-100">Secure Your Spot</button>
-          </form>
+            <button onclick="goToCheckout('spooky')" class="btn btn-success w-100">Secure Your Spot</button>
+          </div>
         </div>
       </div>
 
@@ -148,4 +147,32 @@
   <div class="text-center mt-3">
     <span>&uarr; Swipe for More &darr;</span>
   </div>
+
+<script>
+function goToCheckout(eventType) {
+    let eventId, tickets;
+    
+    if (eventType === 'spooky') {
+        eventId = document.getElementById('spooky-event-date').value;
+        tickets = document.getElementById('spooky-tickets').value;
+        
+        if (!eventId || !tickets) {
+            alert('Please select a date and enter the number of guests.');
+            return;
+        }
+    } else if (eventType === 'halloween') {
+        eventId = '612'; // Halloween Spectacular event ID
+        tickets = document.getElementById('halloween-tickets').value;
+        
+        if (!tickets) {
+            alert('Please enter the number of guests.');
+            return;
+        }
+    }
+    
+    // Redirect to checkout with URL parameters
+    window.location.href = `/checkout?event_id=${eventId}&tickets=${tickets}`;
+}
+</script>
+
 {% endblock %}
