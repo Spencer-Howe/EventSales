@@ -1,76 +1,26 @@
 {% extends "base.html" %}
 
-{% block title %}Howe Ranch - Events & Tech Solutions{% endblock %}
+{% block title %}Select Tickets{% endblock %}
 
 {% block content %}
   <div class="text-center mt-3">
     <span>&uarr; Swipe for More &darr;</span>
   </div>
   <div class="container my-4">
-    <h2 class="text-center mb-4">🎃 Upcoming Ranch Events</h2>
+    <h2 class="text-center mb-4">Upcoming Events</h2>
 
     <!-- Using Bootstrap's card-group to ensure all cards are handled uniformly -->
     <div class="card-group">
 
 
-      <!-- Card 3 -->
-
-<!-- Card spooky moo -->
-        <div class="card">
-        <img src="static/pic/SpookyMooTime.jpg" class="card-img-top" alt="Spooky Moo time">
-        <div class="card-body">
-<h5 class="card-title">🎃 Spooky Moo Time at Howe Ranch</h5>
-<ul class="card-text">
-  <li>🗓️ Sundays: October 19(sold out), and 26 </li>
-  <li>🕒 3:00 PM – 6:00 PM</li>
-</ul>
-<p class="card-text">
-  Celebrate the magic of fall at Howe Ranch during our special Spooky Moo Time open farm days! Bring friends and family for a fun-filled afternoon with our charming micro and mini Highland cows, playful mini goats, alpacas, and friendly donkeys — all set against a festive Halloween backdrop.
-</p>
-<p class="card-text">
-  <strong>✨ Your Spooky Moo Time Includes:</strong>
-</p>
-<ul class="card-text">
-  <li>🐮 Cuddles and kisses with our tiny Highland cows — Petunia, Mary Lou, and friends</li>
-  <li>🐐 Playtime with mini goats and alpacas for smiles and belly laughs</li>
-  <li>📸 Themed Halloween and fall photo backdrops for unforgettable pictures</li>
-  <li>🕹️ Halloween-themed scavenger hunt with prizes</li>
-  <li>🍬 "Trick-or-Treat Sweet Spot" — a special seasonal treat station for our young visitors in the pool sanctuary (no swimming included unless noted)</li>
-    <li>🎨 Halloween-themed coloring and crafts for all ages</li>
-    <li>☀️ On very hot days, we may open the pool for a refreshing swim!</li>
-    <li>👗 Costumes welcome for kids and adults — come dressed for fun!</li>
-</ul>
-<p class="card-text">
-  <strong>📍 Passes are limited: $35 per guest ages 1 and up.</strong>
-</p>
-<p class="card-text">
-  Secure your spot now for the ultimate fall farm experience at Howe Ranch!
-</p>
-          <div>
-            <div class="form-group mb-3">
-              <label for="spooky-event-date" class="form-label">Select a Date</label>
-              <select class="form-control" id="spooky-event-date" required>
-                <option value="">Choose a Date</option>
-                <option value="611">Sunday, October 26</option>
-              </select>
-            </div>
-            <div class="form-group mb-3">
-              <label for="spooky-tickets" class="form-label">Party Size</label>
-              <input type="number" class="form-control" id="spooky-tickets" placeholder="Enter number of guests" required>
-            </div>
-            <button onclick="goToCheckout('spooky')" class="btn btn-success w-100">Secure Your Spot</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card: Halloween Spektacular -->
+      <!-- Card 1: Halloween Spektacular -->
       <div class="card">
-        <img src="static/pic/haloween2.jpg" class="card-img-top" alt="Halloween Spektacular at Howe Ranch">
+        <img src="static/pic/newhalo.jpg" class="card-img-top" alt="Halloween Spektacular at Howe Ranch">
         <div class="card-body">
           <h5 class="card-title">🎃 Halloween Spectacular at Howe Ranch — Halloween Night!</h5>
           <ul class="card-text">
             <li>🗓️ Friday, October 31</li>
-            <li>🕓 4:00 PM – 7:00 PM</li>
+            <li>🕓 4:00 PM – 8:00 PM</li>
           </ul>
           <p class="card-text">
             Finish spooky season with a one-night-only Halloween celebration at Howe Ranch! Join our charming micro and mini Highland cows — starring their newest arrivals, the itty-bitty Mini Moo babies — and their barnyard friends for an evening of fall magic. Enjoy a cozy outdoor Halloween movie under the stars, trick-or-treat adventures, and endless photo-worthy moments with the tiniest, fluffiest calves of the season.
@@ -93,22 +43,72 @@
           <p class="card-text">
             Celebrate Halloween night somewhere unforgettable — love and feed the Mini Moos, watch Halloween classics under the stars, and make memories that last long after the candy's gone.
           </p>
-
-          <div>
+          
+          <form id="HalloweenSpektacular" action="{{ url_for('views.calculate_price') }}" method="post">
             <div class="form-group mb-3">
               <label for="halloween-tickets" class="form-label">Party Size</label>
-              <input type="number" class="form-control" id="halloween-tickets" placeholder="Enter number of guests" required>
+              <input type="number" class="form-control" id="halloween-tickets" name="tickets" placeholder="Enter number of guests" required>
+              <input type="hidden" name="event_id" value="612">
             </div>
-            <button onclick="goToCheckout('halloween')" class="btn btn-success w-100">Book Your Halloween Adventure</button>
-          </div>
+            <button type="submit" class="btn btn-success w-100">Book Your Halloween Adventure</button>
+          </form>
         </div>
       </div>
 
-<!-- Card: Private Boo & Mini Moo -->
+      <!-- Card 2: Open Farm Day -->
+        <div class="card">
+        <img src="static/pic/octnov.jpg" class="card-img-top" alt="Open Farm Day">
+        <div class="card-body">
+<h5 class="card-title">Open Farm Day — Discover the Magic</h5>
+<ul class="card-text">
+  <li>🎃 October 26: Spooky Moo Time at Howe Ranch</li>
+  <li>🍂 November 9: "Fall in Love" at Howe Ranch</li>
+  <li>🗓️ Sundays 🕒 3:00 PM – 6:00 PM</li>
+</ul>
+<p class="card-text">
+  Celebrate the magic of fall at Howe Ranch during our special Open Farm Days! Bring friends and family for a fun-filled afternoon with our charming micro and mini Highland cows, playful mini goats, alpacas, and friendly donkeys — all set against a festive backdrop.
+</p>
+<p class="card-text">
+  <strong>✨ Your Open Farm Day Pass Includes:</strong>
+</p>
+<ul class="card-text">
+  <li>🐮 Cuddles and kisses with our tiny Highland babies and mini cows — Pippi, Lucy, Marvin, Mary Lou and friends</li>
+  <li>🐐 Playtime with mini goats and alpacas for smiles and belly laughs</li>
+  <li>📸 Themed fall photo backdrops for unforgettable pictures</li>
+  <li>🕹️ Themed scavenger hunt with prizes</li>
+  <li>🍬 Seasonal treat stations</li>
+  <li>🎨 Fall themed coloring and crafts for all ages</li>
+  <li>🤠 Come dressed for fun!</li>
+</ul>
+<p class="card-text">
+  <strong>📍 Passes are limited: $35 per guest. Kids under 1 are free.</strong>
+</p>
+<p class="card-text">
+  Secure your spot now for the ultimate fall farm experience at Howe Ranch!
+</p>
+          <form id="SpookyMoo" action="{{ url_for('views.calculate_price') }}" method="post">
+            <div class="form-group mb-3">
+              <label for="event-date" class="form-label">Select a Date</label>
+              <select class="form-control" id="event-date" name="event_id" required>
+                <option value="">Choose a Date</option>
+                  <option value="611">Sunday, October 26</option>
+                  <option value="657">Sunday, November 9</option>
+              </select>
+            </div>
+            <div class="form-group mb-3">
+              <label for="tickets" class="form-label">Party Size</label>
+              <input type="number" class="form-control" id="tickets" name="tickets" placeholder="Enter number of guests" required>
+            </div>
+            <button type="submit" class="btn btn-success w-100">Secure Your Spot</button>
+          </form>
+        </div>
+      </div>
+
+<!-- Card 3: Private Mini Moo Experience -->
 <div class="card">
-  <img src="static/pic/privateboo.jpg" class="card-img-top" alt="Private Boo & Mini Moo at Howe Ranch">
+  <img src="static/pic/privatemoome.jpg" class="card-img-top" alt="Private Mini Moo Experience at Howe Ranch">
   <div class="card-body">
-    <h5 class="card-title">🎃 Private Boo & Mini Moo at Howe Ranch</h5>
+    <h5 class="card-title">Private Mini Moo Experience at Howe Ranch</h5>
 
     <p class="card-text">
       Celebrate fall your way with a very special private cow cuddling and farm adventure for your date or group!
@@ -117,22 +117,23 @@
     <ul class="card-text">
       <li>Squeeze our newest tiny fluffy Highland calves, brush and feed the mini herd, and meet alpacas, playful mini goats, donkeys, and new chicks.</li>
       <li>Bottle feeding of our youngest cow babies is included.</li>
-      <li>Explore the farm’s haunted corners with a Halloween scavenger hunt, snap photos with tiny cow babies at festive backdrops, and take home a special souvenir bag.</li>
+      <li>Explore the farm, snap photos with tiny cow babies at festive backdrops, and take home a special souvenir bag.</li>
     </ul>
 
     <ul class="card-text">
-      <li>📍 Available by appointment on select dates in September &amp; October</li>
+      <li>📍 Available by appointment on select dates in October &amp; November (the farm is closed Nov. 17 - 29 while transforming to Winter Wonderland)</li>
       <li>👥 For 1–10 guests max (infants under 1 are free)</li>
     </ul>
 
     <p class="card-text">$350 per private group (10 guests max ages 1+)</p>
-    <p class="card-text">Costumes welcome — come ready for spooky fun and baby cow kisses!</p>
+    <p class="card-text">Come ready for fall fun and baby cow kisses!</p>
 
     <hr>
 
     <p class="card-text mb-1">By making a booking you agree to:</p>
     <ul class="card-text">
-      <li>This private experience does not allow celebratory or food-related activities (e.g., no cake, decorations, etc.). We offer special gathering options that accommodate celebrations — see our <a href="https://thehoweranch.com/events" target="_blank" rel="noopener noreferrer">Private Petting Zoo Experiences</a> on the EVENTS page.</li>
+      <li>I have read and agree with the Farm Visitor FAQs and Farm Policies.</li>
+      <li>This private experience does not allow celebratory or food-related activities (e.g., no cake, decorations, etc.). We offer special gathering options that accommodate celebrations — see our Private Mini Moo Party on the EVENTS page.</li>
       <li>This experience is for 1–10 guests max (ages 1+). Groups over 10 may book a second tour at the same time, join an Open Farm Day, or reserve a private gathering.</li>
       <li>Experiences are transferable to other guests but cannot be refunded and cannot be rescheduled.</li>
     </ul>
@@ -147,32 +148,4 @@
   <div class="text-center mt-3">
     <span>&uarr; Swipe for More &darr;</span>
   </div>
-
-<script>
-function goToCheckout(eventType) {
-    let eventId, tickets;
-    
-    if (eventType === 'spooky') {
-        eventId = document.getElementById('spooky-event-date').value;
-        tickets = document.getElementById('spooky-tickets').value;
-        
-        if (!eventId || !tickets) {
-            alert('Please select a date and enter the number of guests.');
-            return;
-        }
-    } else if (eventType === 'halloween') {
-        eventId = '612'; // Halloween Spectacular event ID
-        tickets = document.getElementById('halloween-tickets').value;
-        
-        if (!tickets) {
-            alert('Please enter the number of guests.');
-            return;
-        }
-    }
-    
-    // Redirect to checkout with URL parameters (stateless approach)
-    window.location.href = `/checkout?event_id=${eventId}&tickets=${tickets}`;
-}
-</script>
-
 {% endblock %}
