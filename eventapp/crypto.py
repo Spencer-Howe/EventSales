@@ -186,7 +186,7 @@ def confirm_crypto_payment(order_id):
         if recipient_email:
             msg = Message(
                 subject=subject,
-                recipients=[recipient_email],
+                recipients=[recipient_email, 'howeranchservices@gmail.com'],
                 html=html_content,
                 sender=current_app.config['MAIL_DEFAULT_SENDER']
             )
@@ -205,11 +205,17 @@ def get_crypto_address(crypto_currency):
     }
     return addresses.get(crypto_currency, '')
 
+def generate_qr_code_base64(order_id):
+    """Generate QR code base64 for crypto emails"""
+    from .views import generate_qr_code
+    return generate_qr_code(order_id).split(',')[1]  # Remove data:image/png;base64, prefix
+
 def generate_receipt_html(booking):
     """Generate receipt HTML for crypto payment confirmation"""
-    # Create waiver URL for the booking
+    # Create waiver and receipt URLs for the booking
     from flask import url_for
     waiver_url = url_for('views.sign_waiver', order_id=booking.order_id, _external=True)
+    receipt_url = url_for('views.show_receipt', order_id=booking.order_id, _external=True)
     
     # Get latest payment details
     latest_payment = booking.payments[0] if booking.payments else None
@@ -231,6 +237,18 @@ def generate_receipt_html(booking):
             <p>Please review and sign the waiver if you did not already finish the registration after checkout 
                 <a href="{waiver_url}" style="color: #1a73e8;">here</a>.
             </p>
+            
+            <!-- Receipt & QR Code Link -->
+            <div style="text-align: center; margin: 20px 0; padding: 20px; border: 2px dashed #007bff; border-radius: 10px; background-color: #f8f9fa;">
+                <h3 style="color: #007bff; margin-bottom: 15px;">📱 Check-in QR Code</h3>
+                <p style="margin-bottom: 15px;"><strong>Access your QR code for instant check-in at the ranch!</strong></p>
+                <a href="{receipt_url}" style="display: inline-block; background: linear-gradient(45deg, #007bff, #0056b3); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 10px;">
+                    View Receipt & QR Code
+                </a>
+                <p style="margin-top: 10px; font-size: 0.9rem; color: #6c757d;">
+                    Save this link or bookmark it for easy access on your phone
+                </p>
+            </div>
             <hr style="margin: 30px 0;">
             <h2 style="color: #2e6c80;">Thank You & Important Visit Information</h2>
             <p>

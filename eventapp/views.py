@@ -2,7 +2,7 @@ import os
 import requests
 from datetime import datetime, timedelta
 import pytz
-from flask import jsonify, render_template, request, redirect, url_for, session, Blueprint, current_app
+from flask import jsonify, render_template, request, redirect, url_for, session, Blueprint, current_app, Response
 from flask_mail import Message
 from flask_login import login_user, logout_user, login_required
 import qrcode
@@ -210,8 +210,12 @@ def show_receipt(order_id):
                              qr_code=qr_code,
                              checkin_url=booking_info_url)
     
-    # No existing booking found - this must be a new PayPal payment
-    # Verify with PayPal and create booking if valid
+    # No existing booking found
+    # Check if this is a crypto order (should never reach here for valid crypto orders)
+    if order_id.startswith('CRYPTO_'):
+        return "Booking not found", 404
+    
+    # This must be a new PayPal payment - verify with PayPal and create booking if valid
     access_token = get_paypal_access_token()
     if not access_token:
         return "Failed to obtain access token", 500
@@ -301,18 +305,18 @@ def show_receipt(order_id):
         }
         
         waiver_url = url_for('views.sign_waiver', order_id=order_id, _external=True)
+        receipt_url = url_for('views.show_receipt', order_id=order_id, _external=True)
         email_order_details['waiver_url'] = waiver_url
+        email_order_details['receipt_url'] = receipt_url
         
-        # Add QR code to email
-        qr_code_base64 = generate_qr_code(order_id).split(',')[1]  # Remove data:image/png;base64, prefix
+        # Add check-in URL for reference
         booking_info_url = f"https://thehoweranchpayment.com/api/booking/{order_id}"
-        email_order_details['qr_code_base64'] = qr_code_base64
         email_order_details['checkin_url'] = booking_info_url
         
         html_content = create_receipt_email_content(email_order_details)
         subject = "Your Payment Receipt"
         sender = current_app.config['MAIL_USERNAME']
-        recipients = [email, sender]
+        recipients = [email, 'howeranchservices@gmail.com']
         msg = Message(subject, sender=sender, recipients=recipients, html=html_content)
         mail.send(msg)
         
@@ -336,6 +340,45 @@ def show_receipt(order_id):
         return "PayPal verification failed or payment not completed", 400
 
 
+
+@views.route('/qr_download/<order_id>')
+def download_qr_code(order_id):
+    """Download QR code as PNG file"""
+    from eventapp.models import Booking
+    
+    # Verify booking exists
+    booking = Booking.query.filter_by(order_id=order_id).first()
+    if not booking:
+        return "Booking not found", 404
+    
+    # Generate QR code
+    booking_info_url = f"https://thehoweranchpayment.com/api/booking/{order_id}"
+    
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(booking_info_url)
+    qr.make(fit=True)
+    
+    # Generate the QR code image
+    img = qr.make_image(fill_color="black", back_color="white")
+    
+    # Convert to bytes for download
+    buffer = io.BytesIO()
+    img.save(buffer, format='PNG')
+    buffer.seek(0)
+    
+    return Response(
+        buffer.getvalue(),
+        mimetype='image/png',
+        headers={
+            'Content-Disposition': f'attachment; filename="qr_code_{order_id}.png"',
+            'Content-Type': 'image/png'
+        }
+    )
 
 @views.route('/thank_you')
 def thank_you_page():
@@ -432,13 +475,15 @@ def create_receipt_email_content(order_details):
                 <a href="{order_details['waiver_url']}" style="color: #1a73e8;">here</a>.
             </p>
             
-            <!-- QR Code for Check-in -->
-            <div style="text-align: center; border: 2px dashed #007bff; padding: 20px; border-radius: 10px; background-color: #f8f9fa; margin: 20px 0;">
-                <h3 style="color: #007bff; margin-bottom: 15px;">📱 Quick Check-In</h3>
-                <p style="margin-bottom: 15px;"><strong>Show this QR code when you arrive for instant check-in!</strong></p>
-                <img src="data:image/png;base64,{order_details.get('qr_code_base64', '')}" alt="Check-in QR Code" style="width: 200px; height: 200px; margin: 10px;">
+            <!-- Receipt & QR Code Link -->
+            <div style="text-align: center; margin: 20px 0; padding: 20px; border: 2px dashed #007bff; border-radius: 10px; background-color: #f8f9fa;">
+                <h3 style="color: #007bff; margin-bottom: 15px;">📱 Check-in QR Code</h3>
+                <p style="margin-bottom: 15px;"><strong>Access your QR code for instant check-in at the ranch!</strong></p>
+                <a href="{order_details['receipt_url']}" style="display: inline-block; background: linear-gradient(45deg, #007bff, #0056b3); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 10px;">
+                    View Receipt & QR Code
+                </a>
                 <p style="margin-top: 10px; font-size: 0.9rem; color: #6c757d;">
-                    Or visit: <a href="{order_details.get('checkin_url', '')}" style="color: #007bff;">{order_details.get('checkin_url', '')}</a>
+                    Save this link or bookmark it for easy access on your phone
                 </p>
             </div>
             

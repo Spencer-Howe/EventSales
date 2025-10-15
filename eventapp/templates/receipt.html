@@ -25,10 +25,65 @@
     {% if qr_code %}
         <img src="{{ qr_code }}" alt="Check-in QR Code" style="width: 200px; height: 200px; margin: 10px;">
     {% endif %}
+    
+    <!-- Mobile-friendly download options -->
+    <div style="margin: 15px 0;">
+        <a href="{{ url_for('views.download_qr_code', order_id=order_id) }}" 
+           class="btn btn-success btn-sm" 
+           style="margin: 5px; padding: 10px 20px; background-color: #28a745; border: none; color: white; text-decoration: none; border-radius: 5px; display: inline-block;"
+           download>
+            📥 Download QR Code
+        </a>
+        <button onclick="shareQRCode()" 
+                class="btn btn-info btn-sm" 
+                style="margin: 5px; padding: 10px 20px; background-color: #17a2b8; border: none; color: white; border-radius: 5px;"
+                id="shareBtn">
+            📤 Share QR Code
+        </button>
+    </div>
+    
     <p style="margin-top: 10px; font-size: 0.9rem; color: #6c757d;">
         Or visit: <code>{{ checkin_url }}</code>
     </p>
 </div>
+
+<script>
+async function shareQRCode() {
+    const shareBtn = document.getElementById('shareBtn');
+    
+    // Check if Web Share API is supported
+    if (navigator.share) {
+        try {
+            // Fetch the QR code image as blob
+            const response = await fetch('{{ url_for("views.download_qr_code", order_id=order_id) }}');
+            const blob = await response.blob();
+            const file = new File([blob], 'qr_code_{{ order_id }}.png', { type: 'image/png' });
+            
+            await navigator.share({
+                title: 'Check-in QR Code - Howe Ranch',
+                text: 'My check-in QR code for Howe Ranch visit',
+                files: [file]
+            });
+        } catch (error) {
+            // Fallback to download if sharing fails
+            fallbackDownload();
+        }
+    } else {
+        // Fallback for browsers that don't support Web Share API
+        fallbackDownload();
+    }
+}
+
+function fallbackDownload() {
+    // Create a temporary link and trigger download
+    const link = document.createElement('a');
+    link.href = '{{ url_for("views.download_qr_code", order_id=order_id) }}';
+    link.download = 'qr_code_{{ order_id }}.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+</script>
 
 <hr>
 
