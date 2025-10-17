@@ -12,6 +12,7 @@ class Config:
     # App configuration
     SECRET_KEY = os.getenv('FLASK_SECRET_KEY', 'your_development_secret_key')
     PAYPAL_API_BASE = os.getenv('PAYPAL_API_BASE')
+    SERVER_NAME = os.getenv('SERVER_NAME')
 
     # SQLAlchemy configuration
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:///yourdatabase.db')
