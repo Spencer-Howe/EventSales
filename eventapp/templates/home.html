@@ -103,7 +103,82 @@
         </div>
       </div>
 
-<!-- Card 3: Private Mini Moo Experience -->
+      <!-- Card 3: Winter Wonderland -->
+      <div class="card border-danger" style="background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);">
+        <img src="static/pic/25notimewonder.png" class="card-img-top" alt="Winter Wonderland at Howe Ranch" style="border-bottom: 3px solid #dc3545;">
+        <div class="card-body">
+          <h5 class="card-title text-danger" style="font-family: 'serif'; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">❄️ Winter Wonderland Open Farm Day at Howe Ranch — Discover the Magic!</h5>
+          <div class="card-text text-center p-2 mb-3" style="background: linear-gradient(45deg, #dc3545, #28a745); color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+            <strong>🗓️ Nov. 30, Dec. 7, Dec. 14, Dec. 21, Christmas Eve, and New Year's Eve!</strong><br>
+            <strong>🕓 Select your spot!</strong>
+          </div>
+          
+          <p class="card-text">
+            This holiday season, step into a twinkle-lit Winter Wonderland where baby Highland calves in velvet bows, alpacas in festive scarves, and jingling donkeys welcome you into a world of pure Christmas magic. Designed as a micro holiday festival, not a crowded fair, this magical experience lets your family wander, cuddle, decorate, and explore at your own pace — with every station included.
+          </p>
+          
+          <p class="card-text">
+            <strong>✨ Your Winter Wonderland Pass Includes:</strong>
+          </p>
+          <ul class="card-text">
+            <li>🐮 Snuggle sessions with our tiniest Highland calves in their winter fluff</li>
+            <li>📸 Five enchanted holiday scenes, including snowy woodland and miniature Christmas villages</li>
+            <li>🍬 Seasonal treats & hot drinks for kids and grown-ups alike</li>
+            <li>🍪 Cookie decorating with Mrs. Claus</li>
+            <li>🎅 Visit & photo moment with Santa in his vintage red throne</li>
+            <li>🎁 Festive scavenger hunt with sweet surprises along the way</li>
+            <li>🐐 Meet the alpacas and mischievous mini goats (in their holiday scarves, of course)</li>
+            <li>🌟 No lines. No rushing. Real animal time and holiday magic — all included.</li>
+          </ul>
+          
+          <div class="text-center p-2 mb-3" style="background: #fff3cd; border-radius: 8px; border: 2px dashed #ffc107;">
+            <strong>📍 Passes limited: $35 per guest, kids under 1 are free</strong>
+          </div>
+          
+          <p class="card-text">
+            Celebrate the season somewhere unforgettable — cuddle a baby cow with snowflakes in its fur and capture magical moments you'll want on this year's Christmas card.
+          </p>
+          
+          <div class="border p-3 mb-3" style="background: #f8f9fa; border-radius: 8px;">
+            <div class="form-group mb-3">
+              <label for="winter-event-date" class="form-label"><strong>Select a Date</strong></label>
+              <select class="form-control" id="winter-event-date" required onchange="updateTimeSlots()">
+                <option value="">Choose a Date</option>
+                <option value="nov30">Saturday, November 30</option>
+                <option value="dec7">Saturday, December 7</option>
+                <option value="dec14">Saturday, December 14</option>
+                <option value="dec21">Saturday, December 21</option>
+                <option value="christmas">Tuesday, December 24 (Christmas Eve)</option>
+                <option value="newyears">Tuesday, December 31 (New Year's Eve)</option>
+              </select>
+            </div>
+            
+            <div class="form-group mb-3">
+              <label for="winter-time-slot" class="form-label"><strong>Select Time Slot</strong></label>
+              <select class="form-control" id="winter-time-slot" required disabled>
+                <option value="">First select a date</option>
+              </select>
+            </div>
+            
+            <div class="form-group mb-3">
+              <label for="winter-tickets" class="form-label"><strong>Party Size</strong></label>
+              <input type="number" class="form-control" id="winter-tickets" placeholder="Enter number of guests" required min="1" max="10">
+            </div>
+            
+            <button onclick="goToCheckout('winter')" class="btn btn-danger w-100" style="background: linear-gradient(45deg, #dc3545, #28a745); border: none; font-weight: bold; text-shadow: 1px 1px 1px rgba(0,0,0,0.3);">🎄 Book Your Winter Wonderland Adventure 🎄</button>
+          </div>
+          
+          <div class="text-center small" style="color: #6c757d;">
+            <strong>🎟 Advance Reservation Only • No Passes at Gate • Limited Capacity</strong>
+          </div>
+          
+          <div class="text-center small mt-2" style="color: #6c757d;">
+            By making a booking you agree to: I have read and agree with the <a href="#" target="_blank">Farm Visitor FAQs</a> and <a href="#" target="_blank">Farm Policies</a>.
+          </div>
+        </div>
+      </div>
+
+<!-- Card 4: Private Mini Moo Experience -->
 <div class="card">
   <img src="static/pic/privatemoome.jpg" class="card-img-top" alt="Private Mini Moo Experience at Howe Ranch">
   <div class="card-body">
@@ -149,6 +224,31 @@
   </div>
 
 <script>
+function updateTimeSlots() {
+    const dateSelect = document.getElementById('winter-event-date');
+    const timeSelect = document.getElementById('winter-time-slot');
+    const selectedDate = dateSelect.value;
+    
+    // Clear existing options
+    timeSelect.innerHTML = '';
+    timeSelect.disabled = false;
+    
+    if (selectedDate === 'christmas' || selectedDate === 'newyears') {
+        // Christmas Eve and New Year's Eve - 82 person capacity, single time slot
+        timeSelect.innerHTML = '<option value="single">3:00 PM - 6:00 PM</option>';
+    } else if (selectedDate) {
+        // Nov 30, Dec 7, Dec 14, Dec 21 - tiered time slots, 50 each
+        timeSelect.innerHTML = `
+            <option value="">Choose a time slot</option>
+            <option value="3pm">3:00 PM - 6:00 PM</option>
+            <option value="4pm">4:00 PM - 7:00 PM</option>
+        `;
+    } else {
+        timeSelect.innerHTML = '<option value="">First select a date</option>';
+        timeSelect.disabled = true;
+    }
+}
+
 function goToCheckout(eventType) {
     let eventId, tickets;
     
@@ -166,6 +266,37 @@ function goToCheckout(eventType) {
         
         if (!tickets) {
             alert('Please enter the number of guests.');
+            return;
+        }
+    } else if (eventType === 'winter') {
+        const dateValue = document.getElementById('winter-event-date').value;
+        const timeSlot = document.getElementById('winter-time-slot').value;
+        tickets = document.getElementById('winter-tickets').value;
+        
+        if (!dateValue || !timeSlot || !tickets) {
+            alert('Please select a date, time slot, and enter the number of guests.');
+            return;
+        }
+        
+        // Map date and time combinations to event IDs
+        const eventMapping = {
+            'nov30_3pm': '676',
+            'nov30_4pm': '677', 
+            'dec7_3pm': '678',
+            'dec7_4pm': '679',
+            'dec14_3pm': '680',
+            'dec14_4pm': '681',
+            'dec21_3pm': '682',
+            'dec21_4pm': '683',
+            'christmas_single': '684',
+            'newyears_single': '685'
+        };
+        
+        const mappingKey = `${dateValue}_${timeSlot}`;
+        eventId = eventMapping[mappingKey];
+        
+        if (!eventId) {
+            alert('Please select a valid date and time combination.');
             return;
         }
     }
