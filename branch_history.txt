@@ -1,0 +1,111 @@
+18df6fe deployment script for fresh deployments
+18b39e6 more basic tests for capstone project reqs
+f3e3c0c more holiday calender updates
+32a7dd4 holiday callender updatee
+b11baa7 python script to send qr codes for sundays check in, config for server name for local testing
+22d4213 added actual links for home.html
+3b80838 fixed bug for reciept url lookup, changed QR code in email to send url due to email clients blocking images. Added in views a mobile friendly view for downloading QR code
+6115815 switched POST front page to use URL parameters as well JS and html edits
+5bac852 fixed url params to match new booking schema
+685587b updated home to match actual buisness website, hosted on cloudfare with removed nginx and manual ssl tls, getting ready to point DNS for actual website to new project
+df83ab9  new docker compose to move to cloudflare, no more complicated lets encrypt nginx setup
+9c4c938 lots of small bug fixes relating to poricing on events and max capacity for open days and privates
+7371605 fixed maxed guest count to be enforced in checkout, old schema issues again
+e9aac7c simplified crypto admin, androidapi time fix from utc to pacific, fixed views from shema change
+2ddf90a still working through refactor of db, verified api is working through app for check in
+9ad6a7d refactored all code to work with new db schema
+0cffb2c api built for my android check in app + refactored Database with relations primarys and foreign for scalability
+f5247a1 still re-working pricing, implemented current buisness logic home/base with new url params instead of session based. re-disgign of tech add in base
+59b3080 re-working pricing code for room to offer more flexible pricing schemes and new products
+5d3cbb1 added email verification pull user email from paypal api, reacurring problem of people having outdated emails for paypal
+280739a fixed safari ios private browsing issues with sessions not being passed. decided on url params rather than hidden post due to transperency and simplicity. Bug that has and could potentially affect privacy consious customers resolved.
+b60450b UI overhaul for payment checkout and calender(select_tickets), also updated crpyto.py with logic for anonomous booking option without any user info
+65b5728 added a bunch of search queries sql into admin and reports
+95e46a4 added actual crypto wallet adress for optional crypto payments isntead of paypal
+2996a82 re-implemented broken crypto function, core polymorphism functionality working need to refine in line with rest of app
+0c7c77c git pycache cleaned up seperate git worktree
+efb8228  Add polymorphic payment system with crypto support
+c545910 broke down pricing logic into seperate blueprints, added max capacity for events, and changed local env variables to a sandbox mailtrap service for email testing
+4957020 removed all none working tests and standalone scripts into one consolodated simple pytest framework using .env variables
+fa6f33a pytests building out along with config test file, in progress for task 3
+641435a removed sept 21
+f795ee4 new wording for boo and moo
+4ccaaae update reminder with faq in tasks.py
+aeea6ea removed third card
+ce29f7e time zone changed from UTC for admin calendar without debug
+544a567 time zone changed from UTC for admin calendar
+76be57d added in pricing for boo and moo
+f02860e added spooky privs and weeking priv tours homepage edit
+d55f1ca added in spookymoo card number 3
+147cd93 changed all text to no refunds or transfers to other dates
+a4b3f1b changed admin calender to show REVERT
+2141586 changed admin calender to show times
+98de21f added other email for notification, changed in select tickets slotmax to 2000 to show 7pms
+26832de update reminder sent to personal email, updated summer fun dates
+0d23255 canceled june 29
+ef7ccbd canceled june 29
+0b38878 changed all spring to summer and removed lop bunnies
+aff76f9 July sunday fundaysremoved 1st
+6ddcb35 July sunday fundays
+b55a31c code for 24 advance on priv tours, updated add and css styles for add
+aacfa7e removed mothers day card and reimplemented multi pick for sunday events
+9354540 task for clearing old events 24 hours or more
+88c4f38 set 1 hour interval task
+3f34f92 reminder email all working on dev
+e981725 reminder email mid trblsht, app crashes need to add reminder_sent to all in views
+bb2852e trblsht rest of automated sheduler email
+9b079ba new html safety message in emailed reciept
+5590d73 took out spring fling home page card
+90a4e9a mothers day
+6514011 new private tour text
+8408578 fixed easter ticket option
+b07ae3c new spring fling and removed venmo option
+284f911 added easter card
+4a34f28 2 stage update for null values in fixed to true
+7f630b9 2 stage update for null values in DB
+1c75136 new logic for private tours remove upon booking
+f95472d new spring fling and hard coded dates with dropdown
+7e4ec0b new email message with adress and checkin
+53d9bdd new add campaign js coding still to do
+0ee3ab3 typo
+0ff1e55 home page changes
+2bfc5ce bypassing all javascript
+2f57072 new add campaign js coding still to do
+7a69f7e indent
+4a23ca1 titles
+274d758 xmasminimoos
+dbd162f fixed eve tickets
+a533135 remove dec8
+935c628 Revert "close event"
+4c7c012 close event
+c23d822 new zoo pic
+f38d13b small change
+7f35869 Quick fix
+00d7a42 updated tickets
+b6cc7ad new price rules for cow cuddling and updated home page
+011cb29 moved christmas banner up
+3e37790 updated readme and URL
+4f7fa46 added url generating and private events
+0eaaa9d descri
+4b457f7 farm tour descrip
+11e7281 passes
+fdb932d Christmas party button
+0ddf4b6 finalnginxhttps
+617079d change
+6f0b68e ssl
+f385f66 nginx
+5d2e889 ssl
+1508315 webroot certbot
+4580eb2 revised gitignore for docker files in repo
+dd6ec1c updated nginx
+d153965 update gitignore
+98bc0ff Fix calendar to display events with correct date format
+d000f66 fixed time_slot and configured docker development
+d5a465b Update .gitignore
+e594a1e Create README.md
+14d4b58 working admin calender api
+a4f4d34 Full working blueprint app(convert from single page)
+abdcb0d working up until waiver sign
+224ad22 working blueprints
+3b0b48e In process of merging to packages with blueprints
+2f43afa Initial commit
