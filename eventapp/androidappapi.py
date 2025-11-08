@@ -265,44 +265,60 @@ def get_events_checkin_stats():
     """Get events with check-in statistics for admin"""
     from eventapp.models import Event, Booking
     from sqlalchemy import func
+    from datetime import datetime, date, timedelta
     
     # Simple admin check
     auth_header = request.headers.get('Authorization')
     if not auth_header or not auth_header.startswith('Bearer admin_'):
         return jsonify({"success": False, "reason": "Admin authentication required"}), 401
     
-    # Get events that have bookings
-    events_with_stats = db.session.query(
-        Event.id,
-        Event.title,
-        Event.start,
-        Event.end,
-        func.count(Booking.id).label('total_bookings'),
-        func.sum(func.case([(Booking.checked_in == True, 1)], else_=0)).label('checked_in_count'),
-        func.sum(Booking.tickets).label('total_tickets')
-    ).join(Booking).group_by(Event.id, Event.title, Event.start, Event.end).all()
-    
-    events_data = []
-    for event_stat in events_with_stats:
-        checked_in = event_stat.checked_in_count or 0
-        remaining = event_stat.total_bookings - checked_in
+    try:
+        # Get events for next 7 days (so you can test with Sunday's event)
+        today = date.today()
+        next_week = today + timedelta(days=7)
         
-        events_data.append({
-            'event_id': event_stat.id,
-            'title': event_stat.title,
-            'start': event_stat.start.isoformat() if event_stat.start else None,
-            'end': event_stat.end.isoformat() if event_stat.end else None,
-            'total_bookings': event_stat.total_bookings,
-            'total_tickets': event_stat.total_tickets or 0,
-            'checked_in_count': checked_in,
-            'remaining_count': remaining,
-            'completion_percentage': round((checked_in / event_stat.total_bookings) * 100, 1) if event_stat.total_bookings > 0 else 0
+        events_with_stats = db.session.query(
+            Event.id,
+            Event.title,
+            Event.start,
+            Event.end,
+            func.count(Booking.id).label('total_bookings'),
+            func.sum(func.case([(Booking.checked_in == True, 1)], else_=0)).label('checked_in_count'),
+            func.sum(Booking.tickets).label('total_tickets')
+        ).join(Booking).filter(
+            func.date(Event.start) >= today,        # Today or later
+            func.date(Event.start) <= next_week     # Within next 7 days
+        ).group_by(Event.id, Event.title, Event.start, Event.end).all()
+        
+        events_data = []
+        for event_stat in events_with_stats:
+            checked_in = event_stat.checked_in_count or 0
+            remaining = event_stat.total_bookings - checked_in
+            
+            events_data.append({
+                'event_id': event_stat.id,
+                'title': event_stat.title,
+                'start': event_stat.start.isoformat() if event_stat.start else None,
+                'end': event_stat.end.isoformat() if event_stat.end else None,
+                'total_bookings': event_stat.total_bookings,
+                'total_tickets': event_stat.total_tickets or 0,
+                'checked_in_count': checked_in,
+                'remaining_count': remaining,
+                'completion_percentage': round((checked_in / event_stat.total_bookings) * 100, 1) if event_stat.total_bookings > 0 else 0
+            })
+        
+        return jsonify({
+            "success": True,
+            "events": events_data
         })
     
-    return jsonify({
-        "success": True,
-        "events": events_data
-    })
+    except Exception as e:
+        print(f"Error in checkin-stats: {str(e)}")
+        return jsonify({
+            "success": False,
+            "reason": "Database error",
+            "error": str(e)
+        }), 500
 
 
 @android_api.route('/admin/events/<int:event_id>/bookings', methods=['GET'])
