@@ -147,6 +147,13 @@ def verify_transaction():
 @views.route('/waiver/<order_id>', methods=['GET', 'POST'])
 def sign_waiver(order_id):
     from eventapp.models import Waiver, Booking
+    
+    # Check if waiver already exists (for both GET and POST)
+    existing_waiver = Waiver.query.filter_by(order_id=order_id).first()
+    if existing_waiver:
+        # Waiver already signed, redirect to thank you page
+        return redirect(url_for('views.thank_you_page'))
+    
     if request.method == 'POST':
         signature = request.form.get('signature')
         
@@ -154,12 +161,6 @@ def sign_waiver(order_id):
         booking = Booking.query.filter_by(order_id=order_id).first()
         if not booking or not booking.customer:
             return "Booking not found", 404
-        
-        # Check if waiver already exists for this order
-        existing_waiver = Waiver.query.filter_by(order_id=order_id).first()
-        if existing_waiver:
-            # Waiver already signed, redirect to thank you page
-            return redirect(url_for('views.thank_you_page'))
             
         new_waiver = Waiver(
             customer_id=booking.customer.id,
