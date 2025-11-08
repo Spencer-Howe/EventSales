@@ -70,9 +70,6 @@ def send_reminder_email(booking):
     try:
         mail.send(msg)
         print(f"Reminder email sent to {recipient}")
-        # Update the booking to indicate the reminder was sent
-        booking.reminder_sent = True
-        db.session.commit()
     except Exception as e:
         print(f"Failed to send reminder email to {recipient}: {str(e)}")
 
@@ -124,15 +121,31 @@ def check_and_send_reminders(app):
             Booking.reminder_sent == False  # Only unsent reminders
         ).all()
 
+        processed_count = 0
         for booking in bookings:
-            send_reminder_email(booking)
+            # Atomic update: only process if we can successfully mark as sent
+            rows_updated = db.session.query(Booking).filter(
+                Booking.id == booking.id,
+                Booking.reminder_sent == False
+            ).update({'reminder_sent': True})
+            
+            if rows_updated > 0:
+                # We successfully claimed this booking, commit the flag update
+                db.session.commit()
+                
+                # Now send the email
+                send_reminder_email(booking)
+                processed_count += 1
 
-            # If this is a private tour (amount_paid == 250), send personal notification
-            latest_payment = booking.payments[0] if booking.payments else None
-            if latest_payment and latest_payment.amount_paid == 250:
-                send_personal_notification(booking)
+                # If this is a private tour (amount_paid == 250), send personal notification
+                latest_payment = booking.payments[0] if booking.payments else None
+                if latest_payment and latest_payment.amount_paid == 250:
+                    send_personal_notification(booking)
+            else:
+                # Another process already claimed this booking
+                print(f"Booking {booking.id} already processed by another instance")
 
-        print(f"Checked and processed reminders for bookings between {now} and {end_time}")
+        print(f"Checked and processed {processed_count} reminders for bookings between {now} and {end_time}")
 
 
 
