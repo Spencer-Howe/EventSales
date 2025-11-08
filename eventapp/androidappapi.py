@@ -3,7 +3,7 @@ Android App API endpoints
 All API routes for the mobile Android application
 """
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import pytz
 from flask import Blueprint, request, jsonify
 from .extensions import db
@@ -114,7 +114,7 @@ def admin_checkin_attendee(order_id):
         event_start = event.start
         event_end = event.end
         
-        if now < event_start:
+        if now < (event_start - timedelta(minutes=10)):
             return jsonify({
                 "success": False, 
                 "reason": "Check-in not yet available",
@@ -273,14 +273,13 @@ def get_events_checkin_stats():
         return jsonify({"success": False, "reason": "Admin authentication required"}), 401
     
     try:
-        # Get events for next 7 days (so you can test with Sunday's event)
+        # Get events for today and tomorrow
         today = date.today()
-        next_week = today + timedelta(days=7)
+        tomorrow = today + timedelta(days=1)
         
-        # Get events for next 7 days - simplified approach
         events = db.session.query(Event).join(Booking).filter(
             func.date(Event.start) >= today,
-            func.date(Event.start) <= next_week
+            func.date(Event.start) <= tomorrow
         ).distinct().all()
         
         events_data = []
