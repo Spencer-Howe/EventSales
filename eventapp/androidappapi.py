@@ -283,7 +283,7 @@ def get_events_checkin_stats():
             Event.start,
             Event.end,
             func.count(Booking.id).label('total_bookings'),
-            func.sum(func.case([(Booking.checked_in == True, 1)], else_=0)).label('checked_in_count'),
+            func.sum(func.case([(Booking.checked_in == True, 1)])).label('checked_in_count'),
             func.sum(Booking.tickets).label('total_tickets')
         ).join(Booking).filter(
             func.date(Event.start) >= today,        # Today or later
