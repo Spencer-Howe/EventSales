@@ -18,48 +18,47 @@ def send_reminder_email(booking):
     html_content = f"""
     <html>
       <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-        <h1 style="color: #2e6c80;">Preparing for Your Visit &amp; Farm Policies</h1>
+        <p>Hi {name},</p>
 
-        <p>Hello {name},</p>
+        <p>This is a friendly reminder that your visit to Howe Ranch is tomorrow at {time_slot}. We are looking forward to hosting you.</p>
 
-        <p>Thank you for booking a visit to Howe Ranch — we look forward to hosting you! Please review the following safety guidelines and farm policies carefully, and confirm that you have read and shared them with your group. These experiences are only possible with the full support and cooperation of our guests.</p>
+        <h2 style="color: #2e6c80;">Thank You &amp; Important Visit Information</h2>
+        <p>Thank you for purchasing passes to the Mini Moos experience at Howe Ranch. Our miniature Highland cows and their barn friends are excited to show you the magical place they call home:</p>
+        <p><strong>22053 Highland St<br>Wildomar, CA 92595</strong></p>
+        <p>To be compliant with our neighborhood's no impact policies and liability regulations, and ensure a safe and enjoyable experience for the animals and for you, please confirm you have reviewed the visit guidelines below:</p>
 
-        <h2 style="color: #2e6c80;">Arrival Guidelines - No Early Arrivals</h2>
+        <h2 style="color: #2e6c80;">Arrival Guidelines – No Early Arrivals</h2>
         <ul style="padding-left:20px;">
-          <li><strong>EARLY ARRIVALS STRICTLY PROHIBITED:</strong> Guests must not arrive before the event start time. Entry is strictly prohibited before your scheduled time slot at {time_slot}. Early arrivals disrupt operations, compromise safety while moving animals, and will not be accommodated. Please arrive on time or after start time. You will not miss anything by arriving after your scheduled time.</li>
-          <br>
-          <li><strong>PRIVATE ROAD LAWS:</strong> Stopping or staging on the private farm road is prohibited. Strict 15 MPH speed limit on the monitored, unpaved street leading to Howe Ranch — speeding will result in loss of your pass(es).</li>
-          <br>
-          <li><strong>ARRIVAL:</strong> Turn left at the WELCOME sign, pass through the gate, and follow signage.</li>
+          <li>Early arrivals are strictly prohibited. Guests must not arrive before the scheduled time slot due to farm liability management (including moving animals across parking areas).</li>
+          <li>You will not miss anything by arriving after your scheduled time.</li>
+          <li>If you arrive in the area early: Montague Brothers Coffee and Starbucks are nearby.</li>
+          <li>Stopping or staging on the private farm road is not permitted. 15 MPH speed limit is enforced.</li>
         </ul>
 
         <h2 style="color: #2e6c80;">Animal Interactions &amp; Safety</h2>
         <ul style="padding-left:20px;">
-          <li><strong>NO DOGS:</strong> For the safety of our animals and guests, our farm cannot accommodate dogs. Most of our animals are prey species, their reactions would make the encounter unsafe for all, and we have trained livestock guardians to protect from unknown canines on site.</li>
-          <br>
-          <li><strong>SAFETY:</strong> Wear sunscreen, a hat, and closed-toed shoes. Important: Bring water for hydration.</li>
-          <br>
-          <li><strong>SUPERVISED ONLY:</strong> For your safety and the safety of our animals, please do not approach any animals until staff has reviewed safety guidelines with you and is present.</li>
+          <li>No dogs allowed on the ranch.</li>
+          <li>Sunscreen, hat, and closed-toed shoes recommended. Please bring water.</li>
+          <li>Do not approach any animals until staff has reviewed safety with your group and is present. Children must remain supervised by your group at all times.</li>
         </ul>
-        <p>If you arrive and do not see a staff member immediately, please call or text Spencer Howe at <strong>(424) 219-4212</strong> and remain in the designated waiting area. We might be assisting other guests or preparing animals for your experience.</p>
+
+        <p>If you arrive and do not see a staff member immediately, please call or text <strong>(424) 219-4212</strong> and remain in the designated waiting area. We may be assisting another group or preparing animals.</p>
 
         <h2 style="color: #2e6c80;">Transferable Only — No Refunds or Reschedules</h2>
-        <p>
-          Experiences (open farm day passes/private experiences) are transferable, but not refundable, and cannot be rescheduled. As our focus is on animal care and our resources are perpetually at capacity, we are unable to accommodate changes — please do not call to request exceptions. If you transfer your experience, we must receive the guest’s name prior to arrival.
-        </p>
+        <p>Once booked, resources are reserved and the time slot is blocked from other visitors. Experiences may be transferred to other guests in your network, but are not refundable and cannot be rescheduled. If you transfer your pass, please provide the new guest's name prior to arrival.</p>
 
-        <h2 style="color: #2e6c80;">Location and Contact Information:</h2>
-        <p>
-          <strong>22053 Highland St<br>
-          Wildomar, CA 92595</strong>
-        </p>
-        <p>If you have any questions or need assistance, please call or text <strong>(424) 219-4212</strong> or reply to this email.</p>
+        <p>When you arrive, turn left at the Parking sign and show your QR pass to the gatekeeper, who will direct you to parking.</p>
 
-        <hr style="margin:30px 0;">
-        <p>For additional details, please review our <a href="https://www.thehoweranch.com/_files/ugd/fca21d_8ac1fc676ea14f35bd0af74d441bbb4f.pdf" target="_blank">FAQ document here</a>.</p>
+        <h2 style="color: #2e6c80;">QR Code</h2>
+        <div style="text-align: center; margin: 20px 0;">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={booking.order_id}" alt="QR Code" style="border: 1px solid #ddd; padding: 5px;">
+          <br>
+          <p><strong>Order ID: {booking.order_id}</strong> — showing on your phone is fine</p>
+        </div>
 
-        <p>We look forward to welcoming you to Howe Ranch and sharing the magic of our animals with you.</p>
-        <p>Warm regards,<br>Spencer Howe</p>
+        <p>We look forward to welcoming you and sharing the magic of our animals and their farm with you.</p>
+
+        <p>Warmly,<br>Spencer Howe</p>
       </body>
     </html>
     """
