@@ -277,35 +277,32 @@ def get_events_checkin_stats():
         today = date.today()
         next_week = today + timedelta(days=7)
         
-        events_with_stats = db.session.query(
-            Event.id,
-            Event.title,
-            Event.start,
-            Event.end,
-            func.count(Booking.id).label('total_bookings'),
-            func.sum(func.case([(Booking.checked_in == True, 1)])).label('checked_in_count'),
-            func.sum(Booking.tickets).label('total_tickets')
-        ).join(Booking).filter(
-            func.date(Event.start) >= today,        # Today or later
-            func.date(Event.start) <= next_week     # Within next 7 days
-        ).group_by(Event.id, Event.title, Event.start, Event.end).all()
+        # Get events for next 7 days - simplified approach
+        events = db.session.query(Event).join(Booking).filter(
+            func.date(Event.start) >= today,
+            func.date(Event.start) <= next_week
+        ).distinct().all()
         
         events_data = []
-        for event_stat in events_with_stats:
-            checked_in = event_stat.checked_in_count or 0
-            remaining = event_stat.total_bookings - checked_in
+        for event in events:
+            bookings = event.bookings
+            total_bookings = len(bookings)
+            checked_in_count = sum(1 for b in bookings if b.checked_in)
+            remaining = total_bookings - checked_in_count
+            total_tickets = sum(b.tickets for b in bookings)
             
             events_data.append({
-                'event_id': event_stat.id,
-                'title': event_stat.title,
-                'start': event_stat.start.isoformat() if event_stat.start else None,
-                'end': event_stat.end.isoformat() if event_stat.end else None,
-                'total_bookings': event_stat.total_bookings,
-                'total_tickets': event_stat.total_tickets or 0,
-                'checked_in_count': checked_in,
+                'event_id': event.id,
+                'title': event.title,
+                'start': event.start.isoformat() if event.start else None,
+                'end': event.end.isoformat() if event.end else None,
+                'total_bookings': total_bookings,
+                'total_tickets': total_tickets,
+                'checked_in_count': checked_in_count,
                 'remaining_count': remaining,
-                'completion_percentage': round((checked_in / event_stat.total_bookings) * 100, 1) if event_stat.total_bookings > 0 else 0
+                'completion_percentage': round((checked_in_count / total_bookings) * 100, 1) if total_bookings > 0 else 0
             })
+        
         
         return jsonify({
             "success": True,
