@@ -280,7 +280,7 @@ def get_events_checkin_stats():
         func.count(Booking.id).label('total_bookings'),
         func.sum(func.case([(Booking.checked_in == True, 1)], else_=0)).label('checked_in_count'),
         func.sum(Booking.tickets).label('total_tickets')
-    ).join(Booking).group_by(Event.id).all()
+    ).join(Booking).group_by(Event.id, Event.title, Event.start, Event.end).all()
     
     events_data = []
     for event_stat in events_with_stats:
