@@ -4,6 +4,7 @@ from flask import current_app, Blueprint
 from flask_mail import Message
 from eventapp import db, mail
 from eventapp.models import Booking, Event
+from eventapp.views import generate_qr_code
 
 tasks = Blueprint('tasks', __name__)
 
@@ -13,6 +14,9 @@ def send_reminder_email(booking):
     recipient = booking.customer.email if booking.customer else "unknown@email.com"
     time_slot = booking.event.start.strftime('%Y-%m-%d %H:%M:%S') if booking.event else "Unknown"
     name = booking.customer.name if booking.customer else "Unknown"
+    
+    # Generate proper QR code using your system
+    qr_code_data = generate_qr_code(booking.order_id)
 
     # Email content
     html_content = f"""
@@ -51,7 +55,7 @@ def send_reminder_email(booking):
 
         <h2 style="color: #2e6c80;">QR Code</h2>
         <div style="text-align: center; margin: 20px 0;">
-          <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={booking.order_id}" alt="QR Code" style="border: 1px solid #ddd; padding: 5px;">
+          <img src="{qr_code_data}" alt="QR Code" style="border: 1px solid #ddd; padding: 5px; width: 150px; height: 150px;">
           <br>
           <p><strong>Order ID: {booking.order_id}</strong> — showing on your phone is fine</p>
         </div>
