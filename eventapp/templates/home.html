@@ -147,11 +147,21 @@ function updateTimeSlots() {
         timeSelect.innerHTML = '<option value="single">3:00 PM - 6:00 PM</option>';
     } else if (selectedDate) {
         // Nov 30, Dec 7, Dec 14, Dec 21 - tiered time slots, 50 each
-        timeSelect.innerHTML = `
-            <option value="">Choose a time slot</option>
-            <option value="3pm">3:00 PM - 6:00 PM</option>
-            <option value="4pm">4:00 PM - 7:00 PM</option>
-        `;
+        if (selectedDate === 'nov30') {
+            // Nov 30 specific - 3pm slot sold out
+            timeSelect.innerHTML = `
+                <option value="">Choose a time slot</option>
+                <option value="3pm" disabled>3:00 PM - 6:00 PM (SOLD OUT)</option>
+                <option value="4pm">4:00 PM - 7:00 PM</option>
+            `;
+        } else {
+            // Other dates - both slots available
+            timeSelect.innerHTML = `
+                <option value="">Choose a time slot</option>
+                <option value="3pm">3:00 PM - 6:00 PM</option>
+                <option value="4pm">4:00 PM - 7:00 PM</option>
+            `;
+        }
     } else {
         timeSelect.innerHTML = '<option value="">First select a date</option>';
         timeSelect.disabled = true;
