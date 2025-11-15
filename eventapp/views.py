@@ -270,11 +270,14 @@ def show_receipt(order_id):
             db.session.add(customer)
             db.session.flush()  # Get customer.id
         
+        # Holiday Minis: force tickets to 1 regardless of guest count
+        stored_tickets = 1 if "Holiday Minis" in event.title else tickets
+        
         # Create booking
         new_booking = Booking(
             customer_id=customer.id,
             event_id=event.id,
-            tickets=tickets,
+            tickets=stored_tickets,
             order_id=order_id,
             reminder_sent=False
         )
@@ -293,7 +296,7 @@ def show_receipt(order_id):
         db.session.add(payment)
         
         # Mark private event as booked when PayPal payment is completed
-        if event.is_private and status == 'COMPLETED':
+        if event.is_private and status == 'COMPLETED' and "Holiday Minis" not in event.title:
             event.is_booked = True
         
         db.session.commit()

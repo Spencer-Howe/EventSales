@@ -19,6 +19,22 @@ def check_capacity(event, tickets):
     from .models import Booking, Payment
     from datetime import datetime, timedelta
     
+    # Holiday Minis: count bookings instead of total tickets
+    if "Holiday Minis" in event.title:
+        if tickets > 10:
+            return False, f"Holiday Minis accommodate up to 10 guests maximum per booking."
+        
+        # Count number of completed bookings (each booking = 1 slot)
+        current_bookings_count = db.session.query(db.func.count(Booking.id)).join(Payment).filter(
+            Booking.event_id == event.id,
+            Payment.status == 'COMPLETED'
+        ).scalar() or 0
+        
+        if current_bookings_count >= event.max_capacity:
+            return False, f"Sorry, this Holiday Minis session has reached capacity."
+        
+        return True, None
+    
     # Private events don't use capacity system but need 24hr notice and max 10 people
     if event.is_private:
         # Check guest count limit for private events

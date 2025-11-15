@@ -82,11 +82,14 @@ def submit_crypto_payment():
         db.session.add(customer)
         db.session.flush()  # Get customer.id
     
+    # Holiday Minis: force tickets to 1 regardless of guest count
+    stored_tickets = 1 if "Holiday Minis" in event.title else tickets
+    
     # Create booking
     new_booking = Booking(
         customer_id=customer.id,
         event_id=event.id,
-        tickets=tickets,
+        tickets=stored_tickets,
         order_id=order_id,
         reminder_sent=False
     )
@@ -172,7 +175,7 @@ def confirm_crypto_payment(order_id):
             payment.status = 'confirmed'
     
     # Mark private event as booked when crypto payment is confirmed
-    if booking.event.is_private:
+    if booking.event.is_private and "Holiday Minis" not in booking.event.title:
         booking.event.is_booked = True
     
     db.session.commit()
