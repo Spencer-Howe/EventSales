@@ -225,8 +225,16 @@ function updateTimeSlots() {
             timeSelect.innerHTML = `
                 <option value="">Choose a time slot</option>
                 <option value="3pm" disabled>3:00 PM - 6:00 PM (SOLD OUT)</option>
+                <option value="4pm" disabled>4:00 PM - 7:00 PM (SOLD OUT)</option>
+            `;
+        } else if (selectedDate === 'dec14') {
+            // Dec 14 specific - 3pm slot sold out
+            timeSelect.innerHTML = `
+                <option value="">Choose a time slot</option>
+                <option value="3pm" disabled>3:00 PM - 6:00 PM (SOLD OUT)</option>
                 <option value="4pm">4:00 PM - 7:00 PM</option>
             `;
+
         } else if (selectedDate === 'dec21') {
             // Dec 21 specific - 3pm slot sold out
             timeSelect.innerHTML = `
