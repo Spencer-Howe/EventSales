@@ -18,7 +18,7 @@
         <div class="card-body">
           <h5 class="card-title text-danger" style="font-family: 'serif'; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">❄️ Winter Wonderland Open Farm Day at Howe Ranch — Discover the Magic!</h5>
           <div class="card-text text-center p-2 mb-3" style="background: linear-gradient(45deg, #dc3545, #28a745); color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-            <strong>Christmas Eve, and New Year's Eve!</strong><br>
+            <strong>Christmas Eve, and New Year's Eve from 3pm-6pm</strong><br>
             <strong>🕓 Select your spot!</strong>
           </div>
           
@@ -51,18 +51,13 @@
           <div class="border p-3 mb-3" style="background: #f8f9fa; border-radius: 8px;">
             <div class="form-group mb-3">
               <label for="winter-event-date" class="form-label"><strong>Select a Date</strong></label>
-              <select class="form-control" id="winter-event-date" required onchange="updateTimeSlots()">
+              <select class="form-control" id="winter-event-date" required>
                 <option value="">Choose a Date</option>
-                <option value="Christmas">Wednesday, December 24 (Christmas Eve)</option>
-                <option value="New Years">Wednesday, December 31 (New Year's Eve)</option>
+                <option value="christmas">Wednesday, December 24 (Christmas Eve)</option>
+                <option value="newyears">Wednesday, December 31 (New Year's Eve)</option>
               </select>
             </div>
             
-            <div class="form-group mb-3">
-
-                <option value="">First select a date</option>
-              </select>
-            </div>
             
             <div class="form-group mb-3">
               <label for="winter-tickets" class="form-label"><strong>Party Size</strong></label>
@@ -194,62 +189,6 @@
   </div>
 
 <script>
-function updateTimeSlots() {
-    const dateSelect = document.getElementById('winter-event-date');
-    const timeSelect = document.getElementById('winter-time-slot');
-    const selectedDate = dateSelect.value;
-    
-    // Clear existing options
-    timeSelect.innerHTML = '';
-    timeSelect.disabled = false;
-    
-    if (selectedDate === 'christmas' || selectedDate === 'newyears') {
-        // Christmas Eve and New Year's Eve - 82 person capacity, single time slot
-        timeSelect.innerHTML = '<option value="single">3:00 PM - 6:00 PM</option>';
-    } else if (selectedDate) {
-        // Nov 30, Dec 7, Dec 14, Dec 21 - tiered time slots, 50 each
-        if (selectedDate === 'nov30') {
-            // Nov 30 specific - both slots sold out
-            timeSelect.innerHTML = `
-                <option value="">Choose a time slot</option>
-                <option value="3pm" disabled>3:00 PM - 6:00 PM (SOLD OUT)</option>
-                <option value="4pm" disabled>4:00 PM - 7:00 PM (SOLD OUT)</option>
-            `;
-        } else if (selectedDate === 'dec7') {
-            // Dec 7 specific - 3pm slot sold out
-            timeSelect.innerHTML = `
-                <option value="">Choose a time slot</option>
-                <option value="3pm" disabled>3:00 PM - 6:00 PM (SOLD OUT)</option>
-                <option value="4pm" disabled>4:00 PM - 7:00 PM (SOLD OUT)</option>
-            `;
-        } else if (selectedDate === 'dec14') {
-            // Dec 14 specific - 3pm slot sold out
-            timeSelect.innerHTML = `
-                <option value="">Choose a time slot</option>
-                <option value="3pm" disabled>3:00 PM - 6:00 PM (SOLD OUT)</option>
-                <option value="4pm">4:00 PM - 7:00 PM</option>
-            `;
-
-        } else if (selectedDate === 'dec21') {
-            // Dec 21 specific - 3pm slot sold out
-            timeSelect.innerHTML = `
-                <option value="">Choose a time slot</option>
-                <option value="3pm" disabled>3:00 PM - 6:00 PM (SOLD OUT)</option>
-                <option value="4pm">4:00 PM - 7:00 PM</option>
-            `;
-        } else {
-            // Other dates - both slots available
-            timeSelect.innerHTML = `
-                <option value="">Choose a time slot</option>
-                <option value="3pm">3:00 PM - 6:00 PM</option>
-                <option value="4pm">4:00 PM - 7:00 PM</option>
-            `;
-        }
-    } else {
-        timeSelect.innerHTML = '<option value="">First select a date</option>';
-        timeSelect.disabled = true;
-    }
-}
 
 function goToCheckout(eventType) {
     let eventId, tickets;
@@ -272,33 +211,23 @@ function goToCheckout(eventType) {
         }
     } else if (eventType === 'winter') {
         const dateValue = document.getElementById('winter-event-date').value;
-        const timeSlot = document.getElementById('winter-time-slot').value;
         tickets = document.getElementById('winter-tickets').value;
         
-        if (!dateValue || !timeSlot || !tickets) {
-            alert('Please select a date, time slot, and enter the number of guests.');
+        if (!dateValue || !tickets) {
+            alert('Please select a date and enter the number of guests.');
             return;
         }
         
-        // Map date and time combinations to event IDs
+        // Map dates directly to event IDs (Christmas and New Year's only have 3pm slots)
         const eventMapping = {
-            'nov30_3pm': '676',
-            'nov30_4pm': '677', 
-            'dec7_3pm': '678',
-            'dec7_4pm': '679',
-            'dec14_3pm': '680',
-            'dec14_4pm': '681',
-            'dec21_3pm': '682',
-            'dec21_4pm': '683',
-            'christmas_single': '684',
-            'newyears_single': '685'
+            'christmas': '684',
+            'newyears': '685'
         };
         
-        const mappingKey = `${dateValue}_${timeSlot}`;
-        eventId = eventMapping[mappingKey];
+        eventId = eventMapping[dateValue];
         
         if (!eventId) {
-            alert('Please select a valid date and time combination.');
+            alert('Please select a valid date.');
             return;
         }
     } else if (eventType === 'holiday') {
