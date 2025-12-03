@@ -154,18 +154,10 @@ def check_and_send_reminders(app):
 
 
 
-def clear_old_bookings(app):
-    with app.app_context():
-        now = datetime.utcnow()
-        end_time = now - timedelta(hours=24)
-
-        old_events = Event.query.filter(
-            Event.end < end_time
-        ).all()
-
-        for event in old_events:
-            db.session.delete(event)
-        db.session.commit()
+# def clear_old_bookings(app):
+#     # REMOVED - was deleting old events and breaking email recovery
+#     # Now we filter frontend instead to hide old events from booking
+#     pass
 
 
 
