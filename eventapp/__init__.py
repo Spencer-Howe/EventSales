@@ -44,7 +44,7 @@ def create_app(config_class=Config, check_and_send_reminders=None, clear_old_boo
 
     scheduler.init_app(app)
     scheduler.add_job(func=check_and_send_reminders, trigger='interval', args=[app], hours=1, id='email_reminder')
-    scheduler.add_job(func=clear_old_bookings, trigger='interval', args=[app], hours=24, id='clear_bookings')
+    # Removed clear_old_bookings job - now handled by frontend filtering
     scheduler.start()
     app.config['PAYPAL_CLIENT_ID'] = os.getenv('PAYPAL_CLIENT_ID')
     app.config['PAYPAL_API_BASE'] = os.getenv('PAYPAL_API_BASE')
