@@ -23,7 +23,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     },
                     body: JSON.stringify({
                         orderID: data.orderID,
-                        phone: phoneInput
+                        phone: phoneInput,
+                        event_id: eventId,
+                        tickets: tickets
                     }),
                 })
                 .then(response => response.json())
@@ -129,22 +131,44 @@ function showEmailVerificationPopup(paypalEmail, orderID, phone) {
 }
 
 function proceedToReceipt(orderID, phone, useUpdatedEmail) {
-    let emailParam = '';
-    
     if (useUpdatedEmail) {
         const updatedEmail = document.getElementById('verifyEmail').value.trim();
         if (!updatedEmail || !updatedEmail.includes('@')) {
             alert('Please enter a valid email address.');
             return;
         }
-        emailParam = `&email=${encodeURIComponent(updatedEmail)}`;
+        
+        // Update email in existing booking
+        fetch('/update_booking_email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                order_id: orderID,
+                email: updatedEmail
+            })
+        })
+        .then(response => response.json())
+        .then(updateData => {
+            if (updateData.success) {
+                // Email updated successfully, proceed to receipt
+                document.getElementById('emailVerifyPopup').remove();
+                window.location.href = `/receipt/${orderID}`;
+            } else {
+                alert('Failed to update email. Please try again.');
+                console.error('Email update failed:', updateData.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error updating email:', error);
+            alert('Error updating email. Please try again.');
+        });
+    } else {
+        // Use PayPal email (no update needed)
+        document.getElementById('emailVerifyPopup').remove();
+        window.location.href = `/receipt/${orderID}`;
     }
-    
-    // Remove popup
-    document.getElementById('emailVerifyPopup').remove();
-    
-    // Redirect to receipt with email parameter if provided
-    window.location.href = `/receipt/${orderID}?event_id=${eventId}&tickets=${tickets}&phone=${encodeURIComponent(phone)}${emailParam}`;
 }
 
 

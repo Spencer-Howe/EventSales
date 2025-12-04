@@ -34,18 +34,6 @@ def calculate_price():
                              event_description='No description available',
                              error_message='Event not found')
 
-    # Check if event has passed (6 hour grace period after start)
-    booking_cutoff = event.start + timedelta(hours=6) if event.start else None
-    if booking_cutoff and booking_cutoff < datetime.utcnow():
-        return render_template('checkout.html',
-                             time_slot=event.start.strftime('%Y-%m-%d %H:%M:%S') if event.start else 'Unknown Time',
-                             tickets=tickets,
-                             total_price=0,
-                             paypal_client_id=paypal_client_id,
-                             event_title=event.title,
-                             event_description=event.description,
-                             error_message='This event has already ended and is no longer available for booking.')
-
     # Check capacity first
     can_book, capacity_error = check_capacity(event, tickets)
     if not can_book:

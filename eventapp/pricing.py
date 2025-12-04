@@ -18,6 +18,14 @@ def check_capacity(event, tickets):
     """Check if booking fits capacity"""
     from .models import Booking, Payment
     from datetime import datetime, timedelta
+    import pytz
+    
+    # Universal check: allow booking during event, prevent booking 6 hours after event starts
+    pacific_tz = pytz.timezone('America/Los_Angeles')
+    now = datetime.now(pacific_tz).replace(tzinfo=None)  # Convert to naive datetime for comparison
+    booking_cutoff = event.start + timedelta(hours=6) if event.start else None
+    if booking_cutoff and now >= booking_cutoff:
+        return False, f"This event has ended and is no longer available for booking."
     
     # Holiday Minis: count bookings instead of total tickets
     if "Holiday Minis" in event.title:
@@ -42,9 +50,6 @@ def check_capacity(event, tickets):
             return False, f"Private events accommodate up to 10 guests maximum. Please contact us for larger groups."
         
         # Check 24-hour advance booking requirement using Pacific time
-        import pytz
-        pacific_tz = pytz.timezone('America/Los_Angeles')
-        now = datetime.now(pacific_tz).replace(tzinfo=None)  # Convert to naive datetime for comparison
         if event.start <= now + timedelta(hours=24):
             return False, f"Private events require at least 24 hours advance notice due to staffing."
         return True, None
