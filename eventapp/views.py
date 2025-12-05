@@ -370,16 +370,17 @@ def send_confirmation_email_for_booking(booking, payment, order_id):
     # Add check-in URL for reference
     booking_info_url = f"https://thehoweranchpayment.com/api/booking/{order_id}"
     email_order_details['checkin_url'] = booking_info_url
-    
-    # COMMENTED OUT: This was sending duplicate emails every time receipt page is viewed
-    # Receipt emails are already sent during payment confirmation in PayPal/crypto flows
-    # html_content = create_receipt_email_content(email_order_details)
-    # subject = "Your Payment Receipt"
-    # sender = current_app.config['MAIL_USERNAME']
-    # recipients = [booking.customer.email, 'howeranchservices@gmail.com']
-    # msg = Message(subject, sender=sender, recipients=recipients, html=html_content)
-    # mail.send(msg)
 
+    if not booking.receipt_sent:
+
+        html_content = create_receipt_email_content(email_order_details)
+        subject = "Your Payment Receipt"
+        sender = current_app.config['MAIL_USERNAME']
+        recipients = [booking.customer.email, 'howeranchservices@gmail.com']
+        msg = Message(subject, sender=sender, recipients=recipients, html=html_content)
+        mail.send(msg);
+        booking.receipt_sent = True
+        db.session.commit()
 
 
 @views.route('/qr_download/<order_id>')

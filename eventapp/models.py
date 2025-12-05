@@ -56,6 +56,7 @@ class Booking(db.Model):
     reminder_sent = db.Column(db.Boolean, default=False)
     checked_in = db.Column(db.Boolean, default=False)
     checkin_time = db.Column(db.DateTime, nullable=True)
+    receipt_sent = db.Column(db.Boolean, default=False, nullable=False)
     
     # Foreign keys
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
