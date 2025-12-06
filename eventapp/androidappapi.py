@@ -6,6 +6,7 @@ All API routes for the mobile Android application
 from datetime import datetime, timedelta
 import pytz
 from flask import Blueprint, request, jsonify
+from sqlalchemy import or_, and_
 from .extensions import db
 
 # Create the blueprint
@@ -273,12 +274,16 @@ def get_events_checkin_stats():
         return jsonify({"success": False, "reason": "Admin authentication required"}), 401
     
     try:
-        # Get events for today and tomorrow
-        today = date.today()
+        # Get events for yesterday through tomorrow using Pacific timezone  
+        # This prevents events from disappearing during check-in hours
+        pacific_tz = pytz.timezone('America/Los_Angeles')
+        now = datetime.now(pacific_tz)
+        today = now.date()
+        yesterday = today - timedelta(days=1)
         tomorrow = today + timedelta(days=1)
         
         events = db.session.query(Event).join(Booking).filter(
-            func.date(Event.start) >= today,
+            func.date(Event.start) >= yesterday,
             func.date(Event.start) <= tomorrow
         ).distinct().all()
         
