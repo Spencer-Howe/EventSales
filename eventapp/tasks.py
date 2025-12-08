@@ -15,8 +15,8 @@ def send_reminder_email(booking):
     time_slot = booking.event.start.strftime('%Y-%m-%d %H:%M:%S') if booking.event else "Unknown"
     name = booking.customer.name if booking.customer else "Unknown"
 
-    # Generate proper QR code using your system
-    qr_code_data = generate_qr_code(booking.order_id)
+    # Generate receipt URL instead of QR code
+    receipt_url = f"https://thehoweranchpayment.com/receipt/{booking.order_id}"
 
     # Email content
     html_content = f"""
@@ -109,11 +109,13 @@ def send_reminder_email(booking):
 </p>
 
 
-        <h2 style="color: #2e6c80;">QR Code</h2>
-        <div style="text-align: center; margin: 20px 0;">
-          <img src="{qr_code_data}" alt="QR Code" style="border: 1px solid #ddd; padding: 5px; width: 150px; height: 150px;">
-          <br>
-          <p><strong>Order ID: {booking.order_id}</strong> — showing on your phone is fine</p>
+        <div style="text-align: center; margin: 20px 0; padding: 20px; border: 2px dashed #007bff; border-radius: 10px; background-color: #f8f9fa;">
+          <h3 style="color: #007bff; margin-bottom: 15px;">📱 Get Your QR Code</h3>
+          <p style="margin-bottom: 15px;"><strong>Click here to access your QR code for check-in:</strong></p>
+          <a href="{receipt_url}" style="display: inline-block; background: linear-gradient(45deg, #007bff, #0056b3); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 10px;">
+            View Receipt & QR Code
+          </a>
+          <p style="margin-top: 10px;"><strong>Order ID: {booking.order_id}</strong></p>
         </div>
 
         <p>We look forward to welcoming you and sharing the magic of our animals and their farm with you.</p>

@@ -215,19 +215,16 @@ def sign_waiver(order_id):
         )
         db.session.add(new_waiver)
         db.session.commit()
-        subject = f"New Waiver Submitted: {order_id}"
+        subject = f"Waiver Submitted - Thank You!"
         sender = current_app.config['MAIL_USERNAME']
-        recipients = [sender]
+        recipients = [booking.customer.email]
         body = f"""
-        A new waiver has been submitted.
+        Thank you for submitting your waiver for Order ID: {order_id}!
 
-        Details:
-        ID: {new_waiver.id}
-        Order ID: {order_id}
-        Signature: {signature}
-        Signed Date: {new_waiver.signed_date}
+        Your waiver has been successfully received and processed.
+        We look forward to seeing you at Howe Ranch!
 
-        Please review the submission in your system.
+        If you have any questions, please contact us.
         """
         message = Message(subject, sender=sender, recipients=recipients, body=body)
         mail.send(message)
@@ -351,6 +348,13 @@ def show_receipt(order_id):
         # Commit all changes
         db.session.commit()
         
+        # Send admin notification immediately
+        try:
+            send_admin_booking_notification(new_booking, payment, order_id)
+        except Exception as admin_error:
+            current_app.logger.error(f"Failed to send admin notification for {order_id}: {str(admin_error)}")
+            # Continue even if admin email fails - don't break customer flow
+        
         # Send confirmation email (this will use your receipt_sent logic)
         try:
             send_confirmation_email_for_booking(new_booking, payment, order_id)
@@ -436,7 +440,7 @@ def send_confirmation_email_for_booking(booking, payment, order_id):
         html_content = create_receipt_email_content(email_order_details)
         subject = "Your Payment Receipt"
         sender = current_app.config['MAIL_USERNAME']
-        recipients = [booking.customer.email, 'howeranchservices@gmail.com']
+        recipients = [booking.customer.email]
         msg = Message(subject, sender=sender, recipients=recipients, html=html_content)
         mail.send(msg);
         booking.receipt_sent = True
@@ -649,4 +653,16 @@ def create_receipt_email_content(order_details):
 
     """
     return html_content
+
+
+def send_admin_booking_notification(booking, payment, order_id):
+    """Send simple admin notification to business email"""
+    # Everything in subject line for quick scanning
+    subject = f"{booking.event.start.strftime('%m/%d %I:%M%p')} {booking.event.title} - {booking.customer.name} ({booking.tickets}) ${payment.amount_paid}"
+    
+    msg = Message(subject, 
+                  sender=current_app.config['MAIL_USERNAME'],
+                  recipients=['howeranchservices@gmail.com'],
+                  body="")
+    mail.send(msg)
 
