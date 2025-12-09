@@ -1,12 +1,24 @@
 document.addEventListener('DOMContentLoaded', function () {
     paypal.Buttons({
         createOrder: function (data, actions) {
-            // Use the amount already calculated from URL params (totalAmount is from template)
+            // Get form data for webhook metadata
+            var phoneInput = document.getElementById('phone') ? document.getElementById('phone').value : '';
+            var emailInput = document.getElementById('email') ? document.getElementById('email').value : '';
+            
+            // Create metadata for webhook processing
+            var bookingMetadata = {
+                event_id: eventId,
+                tickets: tickets,
+                phone: phoneInput,
+                email: emailInput
+            };
+            
             return actions.order.create({
                 purchase_units: [{
                     amount: {
                         value: totalAmount.toString()
-                    }
+                    },
+                    custom_id: JSON.stringify(bookingMetadata)
                 }]
             });
         },

@@ -5,89 +5,108 @@
 
 {% block content %}
 <body>
-<h1>Payment Receipt</h1>
-<p><strong>Name:</strong> {{name}}</p>
-<p><strong>Email:</strong> {{email}}</p>
-<p>Order ID: {{ order_id }}</p>
-<p>Total Amount: {{ amount }}</p>
-<p>Currency: {{ currency }}</p>
-<p>Status: {{ status }}</p>
-<p>Time slot: {{time_slot}}</p>
-<p>Number of Tickets: {{ tickets }}</p>
-<div class="mb-3">
-    <a href="{{ url_for('views.sign_waiver', order_id=order_id) }}" class="btn btn-primary">Please Complete Registration</a>
-</div>
-
-<!-- QR Code for Check-in -->
-<div class="text-center mb-4" style="border: 2px dashed #007bff; padding: 20px; border-radius: 10px; background-color: #f8f9fa;">
-    <h3 style="color: #007bff; margin-bottom: 15px;">📱 Quick Check-In</h3>
-    <p><strong>Show this QR code when you arrive for instant check-in!</strong></p>
-    {% if qr_code %}
-        <img src="{{ qr_code }}" alt="Check-in QR Code" style="width: 200px; height: 200px; margin: 10px;">
-    {% endif %}
-    
-    <!-- Mobile-friendly download options -->
-    <div style="margin: 15px 0;">
-        <a href="{{ url_for('views.download_qr_code', order_id=order_id) }}" 
-           class="btn btn-success btn-sm" 
-           style="margin: 5px; padding: 10px 20px; background-color: #28a745; border: none; color: white; text-decoration: none; border-radius: 5px; display: inline-block;"
-           download>
-            📥 Download QR Code
-        </a>
-        <button onclick="shareQRCode()" 
-                class="btn btn-info btn-sm" 
-                style="margin: 5px; padding: 10px 20px; background-color: #17a2b8; border: none; color: white; border-radius: 5px;"
-                id="shareBtn">
-            📤 Share QR Code
-        </button>
+{% if processing %}
+    <h1>Payment Received - Finalizing Booking</h1>
+    <div class="alert alert-info" role="alert">
+        <h4 class="alert-heading">Payment Confirmed!</h4>
+        <p>Your payment has been successfully received and is being processed.</p>
+        <p>Order ID: <strong>{{ order_id }}</strong></p>
+        <hr>
+        <p class="mb-0">Please refresh this page in a few moments to see your complete receipt and QR code.</p>
     </div>
-    
-    <p style="margin-top: 10px; font-size: 0.9rem; color: #6c757d;">
-        Or visit: <code>{{ checkin_url }}</code>
-    </p>
-</div>
+    <script>
+        // Auto-refresh every 5 seconds until booking is processed
+        setTimeout(function() {
+            location.reload();
+        }, 5000);
+    </script>
+{% else %}
+    <h1>Payment Receipt</h1>
+    <p><strong>Name:</strong> {{name}}</p>
+    <p><strong>Email:</strong> {{email}}</p>
+    <p>Order ID: {{ order_id }}</p>
+    <p>Total Amount: {{ amount }}</p>
+    <p>Currency: {{ currency }}</p>
+    <p>Status: {{ status }}</p>
+    <p>Time slot: {{time_slot}}</p>
+    <p>Number of Tickets: {{ tickets }}</p>
+    <div class="mb-3">
+        <a href="{{ url_for('views.sign_waiver', order_id=order_id) }}" class="btn btn-primary">Please Complete Registration</a>
+    </div>
+    <!-- QR Code for Check-in -->
+    <div class="text-center mb-4" style="border: 2px dashed #007bff; padding: 20px; border-radius: 10px; background-color: #f8f9fa;">
+        <h3 style="color: #007bff; margin-bottom: 15px;">📱 Quick Check-In</h3>
+        <p><strong>Show this QR code when you arrive for instant check-in!</strong></p>
+        {% if qr_code %}
+            <img src="{{ qr_code }}" alt="Check-in QR Code" style="width: 200px; height: 200px; margin: 10px;">
+        {% endif %}
+        
+        <!-- Mobile-friendly download options -->
+        <div style="margin: 15px 0;">
+            <a href="{{ url_for('views.download_qr_code', order_id=order_id) }}" 
+               class="btn btn-success btn-sm" 
+               style="margin: 5px; padding: 10px 20px; background-color: #28a745; border: none; color: white; text-decoration: none; border-radius: 5px; display: inline-block;"
+               download>
+                📥 Download QR Code
+            </a>
+            <button onclick="shareQRCode()" 
+                    class="btn btn-info btn-sm" 
+                    style="margin: 5px; padding: 10px 20px; background-color: #17a2b8; border: none; color: white; border-radius: 5px;"
+                    id="shareBtn">
+                📤 Share QR Code
+            </button>
+        </div>
+        
+        <p style="margin-top: 10px; font-size: 0.9rem; color: #6c757d;">
+            Or visit: <code>{{ checkin_url }}</code>
+        </p>
+    </div>
 
-<script>
-async function shareQRCode() {
-    const shareBtn = document.getElementById('shareBtn');
-    
-    // Check if Web Share API is supported
-    if (navigator.share) {
-        try {
-            // Fetch the QR code image as blob
-            const response = await fetch('{{ url_for("views.download_qr_code", order_id=order_id) }}');
-            const blob = await response.blob();
-            const file = new File([blob], 'qr_code_{{ order_id }}.png', { type: 'image/png' });
-            
-            await navigator.share({
-                title: 'Check-in QR Code - Howe Ranch',
-                text: 'My check-in QR code for Howe Ranch visit',
-                files: [file]
-            });
-        } catch (error) {
-            // Fallback to download if sharing fails
+    <script>
+    async function shareQRCode() {
+        const shareBtn = document.getElementById('shareBtn');
+        
+        // Check if Web Share API is supported
+        if (navigator.share) {
+            try {
+                // Fetch the QR code image as blob
+                const response = await fetch('{{ url_for("views.download_qr_code", order_id=order_id) }}');
+                const blob = await response.blob();
+                const file = new File([blob], 'qr_code_{{ order_id }}.png', { type: 'image/png' });
+                
+                await navigator.share({
+                    title: 'Check-in QR Code - Howe Ranch',
+                    text: 'My check-in QR code for Howe Ranch visit',
+                    files: [file]
+                });
+            } catch (error) {
+                // Fallback to download if sharing fails
+                fallbackDownload();
+            }
+        } else {
+            // Fallback for browsers that don't support Web Share API
             fallbackDownload();
         }
-    } else {
-        // Fallback for browsers that don't support Web Share API
-        fallbackDownload();
     }
-}
 
-function fallbackDownload() {
-    // Create a temporary link and trigger download
-    const link = document.createElement('a');
-    link.href = '{{ url_for("views.download_qr_code", order_id=order_id) }}';
-    link.download = 'qr_code_{{ order_id }}.png';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}
-</script>
+    function fallbackDownload() {
+        // Create a temporary link and trigger download
+        const link = document.createElement('a');
+        link.href = '{{ url_for("views.download_qr_code", order_id=order_id) }}';
+        link.download = 'qr_code_{{ order_id }}.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+    </script>
 
-<hr>
+    <hr>
 
-<h2>Thank You & Important Visit Information</h2>
+    <h2>Thank You & Important Visit Information</h2>
+{% endif %}
+
+{% if not processing %}
+<h2 style="margin-top: 30px;">Thank You & Important Visit Information</h2>
 <p>Thank you for purchasing passes to the Mini Moos experience at Howe Ranch! Our miniature Highland cows and their barn friends are excited to show you the magical place they call home:</p>
 <p><strong>22053 Highland St<br>Wildomar, CA 92595</strong></p>
 <p>To be compliant with our neighborhood's no impact policies and liability regulations, and ensure a safe and enjoyable experience for the animals and you, we must ask that you please confirm that you have reviewed the visit guidelines below, as posted on our website:</p>
@@ -116,6 +135,7 @@ function fallbackDownload() {
 <p style="margin-top: 15px;">When you arrive, turn left at the Parking Sign and show your QR Pass to the gatekeeper, who will direct you to the parking area. Have fun!</p>
 
 <p>Warmly,<br>Spencer Howe</p>
+{% endif %}
 
 
 </body>

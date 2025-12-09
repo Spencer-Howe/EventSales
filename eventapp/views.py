@@ -142,20 +142,8 @@ def verify_transaction():
     
     verified, order_details = verify_order_with_paypal(order_id, access_token)
     if verified:
-        # Send instant receipt URL email for safety
-        try:
-            # Use frontend email if provided, otherwise use PayPal email
-            payer_info = order_details.get('payer', {})
-            paypal_email = payer_info.get('email_address')
-            target_email = email if email else paypal_email  # Fallback to PayPal email
-            
-            if target_email and event_id and tickets:
-                receipt_url = f"https://thehoweranchpayment.com/receipt/{order_id}?event_id={event_id}&tickets={tickets}&phone={phone or ''}&email={email or ''}"
-                send_instant_receipt_url_email(target_email, order_id, receipt_url, order_details)
-        except Exception as email_error:
-            current_app.logger.error(f"Failed to send instant receipt URL for {order_id}: {str(email_error)}")
-            # Continue even if instant email fails - don't break the flow
-        
+        # Webhook will handle all email sending - no need for instant email
+        current_app.logger.info(f"Payment verified for {order_id} - webhook will create booking")
         return jsonify({"verified": True, "orderID": order_id, "details": order_details})
     else:
         return jsonify({"verified": False, "reason": "Verification failed or order not completed"}), 400
@@ -234,24 +222,20 @@ def sign_waiver(order_id):
 
 @views.route('/receipt/<order_id>')
 def show_receipt(order_id):
-    from eventapp.models import Booking, Event
+    from eventapp.models import Booking
     
-    # Check if this booking already exists in database
+    # READ-ONLY RECEIPT PAGE
+    # Only displays bookings created by webhook
+    # Never creates bookings directly
+    
     existing_booking = Booking.query.filter_by(order_id=order_id).first()
     if existing_booking:
-        # This is a completed booking - show receipt from database
+        # Booking exists (created by webhook) - show receipt from database
         qr_code = generate_qr_code(order_id)
         booking_info_url = f"https://thehoweranchpayment.com/api/booking/{order_id}"
         
         # Get latest payment for display
         latest_payment = existing_booking.payments[0] if existing_booking.payments else None
-        
-        # Send confirmation email if not already sent (safety check)
-        try:
-            send_confirmation_email_for_booking(existing_booking, latest_payment, order_id)
-        except Exception as email_error:
-            current_app.logger.error(f"Failed to send confirmation email for {order_id}: {str(email_error)}")
-            # Continue showing receipt even if email fails
         
         return render_template('receipt.html', 
                              order_id=existing_booking.order_id,
@@ -266,185 +250,23 @@ def show_receipt(order_id):
                              qr_code=qr_code,
                              checkin_url=booking_info_url)
     
-    # No existing booking found - create booking from PayPal verification
-    # Get event_id and tickets from URL parameters (passed from frontend after PayPal success)
-    event_id = request.args.get('event_id')
-    tickets = request.args.get('tickets')
-    phone = request.args.get('phone')
-    user_email = request.args.get('email')  # Optional user-provided email
-    
-    if not event_id or not tickets:
-        return "Missing booking details. Please contact support with order ID: " + order_id, 400
-    
-    # Verify with PayPal first
-    access_token = get_paypal_access_token()
-    if not access_token:
-        return "Failed to obtain access token", 500
-    
-    verified, order_details = verify_order_with_paypal(order_id, access_token)
-    if not verified:
-        return "Payment verification failed", 400
-    
-    # Create booking immediately after PayPal verification (same logic as before)
-    try:
-        from .models import Customer, Payment
-        
-        # Get event
-        event = Event.query.filter_by(id=event_id).first()
-        if not event:
-            raise Exception(f"Event {event_id} not found")
-            
-        # Extract PayPal details
-        payer_info = order_details.get('payer', {})
-        name = f"{payer_info.get('name').get('given_name')} {payer_info.get('name').get('surname')}"
-        paypal_email = payer_info.get('email_address')
-        # Use user-provided email if provided, otherwise use PayPal email
-        email = user_email if user_email else paypal_email
-        amount = order_details['purchase_units'][0]['amount']['value']
-        currency = order_details['purchase_units'][0]['amount']['currency_code']
-        status = order_details.get('status')
-        
-        # Find or create customer with email
-        customer = Customer.query.filter_by(email=email).first()
-        if not customer:
-            customer = Customer(
-                name=name,
-                email=email,
-                phone=phone
-            )
-            db.session.add(customer)
-            db.session.flush()
-        
-        # Holiday Minis: force tickets to 1 regardless of guest count
-        stored_tickets = 1 if "Holiday Minis" in event.title else int(tickets)
-        
-        # Create booking
-        new_booking = Booking(
-            customer_id=customer.id,
-            event_id=event.id,
-            tickets=stored_tickets,
-            order_id=order_id,
-            reminder_sent=False,
-            receipt_sent=False  # Initialize receipt_sent to False
-        )
-        db.session.add(new_booking)
-        db.session.flush()
-        
-        # Create payment record
-        payment = Payment(
-            booking_id=new_booking.id,
-            amount_paid=float(amount),
-            currency=currency,
-            status=status,
-            payment_method='paypal',
-            paypal_order_id=order_id
-        )
-        db.session.add(payment)
-        
-        # Mark private event as booked when PayPal payment is completed
-        if event.is_private and status == 'COMPLETED' and "Holiday Minis" not in event.title:
-            event.is_booked = True
-        
-        # Commit all changes
-        db.session.commit()
-        
-        # Send admin notification immediately
-        try:
-            send_admin_booking_notification(new_booking, payment, order_id)
-        except Exception as admin_error:
-            current_app.logger.error(f"Failed to send admin notification for {order_id}: {str(admin_error)}")
-            # Continue even if admin email fails - don't break customer flow
-        
-        # Send confirmation email (this will use your receipt_sent logic)
-        try:
-            send_confirmation_email_for_booking(new_booking, payment, order_id)
-        except Exception as email_error:
-            current_app.logger.error(f"Failed to send confirmation email for {order_id}: {str(email_error)}")
-            # Continue showing receipt even if email fails
-        
-        # Generate QR code and show receipt
-        qr_code = generate_qr_code(order_id)
-        booking_info_url = f"https://thehoweranchpayment.com/api/booking/{order_id}"
-        
-        return render_template('receipt.html',
-                             order_id=order_id,
-                             name=name,
-                             email=email,
-                             time_slot=event.start,
-                             tickets=stored_tickets,
-                             amount=float(amount),
-                             currency=currency,
-                             status=status,
-                             phone=phone,
-                             qr_code=qr_code,
-                             checkin_url=booking_info_url)
-        
-    except Exception as e:
-        db.session.rollback()
-        current_app.logger.error(f"Booking creation failed for {order_id}: {str(e)}")
-        return f"Booking creation failed. Please contact support with order ID: {order_id}. Error: {str(e)}", 500
+    # No booking exists yet - webhook hasn't processed yet
+    # Show "payment received, finalizing booking" message
+    return render_template('receipt.html',
+                         order_id=order_id,
+                         name="Processing...",
+                         email="",
+                         time_slot=None,
+                         tickets=0,
+                         amount=0,
+                         currency="USD",
+                         status="PROCESSING",
+                         phone=None,
+                         qr_code=None,
+                         checkin_url=None,
+                         processing=True)
 
 
-def send_instant_receipt_url_email(email, order_id, receipt_url, order_details):
-    """Send instant simple email with receipt URL - super fast"""
-    try:
-        html_content = f"""
-        <html>
-            <body>
-                <h2>Payment Confirmed!</h2>
-                <p>Click here for your receipt and QR code:</p>
-                <a href="{receipt_url}">View Receipt</a>
-                <p>Order ID: {order_id}</p>
-            </body>
-        </html>
-        """
-        
-        subject = f"Receipt Ready - {order_id}"
-        sender = current_app.config['MAIL_USERNAME']
-        msg = Message(subject, sender=sender, recipients=[email], html=html_content)
-        mail.send(msg)
-        
-    except Exception as e:
-        current_app.logger.error(f"Instant email failed: {str(e)}")
-
-
-def send_confirmation_email_for_booking(booking, payment, order_id):
-    """Send confirmation email for existing booking"""
-    if not booking or not booking.customer or not payment:
-        return
-        
-    # Prepare email details
-    email_order_details = {
-        'name': booking.customer.name,
-        'email': booking.customer.email,
-        'phone': booking.customer.phone,
-        'order_id': order_id,
-        'amount': payment.amount_paid,
-        'currency': payment.currency,
-        'status': payment.status,
-        'time_slot': booking.event.start if booking.event else 'Unknown',
-        'tickets': booking.tickets
-    }
-    
-    waiver_url = url_for('views.sign_waiver', order_id=order_id, _external=True)
-    receipt_url = url_for('views.show_receipt', order_id=order_id, _external=True)
-    email_order_details['waiver_url'] = waiver_url
-    email_order_details['receipt_url'] = receipt_url
-    
-    # Add check-in URL for reference
-    booking_info_url = f"https://thehoweranchpayment.com/api/booking/{order_id}"
-    email_order_details['checkin_url'] = booking_info_url
-
-    if not booking.receipt_sent:
-
-        html_content = create_receipt_email_content(email_order_details)
-        subject = "Your Payment Receipt"
-        sender = current_app.config['MAIL_USERNAME']
-        recipients = [booking.customer.email]
-        msg = Message(subject, sender=sender, recipients=recipients, html=html_content)
-        mail.send(msg);
-        booking.receipt_sent = True
-        db.session.commit()
 
 
 @views.route('/qr_download/<order_id>')
