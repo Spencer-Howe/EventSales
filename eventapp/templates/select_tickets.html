@@ -7,8 +7,8 @@
 /* Mobile-first calendar styles */
 
 .calendar-hero {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: linear-gradient(135deg, #f8f5f8 0%, #e8dfe8 100%);
+  color: #5d4e5d;
   padding: 1.5rem 1rem;
   margin-bottom: 1rem;
   text-align: center;
@@ -38,11 +38,11 @@
 }
 
 .calendar-instructions {
-  background: #e3f2fd;
+  background: #fce4ec;
   padding: 0.75rem;
   margin-bottom: 1rem;
   border-radius: 8px;
-  border-left: 4px solid #2196f3;
+  border-left: 4px solid #e91e63;
 }
 
 .calendar-instructions h6 {
@@ -75,13 +75,13 @@
 }
 
 .fc-button-primary {
-  background: #667eea;
-  border-color: #667eea;
+  background: #8e8e93;
+  border-color: #8e8e93;
 }
 
 .fc-button-primary:hover {
-  background: #5a6fd8;
-  border-color: #5a6fd8;
+  background: #6d6d70;
+  border-color: #6d6d70;
 }
 
 .fc-event {
@@ -90,22 +90,22 @@
   padding: 4px 8px;
   font-size: 0.8rem;
   font-weight: 600;
-  background: linear-gradient(45deg, #667eea, #764ba2);
+  background: linear-gradient(45deg, #d5a6bd, #c48ca3);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .fc-event:hover {
   transform: scale(1.02);
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 2px 8px rgba(213, 166, 189, 0.4);
 }
 
 .fc-day-today {
-  background: rgba(102, 126, 234, 0.1) !important;
+  background: rgba(233, 30, 99, 0.08) !important;
 }
 
 .fc-daygrid-day:hover {
-  background: rgba(102, 126, 234, 0.05);
+  background: rgba(233, 30, 99, 0.03);
 }
 
 /* Mobile event modal */
@@ -144,7 +144,7 @@
 }
 
 .event-modal h5 {
-  color: #667eea;
+  color: #e91e63;
   margin-bottom: 1rem;
   font-size: 1.1rem;
 }
@@ -159,13 +159,13 @@
 }
 
 .guest-input:focus {
-  border-color: #667eea;
+  border-color: #e91e63;
   outline: none;
-  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+  box-shadow: 0 0 0 0.2rem rgba(233, 30, 99, 0.2);
 }
 
 .btn-book {
-  background: linear-gradient(45deg, #667eea, #764ba2);
+  background: linear-gradient(45deg, #e91e63, #f06292);
   border: none;
   color: white;
   padding: 12px 24px;
@@ -178,7 +178,7 @@
 
 .btn-book:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);
   color: white;
 }
 
@@ -208,7 +208,7 @@
 .stat-number {
   font-size: 1.2rem;
   font-weight: bold;
-  color: #667eea;
+  color: #8e8e93;
 }
 
 .stat-label {
@@ -224,8 +224,8 @@
     margin-bottom: 1.5rem;
   }
   
-  .calendar-hero h1 {
-    font-size: 2rem;
+  .calendar-hero h3 {
+    font-size: 1.5rem;
   }
   
   .calendar-hero .lead {
@@ -267,8 +267,8 @@
     margin-bottom: 2rem;
   }
   
-  .calendar-hero h1 {
-    font-size: 2.5rem;
+  .calendar-hero h3 {
+    font-size: 1.8rem;
   }
   
   .calendar-container {
@@ -289,8 +289,8 @@
 <!-- Calendar Hero Section -->
 <div class="calendar-hero">
   <div class="container">
-    <h1 class="fw-bold mb-1">📅 Book Your Experience</h1>
-    <p class="lead mb-0">Select a date and time that works for you</p>
+    <h3 class="fw-bold mb-1">📅 Book Your Experience</h3>
+    <p class="mb-0" style="font-size: 0.9rem;">Select a date and time that works for you</p>
   </div>
 </div>
 
@@ -313,7 +313,7 @@
 <!-- Modern Event Booking Modal -->
 <div class="event-modal" id="eventModal">
   <div class="event-modal-content">
-    <h5 id="modalEventTitle">🎃 Event Details</h5>
+    <h5 id="modalEventTitle">Event Details</h5>
     <p id="modalEventDescription">Loading event details...</p>
     
     <div class="mb-3">
@@ -475,7 +475,7 @@ function showEventModal(event) {
   const guestInput = document.getElementById('modalGuestCount');
   
   // Set event details
-  title.textContent = `🎃 ${event.title}`;
+  title.textContent = `${event.title}`;
   description.textContent = event.extendedProps.description || 'Join us for an amazing farm experience with Highland cows, mini goats, and alpacas!';
   
   // Format event info

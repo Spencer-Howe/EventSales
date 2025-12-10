@@ -12,59 +12,66 @@
     <!-- Using Bootstrap's card-group to ensure all cards are handled uniformly -->
     <div class="card-group">
 
-      <!-- Card 3: Winter Wonderland -->
-      <div class="card border-danger" style="background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);">
-        <img src="static/pic/25notimewonder.png" class="card-img-top" alt="Winter Wonderland at Howe Ranch" style="border-bottom: 3px solid #dc3545;">
+      <!-- Card 3: Season of Love Open Farm Day -->
+      <div class="card border-danger" style="background: linear-gradient(135deg, #fff0f3 0%, #ffeef5 100%);">
+        <img src="static/pic/valentinesopen.jpg" class="card-img-top" alt="Season of Love Open Farm Day at Howe Ranch" style="border-bottom: 3px solid #e91e63;">
         <div class="card-body">
-          <h5 class="card-title text-danger" style="font-family: 'serif'; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">❄️ Winter Wonderland Open Farm Day at Howe Ranch — Discover the Magic!</h5>
-          <div class="card-text text-center p-2 mb-3" style="background: linear-gradient(45deg, #dc3545, #28a745); color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-            <strong>Christmas Eve, and New Year's Eve from 3pm-6pm</strong><br>
-            <strong>🕓 Select your spot!</strong>
+          <h5 class="card-title text-danger" style="font-family: 'serif'; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); color: #e91e63 !important;">❤️ Season of Love Open Farm Day at Howe Ranch — Celebrate the Magic of Togetherness</h5>
+          <div class="card-text text-center p-2 mb-3" style="background: linear-gradient(45deg, #e91e63, #f06292); color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+            <strong>Select Dates in January to February • 3pm–6pm & 4pm–7pm</strong><br>
+            <strong>🕓 Select your date and time slot!</strong>
           </div>
           
           <p class="card-text">
-            This holiday season, step into a twinkle-lit Winter Wonderland where baby Highland calves in velvet bows, alpacas in festive scarves, and jingling donkeys welcome you into a world of pure Christmas magic. Designed as a micro holiday festival, not a crowded fair, this magical experience lets your family wander, cuddle, decorate, and explore at your own pace — with every station included.
+            This Season of Love, step into a heart-lit Valentine's Town where baby Highland calves in flower crowns, alpacas in sweetheart scarves, and our adorable goats and donkeys welcome you into a world of pure whimsy. Designed as a micro love-themed festival — not a crowded fair — this enchanted experience lets you wander, cuddle, craft, and explore at your own pace, with every station included.
           </p>
           
           <p class="card-text">
-            <strong>✨ Your Winter Wonderland Pass Includes:</strong>
+            <strong>✨ Your Season of Love Pass Includes:</strong>
           </p>
           <ul class="card-text">
-            <li>🐮 Snuggle sessions with our tiniest Highland calves in their winter fluff</li>
-            <li>📸 Five enchanted holiday scenes, including snowy woodland and miniature Christmas villages</li>
-            <li>🍬 Seasonal treats & hot drinks for kids and grown-ups alike</li>
-            <li>🍪 Cookie decorating with Mrs. Claus</li>
-            <li>🎅 Visit & photo moment with Santa in his vintage red throne</li>
-            <li>🎁 Festive scavenger hunt with sweet surprises along the way</li>
-            <li>🐐 Meet the alpacas and mischievous mini goats (in their holiday scarves, of course)</li>
-            <li>🌟 No lines. No rushing. Real animal time and holiday magic — all included.</li>
+            <li>🐮 Guided "Love Walks" with our baby Mini Moos through Valentine's Town</li>
+            <li>💌 Several romantic + whimsical scenes for photos and memory-making (think: Serenity Garden, Cupid's Courtyard, Sweetheart Sanctuary,...)</li>
+            <li>🍬 Seasonal treats and drinks for all ages</li>
+            <li>🎨 Make-and-take crafts at our Love Letter & Keepsake Station</li>
+            <li>💕 Mini Moos Love Trail scavenger hunt with prizes</li>
+            <li>🐐 Visits with alpacas and mini goats dressed in their Valentine best</li>
+            <li>🌟 No lines. No rushing. Just real connection, cozy moments, and magical time with the animals — all included.</li>
           </ul>
           
-          <div class="text-center p-2 mb-3" style="background: #fff3cd; border-radius: 8px; border: 2px dashed #ffc107;">
+          <div class="text-center p-2 mb-3" style="background: #ffebee; border-radius: 8px; border: 2px dashed #e91e63;">
             <strong>📍 Passes limited: $35 per guest, kids under 1 are free</strong>
           </div>
           
           <p class="card-text">
-            Celebrate the season somewhere unforgettable — cuddle a baby cow with snowflakes in its fur and capture magical moments you'll want on this year's Christmas card.
+            Celebrate love in all its forms — family, friendship, romance — as the baby Moos take you through an unforgettable Season of Love experience at the farm.
           </p>
           
           <div class="border p-3 mb-3" style="background: #f8f9fa; border-radius: 8px;">
             <div class="form-group mb-3">
-              <label for="winter-event-date" class="form-label"><strong>Select a Date</strong></label>
-              <select class="form-control" id="winter-event-date" required>
+              <label for="valentine-event-date" class="form-label"><strong>Select a Date</strong></label>
+              <select class="form-control" id="valentine-event-date" required onchange="updateValentineTimeSlots()">
                 <option value="">Choose a Date</option>
-                <option value="christmas">Wednesday, December 24 (Christmas Eve)</option>
-                <option value="newyears">Wednesday, December 31 (New Year's Eve)</option>
+                <option value="valentine1">Sunday, January 11</option>
+                <option value="valentine2">Sunday, January 25</option>
+                <option value="valentine3">Sunday, February 8</option>
+                <option value="valentine4">Saturday, February 14 (Valentine's Day)</option>
               </select>
             </div>
             
-            
             <div class="form-group mb-3">
-              <label for="winter-tickets" class="form-label"><strong>Party Size</strong></label>
-              <input type="number" class="form-control" id="winter-tickets" placeholder="Enter number of guests" required min="1" max="10">
+              <label for="valentine-time-slot" class="form-label"><strong>Select Time Slot</strong></label>
+              <select class="form-control" id="valentine-time-slot" required disabled>
+                <option value="">First select a date</option>
+              </select>
             </div>
             
-            <button onclick="goToCheckout('winter')" class="btn btn-danger w-100" style="background: linear-gradient(45deg, #dc3545, #28a745); border: none; font-weight: bold; text-shadow: 1px 1px 1px rgba(0,0,0,0.3);">🎄 Book Your Winter Wonderland Adventure 🎄</button>
+            <div class="form-group mb-3">
+              <label for="valentine-tickets" class="form-label"><strong>Party Size</strong></label>
+              <input type="number" class="form-control" id="valentine-tickets" placeholder="Enter number of guests" required min="1" max="10">
+            </div>
+            
+            <button onclick="goToCheckout('valentine')" class="btn btn-danger w-100" style="background: linear-gradient(45deg, #e91e63, #f06292); border: none; font-weight: bold; text-shadow: 1px 1px 1px rgba(0,0,0,0.3);">💕 Book Your Season of Love Adventure 💕</button>
           </div>
           
           <div class="text-center small" style="color: #6c757d;">
@@ -77,28 +84,28 @@
         </div>
       </div>
 
-      <!-- Card 4: Holiday Minis Experience -->
-      <div class="card border-warning" style="background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);">
-        <img src="static/pic/minis2.jpg" class="card-img-top" alt="Holiday Minis at Howe Ranch" style="border-bottom: 3px solid #ffc107;">
+      <!-- Card 4: Mini Moo Winter Wonderland Experience with Professional Photos -->
+      <div class="card border-info" style="background: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%);">
+        <img src="static/pic/newholidayminipic.jpg" class="card-img-top" alt="Mini Moo Winter Wonderland Experience with Professional Photos" style="border-bottom: 3px solid #00695c;">
         <div class="card-body">
-          <h5 class="card-title text-warning" style="font-family: 'serif'; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); color: #856404 !important;">🎄 Holiday Minis + Mini Moo Winter Wonderland Experience</h5>
-          <div class="card-text text-center p-2 mb-3" style="background: linear-gradient(45deg, #ffc107, #dc3545); color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+          <h5 class="card-title text-info" style="font-family: 'serif'; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); color: #00695c !important;">🎄 Mini Moo Winter Wonderland Experience with Professional Photos</h5>
+          <div class="card-text text-center p-2 mb-3" style="background: linear-gradient(45deg, #00695c, #00897b); color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
             <strong>$350 per booking • Up to 10 guests • 12:45 PM – 2:45 PM</strong>
           </div>
           
           <p class="card-text">
-            Because families have been asking for a holiday photo experience at Howe Ranch, we are opening a limited block of Holiday Minis paired with our magical Mini Moo cuddle experience.
+            Because families have been asking for a holiday photo experience at Howe Ranch, we are opening a limited block of Holiday Minis paired with our magical Winter Wonderland Mini Moo experience.
           </p>
           
           <p class="card-text">
-            <strong>✨ This intimate, early-access offering includes:</strong>
+            <strong>✨ This early-access offering includes:</strong>
           </p>
           <ul class="card-text">
-            <li>📸 <strong>Holiday Minis:</strong> A professional holiday photo session</li>
+            <li>📸 <strong>Holiday Minis:</strong> Professional photos curated with the micro mini Highland calves</li>
             <li>🖼️ Two stunning edited portraits with our micro mini Highland calves
-              <ul><li>Choose the Holiday Rose backdrop or Rustic Winter Farm backdrop</li></ul>
+              <ul><li>Depending on group size: Holiday Rose backdrop or Rustic Farm backdrop</li></ul>
             </li>
-            <li>🍼 Cuddle & bottle-feed our baby Mini Moos</li>
+            <li>🍼 Cuddle & experience bottle-feeding of our baby Mini Moos</li>
             <li>❄️ Full Winter Wonderland access, including:
               <ul>
                 <li>Santa's Hidden Village concessions</li>
@@ -118,8 +125,7 @@
               <label for="holiday-event-date" class="form-label"><strong>Select a Date</strong></label>
               <select class="form-control" id="holiday-event-date" required>
                 <option value="">Choose a Date</option>
-                <option value="dec7">Sunday, December 7</option>
-                <option value="dec14">Sunday, December 14</option>
+                <option value="dec21">Saturday, December 21</option>
               </select>
             </div>
             
@@ -128,10 +134,10 @@
               <input type="number" class="form-control" id="holiday-tickets" placeholder="Enter number of guests (1-10)" required min="1" max="10">
             </div>
             
-            <button onclick="goToCheckout('holiday')" class="btn btn-warning w-100" style="background: linear-gradient(45deg, #ffc107, #dc3545); border: none; font-weight: bold; text-shadow: 1px 1px 1px rgba(0,0,0,0.3); color: white;">🎄 Book Your Holiday Minis Experience 🎄</button>
+            <button onclick="goToCheckout('holiday')" class="btn btn-info w-100" style="background: linear-gradient(45deg, #00695c, #00897b); border: none; font-weight: bold; text-shadow: 1px 1px 1px rgba(0,0,0,0.3); color: white;">🎄 Book Your Holiday Minis Experience 🎄</button>
           </div>
           
-          <div class="text-center small" style="color: #856404;">
+          <div class="text-center small" style="color: #00695c;">
             <strong>📸 Limited Bookings Per Session • Professional Photography Included</strong>
           </div>
           
@@ -142,27 +148,34 @@
       </div>
 
 <!-- Card 5: Private Mini Moo Experience -->
-<div class="card">
-  <img src="static/pic/privatemoome.jpg" class="card-img-top" alt="Private Mini Moo Experience at Howe Ranch">
+<div class="card border-danger" style="background: linear-gradient(135deg, #fff0f3 0%, #ffeef5 100%);">
+  <img src="static/pic/valentinesminimoo.jpg" class="card-img-top" alt="Private Mini Moo Experience at Howe Ranch" style="border-bottom: 3px solid #e91e63;">
   <div class="card-body">
-    <h5 class="card-title">Private Mini Moo Experience at Howe Ranch</h5>
+    <h5 class="card-title text-danger" style="font-family: 'serif'; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); color: #e91e63 !important;">🎁 Private Mini Moo Experience at Howe Ranch</h5>
+    
+    <div class="text-center p-3 mb-3" style="background: linear-gradient(45deg, #e91e63, #f06292); color: white; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+      <h4 style="margin: 0; font-weight: bold;">🎀 GIFT CERTIFICATES AVAILABLE! 🎀</h4>
+    </div>
 
     <p class="card-text">
-      Celebrate fall your way with a very special private cow cuddling and farm adventure for your date or group!
+      The sweetest gift of the season — soft noses, baby cow cuddles & kisses, and bottle-feeding our fluffy Highland calves: Private Mini Moo Experiences are limited in Peak Season (Dec. - Feb.).
     </p>
 
     <ul class="card-text">
       <li>Squeeze our newest tiny fluffy Highland calves, brush and feed the mini herd, and meet alpacas, playful mini goats, donkeys, and new chicks.</li>
       <li>Bottle feeding of our youngest cow babies is included.</li>
-      <li>Explore the farm, snap photos with tiny cow babies at festive backdrops, and take home a special souvenir bag.</li>
+      <li>Explore the farm, snap photos with tiny cow babies at professional backdrops, and take home a special souvenir bag.</li>
     </ul>
 
     <ul class="card-text">
-      <li>📍 Available by appointment on select dates in October &amp; November (the farm is closed Nov. 17 - 29 while transforming to Winter Wonderland)</li>
+      <li>📍 Available by appointment on select dates</li>
       <li>👥 For 1–10 guests max (infants under 1 are free)</li>
     </ul>
 
-    <p class="card-text">$350 per private group (10 guests max ages 1+)</p>
+    <div class="text-center p-2 mb-3" style="background: #ffebee; border-radius: 8px; border: 2px dashed #e91e63;">
+      <strong>$350 per private group (10 guests max ages 1+)</strong>
+    </div>
+    
     <p class="card-text">Come ready for fall fun and baby cow kisses!</p>
 
     <hr>
@@ -175,7 +188,7 @@
       <li>Experiences are transferable to other guests but cannot be refunded and cannot be rescheduled.</li>
     </ul>
 
-    <a href="/select_tickets" class="btn btn-primary">Book Now</a>
+    <a href="/select_tickets" class="btn btn-danger w-100" style="background: linear-gradient(45deg, #e91e63, #f06292); border: none; font-weight: bold; text-shadow: 1px 1px 1px rgba(0,0,0,0.3);">🎁 Book Your Private Experience / Purchase Gift Certificate</a>
   </div>
 </div>
 
@@ -187,6 +200,30 @@
   </div>
 
 <script>
+
+function updateValentineTimeSlots() {
+    const dateValue = document.getElementById('valentine-event-date').value;
+    const timeSlotSelect = document.getElementById('valentine-time-slot');
+    
+    // Clear existing options
+    timeSlotSelect.innerHTML = '';
+    
+    if (dateValue) {
+        // Enable the time slot dropdown
+        timeSlotSelect.disabled = false;
+        
+        // Add time slot options
+        timeSlotSelect.innerHTML = `
+            <option value="">Choose a Time Slot</option>
+            <option value="3pm">3:00 PM - 6:00 PM</option>
+            <option value="4pm">4:00 PM - 7:00 PM</option>
+        `;
+    } else {
+        // Disable the time slot dropdown
+        timeSlotSelect.disabled = true;
+        timeSlotSelect.innerHTML = '<option value="">First select a date</option>';
+    }
+}
 
 function goToCheckout(eventType) {
     let eventId, tickets;
@@ -207,25 +244,37 @@ function goToCheckout(eventType) {
             alert('Please enter the number of guests.');
             return;
         }
-    } else if (eventType === 'winter') {
-        const dateValue = document.getElementById('winter-event-date').value;
-        tickets = document.getElementById('winter-tickets').value;
+    } else if (eventType === 'valentine') {
+        const dateValue = document.getElementById('valentine-event-date').value;
+        const timeSlotValue = document.getElementById('valentine-time-slot').value;
+        tickets = document.getElementById('valentine-tickets').value;
         
-        if (!dateValue || !tickets) {
-            alert('Please select a date and enter the number of guests.');
+        if (!dateValue || !timeSlotValue || !tickets) {
+            alert('Please select a date, time slot, and enter the number of guests.');
             return;
         }
         
-        // Map dates directly to event IDs (Christmas and New Year's only have 3pm slots)
+        // Map combinations of dates and time slots to specific event IDs
         const eventMapping = {
-            'christmas': '684',
-            'newyears': '685'
+            // Sunday, January 11
+            'valentine1_3pm': '1182', // 3pm-6pm slot
+            'valentine1_4pm': '1183', // 4pm-7pm slot
+            // Sunday, January 25  
+            'valentine2_3pm': '1184', // 3pm-6pm slot
+            'valentine2_4pm': '1185', // 4pm-7pm slot
+            // Sunday, February 8
+            'valentine3_3pm': '1186', // 3pm-6pm slot
+            'valentine3_4pm': '1187', // 4pm-7pm slot
+            // Friday, February 14 (Valentine's Day)
+            'valentine4_3pm': '1188', // 3pm-6pm slot
+            'valentine4_4pm': '1189'  // 4pm-7pm slot
         };
         
-        eventId = eventMapping[dateValue];
+        const eventKey = dateValue + '_' + timeSlotValue;
+        eventId = eventMapping[eventKey];
         
         if (!eventId) {
-            alert('Please select a valid date.');
+            alert('Please select a valid date and time slot.');
             return;
         }
     } else if (eventType === 'holiday') {
@@ -237,11 +286,9 @@ function goToCheckout(eventType) {
             return;
         }
         
-        // Map dates to Holiday Minis event IDs (you'll need to update these after creating events)
+        // Map dates to Holiday Minis event IDs
         const holidayEventMapping = {
-            'nov30': '945',
-            'dec7': '946',
-            'dec14': '947'
+            'dec21': '1190'
         };
         
         eventId = holidayEventMapping[dateValue];
