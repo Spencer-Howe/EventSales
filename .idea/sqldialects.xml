@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/joseph_cabrera_simple_insert.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/private_mini_moo_schedule.sql" dialect="PostgreSQL" />
   </component>
 </project>
