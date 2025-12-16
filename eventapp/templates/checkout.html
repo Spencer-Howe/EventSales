@@ -371,20 +371,11 @@
         <i class="fab fa-bitcoin"></i>
       </div>
       <h6 class="fw-bold mb-2">Cryptocurrency</h6>
-      <small class="text-muted d-block mb-2">Bitcoin, Litecoin, or Monero</small>
-      
-      <div class="crypto-features mb-2">
-        <small>₿ Bitcoin</small>
-        <small class="ms-2">Ł Litecoin</small>
-        <small class="ms-2">ɱ Monero</small>
-      </div>
-      
+
       <a href="{{ url_for('crypto.crypto_checkout') }}?event_id={{ event_id }}&tickets={{ tickets }}" 
          class="btn btn-crypto btn-payment">
         ₿ Pay with Crypto
       </a>
-      
-      <small class="text-muted mt-2 d-block">🔐 Anonymous & secure</small>
     </div>
   </div>
       
