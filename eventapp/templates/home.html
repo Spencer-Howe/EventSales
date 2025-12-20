@@ -132,77 +132,6 @@
         </div>
       </div>
 
-      <!-- Card 3: Mini Moo Winter Wonderland Experience with Professional Photos -->
-      <div class="card border-info" style="background: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%);">
-        <img src="static/pic/minisnewtime.jpg" class="card-img-top" alt="Mini Moo Winter Wonderland Experience with Professional Photos" style="border-bottom: 3px solid #00695c;">
-        <div class="card-body">
-          <h5 class="card-title text-info" style="font-family: 'serif'; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); color: #00695c !important;">🎄 Mini Moo Winter Wonderland Experience with Professional Photos</h5>
-          <div class="card-text text-center p-2 mb-3" style="background: linear-gradient(45deg, #00695c, #00897b); color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-            <strong>$350 per booking • Up to 10 guests • 10:30 AM – 12:30 PM</strong>
-          </div>
-          
-          <p class="card-text">
-            Because families have been asking for a holiday photo experience at Howe Ranch, we are opening a limited block of Holiday Minis paired with our magical Winter Wonderland Mini Moo experience. This is an early-access experience shared with a limited number of families prior to Winter Wonderland opening to the broader Open Farm Day. A few families participate simultaneously, with structured facilitation, scheduled photo rotations, and staffed activity areas throughout the ranch. Everyone gets one-on-one time with the baby moos, and other animals.
-          </p>
-          
-          <p class="card-text">
-            <strong>✨ This early-access offering includes:</strong>
-          </p>
-          <ul class="card-text">
-            <li>📸 <strong>Holiday Minis:</strong> Professional photos curated with the micro mini Highland calves</li>
-            <li>🖼️ Two stunning edited portraits with our micro mini Highland calves
-              <ul><li>Depending on group size: Holiday Rose backdrop or Rustic Farm backdrop</li></ul>
-            </li>
-            <li>🍼 Cuddle our baby Mini Moos</li>
-            <li>❄️ Full Winter Wonderland access, including:
-              <ul>
-                <li>Santa's Hidden Village concessions</li>
-                <li>Enchanted winter vignettes</li>
-                <li>Cozy curated scenes perfect for memory-making</li>
-              </ul>
-            </li>
-            <li>🎁 Winter Wonderland scavenger hunt with prizes</li>
-          </ul>
-          
-          <p class="card-text">
-            This is a rare chance to enjoy Howe Ranch's Winter Wonderland with photography, — created by popular request from our returning families.
-          </p>
-
-          <p class="card-text mb-1">
-            <strong>Prior to Booking:</strong>
-          </p>
-          <ul class="card-text">
-            <li>I understand this is a shared, small-group experience and not a private farm rental or exclusive use of Howe Ranch.</li>
-            <li>I understand that each booking includes one professional photo session per backdrop (2 backdrops) for my entire booked group only. Photo sessions may not be split, rotated, or repeated for multiple sub-groups, or individuals within the same booking.</li>
-            <li>Any additional families or photo sessions require a separate booking.</li>
-          </ul>
-          
-          <div class="border p-3 mb-3" style="background: #f8f9fa; border-radius: 8px;">
-            <div class="form-group mb-3">
-              <label for="holiday-event-date" class="form-label"><strong>Select a Date</strong></label>
-              <select class="form-control" id="holiday-event-date" required>
-                <option value="">Choose a Date</option>
-                <option value="dec21">Sunday, December 21</option>
-              </select>
-            </div>
-            
-            <div class="form-group mb-3">
-              <label for="holiday-tickets" class="form-label"><strong>Party Size</strong></label>
-              <input type="number" class="form-control" id="holiday-tickets" placeholder="Enter number of guests (1-10)" required min="1" max="10">
-            </div>
-            
-            <button onclick="goToCheckout('holiday')" class="btn btn-info w-100" style="background: linear-gradient(45deg, #00695c, #00897b); border: none; font-weight: bold; text-shadow: 1px 1px 1px rgba(0,0,0,0.3); color: white;">🎄 Book Your Holiday Minis Experience 🎄</button>
-          </div>
-          
-          <div class="text-center small" style="color: #00695c;">
-            <strong>📸 Limited Bookings Per Session • Professional Photography Included</strong>
-          </div>
-          
-          <div class="text-center small mt-2" style="color: #6c757d;">
-            By making a booking you agree to: I have read and agree with the <a href="https://www.thehoweranch.com/_files/ugd/fca21d_a063413021c34f2d814bca731db5d2f4.pdf" target="_blank">Farm Visitor FAQs</a> and <a href="https://www.thehoweranch.com/_files/ugd/fca21d_a30cd343d96b4be3913cded96c226b9f.pdf" target="_blank">Farm Policies</a>.
-          </div>
-        </div>
-      </div>
 
     </div> <!-- Close card-group -->
   </div> <!-- Close container -->
@@ -287,26 +216,6 @@ function goToCheckout(eventType) {
         
         if (!eventId) {
             alert('Please select a valid date and time slot.');
-            return;
-        }
-    } else if (eventType === 'holiday') {
-        const dateValue = document.getElementById('holiday-event-date').value;
-        tickets = document.getElementById('holiday-tickets').value;
-        
-        if (!dateValue || !tickets) {
-            alert('Please select a date and enter the number of guests.');
-            return;
-        }
-        
-        // Map dates to Holiday Minis event IDs
-        const holidayEventMapping = {
-            'dec21': '1190'
-        };
-        
-        eventId = holidayEventMapping[dateValue];
-        
-        if (!eventId) {
-            alert('Please select a valid date.');
             return;
         }
     }
