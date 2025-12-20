@@ -157,8 +157,31 @@ Go to crypto admin panel to verify payment and send confirmation email to custom
     except Exception as e:
         print(f"Admin notification email failed: {e}")
     
-    # Redirect to receipt
-    return redirect(f'/receipt/{order_id}')
+    # Redirect to pending page instead of receipt (payment not verified yet)
+    return redirect(f'/crypto_pending/{order_id}')
+
+@crypto_bp.route('/crypto_pending/<order_id>')
+def crypto_pending(order_id):
+    """Show pending page for unconfirmed crypto payments"""
+    from .models import Booking
+    
+    booking = Booking.query.filter_by(order_id=order_id).first()
+    if not booking:
+        return "Booking not found", 404
+    
+    # Get payment details
+    payment = None
+    for p in booking.payments:
+        if p.payment_method == 'crypto':
+            payment = p
+            break
+    
+    return render_template('crypto_pending.html',
+                          order_id=order_id,
+                          name=booking.customer.name if booking.customer else "Anonymous",
+                          email=booking.customer.email if booking.customer else "No email provided",
+                          crypto_currency=payment.crypto_currency if payment else "Unknown",
+                          transaction_hash=payment.transaction_hash if payment else "Unknown")
 
 @crypto_bp.route('/confirm_crypto_payment/<order_id>')
 @login_required
