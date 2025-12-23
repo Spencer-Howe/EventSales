@@ -62,6 +62,34 @@ def home():
 def test():
     return render_template('test.html')
 
+@views.route('/valentine_magic_admin')
+def valentine_magic_admin():
+    return render_template('valentine_magic_admin.html')
+
+@views.route('/get_valentine_magic_events')
+def get_valentine_magic_events():
+    from eventapp.models import Event
+    from sqlalchemy import and_
+    
+    # Get all Valentine Magic events (both available and booked)
+    events = Event.query.filter(
+        Event.title.contains('Valentine Magic with the Mini Moos')
+    ).all()
+    
+    events_data = [{
+        'id': event.id,
+        'title': event.title,
+        'start': event.start.isoformat(),
+        'end': event.end.isoformat(),
+        'description': event.description,
+        'is_booked': event.is_booked,
+        'is_private': event.is_private,
+        'max_capacity': event.max_capacity,
+        'price_per_ticket': event.price_per_ticket
+    } for event in events]
+    
+    return jsonify(events_data)
+
 @views.route('/select_tickets')
 def select_tickets():
     paypal_client_id = current_app.config['PAYPAL_CLIENT_ID']
@@ -237,11 +265,19 @@ def show_receipt(order_id):
         # Get latest payment for display
         latest_payment = existing_booking.payments[0] if existing_booking.payments else None
         
+        # Format time slot with start and end times
+        if existing_booking.event and existing_booking.event.start and existing_booking.event.end:
+            start_formatted = existing_booking.event.start.strftime("%B %d, %Y, %I:%M %p")
+            end_formatted = existing_booking.event.end.strftime("%I:%M %p")
+            time_slot = f"{start_formatted} - {end_formatted}"
+        else:
+            time_slot = "TBD"
+        
         return render_template('receipt.html', 
                              order_id=existing_booking.order_id,
                              name=existing_booking.customer.name if existing_booking.customer else "Unknown",
                              email=existing_booking.customer.email if existing_booking.customer else "Unknown",
-                             time_slot=existing_booking.event.start if existing_booking.event else None,
+                             time_slot=time_slot,
                              tickets=existing_booking.tickets,
                              amount=latest_payment.amount_paid if latest_payment else 0,
                              currency=latest_payment.currency if latest_payment else "USD",

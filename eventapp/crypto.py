@@ -35,7 +35,8 @@ def crypto_checkout():
     
     # Format event details
     readable_start = event.start.strftime("%B %d, %Y, %I:%M %p")
-    readable_time_slot = f'{event.title} - {readable_start}'
+    readable_end = event.end.strftime("%I:%M %p")
+    readable_time_slot = f'{readable_start} - {readable_end}'
     
     return render_template('crypto_checkout.html',
                           event_id=event.id,
@@ -82,8 +83,8 @@ def submit_crypto_payment():
         db.session.add(customer)
         db.session.flush()  # Get customer.id
     
-    # Holiday Minis: force tickets to 1 regardless of guest count
-    stored_tickets = 1 if "Holiday Minis" in event.title else tickets
+    # Store actual ticket count  
+    stored_tickets = tickets
     
     # Create booking
     new_booking = Booking(

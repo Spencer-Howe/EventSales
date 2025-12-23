@@ -299,8 +299,8 @@ def create_booking_from_webhook(order_id, order_details, booking_metadata):
             db.session.add(customer)
             db.session.flush()
         
-        # Holiday Minis: force tickets to 1 regardless of guest count
-        stored_tickets = 1 if "Holiday Minis" in event.title else int(tickets)
+        # Store actual ticket count
+        stored_tickets = int(tickets)
         
         # Create booking
         booking = Booking(

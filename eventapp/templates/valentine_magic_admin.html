@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+
+{% block title %}Valentine Magic Slot Management{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <h2 class="text-center mb-4">❤️ Valentine Magic with Mini Moos - Slot Management</h2>
+    
+    <div class="alert alert-info">
+        <h5>Valentine Magic Experience Details:</h5>
+        <ul class="mb-0">
+            <li><strong>Mary Lou's Special:</strong> $350 per group (up to 5 guests)</li>
+            <li><strong>Duration:</strong> 2 hours each slot</li>
+            <li><strong>Includes:</strong> Professional photos with photographer partner</li>
+            <li><strong>Staffing Hours:</strong> 2:00 PM to 5:00 PM</li>
+            <li><strong>Available Dates:</strong> Jan 4, 17, 18, 24, 31 & Feb 1, 7</li>
+        </ul>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>📅 Current Slots Status</h5>
+                </div>
+                <div class="card-body">
+                    <div id="slots-by-date">Loading slots...</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>📊 Slot Overview</h5>
+                </div>
+                <div class="card-body">
+                    <div id="booking-summary">
+                        <p><strong>Created Slots:</strong> <span id="created-slots">-</span></p>
+                        <p><strong>Available for Booking:</strong> <span id="available-slots">-</span></p>
+                        <p><strong>Booked:</strong> <span id="booked-slots">-</span></p>
+                        <p><strong>Need to Create:</strong> <span id="remaining-slots">-</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5>🎯 Test Booking Flow</h5>
+                    <button class="btn btn-primary btn-sm" onclick="refreshData()">Refresh Data</button>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="form-label"><strong>Select Date:</strong></label>
+                            <select class="form-control" id="test-date" onchange="updateTestTimeSlots()">
+                                <option value="">Choose a Date</option>
+                                <option value="2025-01-04">Sunday, January 4</option>
+                                <option value="2025-01-17">Saturday, January 17</option>
+                                <option value="2025-01-18">Sunday, January 18</option>
+                                <option value="2025-01-24">Saturday, January 24</option>
+                                <option value="2025-01-31">Saturday, January 31</option>
+                                <option value="2025-02-01">Sunday, February 1</option>
+                                <option value="2025-02-07">Saturday, February 7</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label"><strong>Select Time:</strong></label>
+                            <select class="form-control" id="test-time" disabled>
+                                <option value="">First select a date</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label"><strong>Party Size:</strong></label>
+                            <input type="number" class="form-control" id="test-party-size" min="1" max="5" value="2">
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button class="btn btn-success" onclick="testBookingFlow()">Test Booking Flow</button>
+                        <span id="test-result" class="ml-3"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Valentine Magic time slots (2:00 PM to 4:30 PM, 15-minute intervals)
+const TIME_SLOTS = [
+    '14:00', '14:15', '14:30', '14:45',
+    '15:00', '15:15', '15:30', '15:45',
+    '16:00', '16:15', '16:30'
+];
+
+const DATES = [
+    '2025-01-04', '2025-01-17', '2025-01-18',
+    '2025-01-24', '2025-01-31', '2025-02-01', '2025-02-07'
+];
+
+let allEvents = [];
+
+function formatTime(time24) {
+    const [hours, minutes] = time24.split(':');
+    const hour12 = hours % 12 || 12;
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    return `${hour12}:${minutes} ${ampm}`;
+}
+
+function formatTimeRange(startTime) {
+    const [hours, minutes] = startTime.split(':');
+    const startHour = parseInt(hours);
+    const startMin = parseInt(minutes);
+    const endHour = startMin === 30 ? startHour + 2 : startHour + 2;
+    const endMin = startMin;
+    
+    const startFormatted = formatTime(startTime);
+    const endFormatted = formatTime(`${endHour.toString().padStart(2, '0')}:${endMin.toString().padStart(2, '0')}`);
+    
+    return `${startFormatted} - ${endFormatted}`;
+}
+
+function loadEvents() {
+    fetch('/get_valentine_magic_events')
+        .then(response => response.json())
+        .then(events => {
+            allEvents = events;
+            displaySlotsByDate();
+            updateSummary();
+        })
+        .catch(error => {
+            console.error('Error loading events:', error);
+            document.getElementById('slots-by-date').innerHTML = '<div class="alert alert-danger">Error loading events</div>';
+        });
+}
+
+function displaySlotsByDate() {
+    const container = document.getElementById('slots-by-date');
+    let html = '';
+    
+    DATES.forEach(date => {
+        const dateEvents = allEvents.filter(event => 
+            event.start.startsWith(date)
+        );
+        
+        const dateObj = new Date(date + 'T00:00:00');
+        const dateStr = dateObj.toLocaleDateString('en-US', {
+            weekday: 'long',
+            month: 'long', 
+            day: 'numeric'
+        });
+        
+        html += `<div class="mb-3">`;
+        html += `<h6 class="text-primary">${dateStr}</h6>`;
+        
+        if (dateEvents.length === 0) {
+            html += `<small class="text-warning">No slots created yet</small>`;
+        } else {
+            const availableCount = dateEvents.filter(event => !event.is_booked).length;
+            const bookedCount = dateEvents.filter(event => event.is_booked).length;
+            
+            if (availableCount === 0) {
+                html += `<small class="text-danger"><strong>🔴 SOLD OUT</strong> (${bookedCount} booked)</small>`;
+            } else if (availableCount <= 3) {
+                html += `<small class="text-warning"><strong>⚠️ ALMOST SOLD OUT</strong> - ${availableCount} slots left</small>`;
+            } else {
+                html += `<small class="text-success">${availableCount} slots available</small>`;
+            }
+            
+            // Show first few time slots as examples
+            const firstFew = dateEvents.slice(0, 3).map(event => {
+                const eventDate = new Date(event.start);
+                const timeStr = eventDate.toLocaleTimeString('en-US', {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                });
+                return timeStr;
+            }).join(', ');
+            
+            html += `<br><small class="text-muted">Times: ${firstFew}${dateEvents.length > 3 ? '...' : ''}</small>`;
+        }
+        
+        html += `</div>`;
+    });
+    
+    container.innerHTML = html;
+}
+
+function updateSummary() {
+    const totalSlotsNeeded = DATES.length * TIME_SLOTS.length; // 7 dates × 11 slots = 77 total
+    const createdSlots = allEvents.length;
+    const bookedSlots = allEvents.filter(event => event.is_booked).length;
+    const availableSlots = allEvents.filter(event => !event.is_booked).length;
+    const remainingToCreate = totalSlotsNeeded - createdSlots;
+    
+    document.getElementById('created-slots').textContent = createdSlots;
+    document.getElementById('available-slots').textContent = availableSlots;
+    document.getElementById('booked-slots').textContent = bookedSlots;
+    document.getElementById('remaining-slots').textContent = remainingToCreate;
+}
+
+function updateTestTimeSlots() {
+    const dateValue = document.getElementById('test-date').value;
+    const timeSelect = document.getElementById('test-time');
+    
+    timeSelect.innerHTML = '';
+    
+    if (dateValue) {
+        timeSelect.disabled = false;
+        timeSelect.innerHTML = '<option value="">Choose a Time Slot</option>';
+        
+        TIME_SLOTS.forEach(time => {
+            const option = document.createElement('option');
+            option.value = time;
+            option.textContent = formatTimeRange(time);
+            timeSelect.appendChild(option);
+        });
+    } else {
+        timeSelect.disabled = true;
+        timeSelect.innerHTML = '<option value="">First select a date</option>';
+    }
+}
+
+function testBookingFlow() {
+    const date = document.getElementById('test-date').value;
+    const time = document.getElementById('test-time').value;
+    const partySize = document.getElementById('test-party-size').value;
+    const resultSpan = document.getElementById('test-result');
+    
+    if (!date || !time || !partySize) {
+        resultSpan.innerHTML = '<span class="text-danger">Please fill all fields</span>';
+        return;
+    }
+    
+    // Find matching event
+    const targetDateTime = `${date}T${time}:00`;
+    const matchingEvent = allEvents.find(event => 
+        event.start.startsWith(targetDateTime.substring(0, 16)) // Match YYYY-MM-DDTHH:MM
+    );
+    
+    if (matchingEvent) {
+        const checkoutUrl = `/checkout?event_id=${matchingEvent.id}&tickets=${partySize}`;
+        resultSpan.innerHTML = `<a href="${checkoutUrl}" class="btn btn-sm btn-primary" target="_blank">Test Checkout</a>`;
+    } else {
+        resultSpan.innerHTML = '<span class="text-warning">No event found for this slot - need to create in database first</span>';
+    }
+}
+
+function refreshData() {
+    document.getElementById('slots-by-date').innerHTML = 'Loading...';
+    loadEvents();
+}
+
+// Load data on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadEvents();
+});
+</script>
+
+{% endblock %}

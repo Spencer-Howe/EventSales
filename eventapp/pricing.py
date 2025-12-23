@@ -80,7 +80,8 @@ def check_capacity(event, tickets):
 def get_booking_summary(event, tickets, total_price):
     """Format booking details for display"""
     readable_start = event.start.strftime("%B %d, %Y, %I:%M %p")
-    readable_time_slot = f'{event.title} - {readable_start}'
+    readable_end = event.end.strftime("%I:%M %p")
+    readable_time_slot = f'{readable_start} - {readable_end}'
     
     return {
         'time_slot': readable_time_slot,
