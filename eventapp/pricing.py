@@ -26,23 +26,25 @@ def check_capacity(event, tickets):
     booking_cutoff = event.start + timedelta(hours=6) if event.start else None
     if booking_cutoff and now >= booking_cutoff:
         return False, f"This event has ended and is no longer available for booking."
-    
-    # Holiday Minis: count bookings instead of total tickets
-    if "Holiday Minis" in event.title:
-        if tickets > 10:
-            return False, f"Holiday Minis accommodate up to 10 guests maximum per booking."
-        
-        # Count number of completed bookings (each booking = 1 slot)
-        current_bookings_count = db.session.query(db.func.count(Booking.id)).join(Payment).filter(
+    #check for 5 max photos
+    if event.title and "Professional Photos" in event.title:
+        current_bookings = db.session.query(db.func.sum(Booking.tickets)).join(Payment).filter(
             Booking.event_id == event.id,
             Payment.status == 'COMPLETED'
         ).scalar() or 0
-        
-        if current_bookings_count >= event.max_capacity:
-            return False, f"Sorry, this Holiday Minis session has reached capacity."
-        
+
+        # Simple check: if already at/over capacity, block new bookings
+        if current_bookings >= event.max_capacity:
+            return False, f"Sorry, this event has reached capacity, please check our other offerings."
+
+        # Check if this booking would put us over capacity
+        final_bookings = current_bookings + tickets
+        if final_bookings > event.max_capacity:
+            available_spots = event.max_capacity - current_bookings
+            return False, f"Up to 5 guests per booking (ages 1+)"
+        # (count bookings or sum tickets, your choice)
         return True, None
-    
+
     # Private events don't use capacity system but need 24hr notice and max 10 people
     if event.is_private:
         # Check guest count limit for private events
