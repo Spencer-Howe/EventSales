@@ -59,7 +59,92 @@
     <a href="/select_tickets" class="btn btn-danger w-100" style="background: linear-gradient(45deg, #e91e63, #f06292); border: none; font-weight: bold; text-shadow: 1px 1px 1px rgba(0,0,0,0.3);">🎁 Book Your Private Experience / Purchase Gift Certificate</a>
   </div>
 </div>
+      <!-- Card 3: Valentine Magic with the Mini Moos -->
+      <div class="card border-danger" style="background: linear-gradient(135deg, #fff0f3 0%, #ffeef5 100%);">
+        <img src="static/pic/magicvalentine.jpg" class="card-img-top" alt="Valentine Magic with the Mini Moos at Howe Ranch" style="border-bottom: 3px solid #e91e63;">
+        <div class="card-body">
+          <h5 class="card-title text-danger" style="font-family: 'serif'; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); color: #e91e63 !important;">❤️ Valentine Magic with the Mini Moos — Including Professional Photos</h5>
 
+          <div class="text-center p-3 mb-3" style="background: linear-gradient(45deg, #e91e63, #f06292); color: white; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+            <h4 style="margin: 0; font-weight: bold;">🎁 Mary Lou's Special 🎁</h4>
+            <p style="margin: 5px 0 0 0; font-size: 0.9rem;">Select Dates in January & February</p>
+          </div>
+
+          <div class="card-text text-center p-2 mb-3" style="background: linear-gradient(45deg, #e91e63, #f06292); color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+            <strong>🕓 Select your date and time slot!</strong>
+          </div>
+
+          <p class="card-text">
+            Step into Valentine Town at Howe Ranch for a heart-filled, small-group experience created for guests who want something extra special this season. Each group enjoys a two-hour Valentine Magic experience, designed to feel relaxed, unrushed, and full of meaningful moments with the Mini Moos and friends.
+          </p>
+
+          <p class="card-text">
+            Valentine Magic with the Mini Moos blends baby cow cuddles, whimsical Valentine environments, and a guided professional mini photo session — all in a calm, boutique setting before larger events arrive.
+          </p>
+
+          <p class="card-text">
+            <strong>This is not a private ranch rental and not an Open Farm Day.</strong> It is a thoughtfully paced, early-access experience shared with a few small couples/families, designed for meaningful moments, beautiful photos, and cozy Valentine magic.
+          </p>
+
+          <p class="card-text">
+            <strong>✨ Your Valentine Magic Experience Includes:</strong>
+          </p>
+          <ul class="card-text">
+            <li>🐮 Baby Moo kisses & cuddles with our fluffy Highland calves</li>
+            <li>📸 Two professional mini-session photos with our photographer partner (included with every booking)</li>
+            <li>💘 Romantic & whimsical Valentine Town scenes for exploring and memory-making</li>
+            <li>🎨 Valentine Crafts at our make-and-take station</li>
+            <li>🍬 Seasonal Valentine treats & drinks</li>
+            <li>🐐 Visits with alpacas, mini highland cows, and mini goats dressed in their Valentine best</li>
+            <li>🌸 A fully staffed, relaxed experience with guided flow — no crowds, no chaos</li>
+            <li>💕 Much loved and traditional scavenger hunt</li>
+          </ul>
+
+          <div class="text-center p-2 mb-3" style="background: #ffebee; border-radius: 8px; border: 2px dashed #e91e63;">
+            <strong>📍 Mary Lou's Special: $350 per group</strong><br>
+            <strong>👥 Up to 5 guests per booking (ages 1+)</strong><br>
+            <strong>🎟️ Very limited availability • Advance online reservation required</strong>
+          </div>
+
+          <p class="card-text">
+            Valentine Magic with the Mini Moos is perfect for families, couples, and anyone looking to celebrate love with baby cow snuggles, charming Valentine scenes, and professional photos to remember it all.
+          </p>
+
+          <div class="border p-3 mb-3" style="background: #f8f9fa; border-radius: 8px;">
+            <div class="form-group mb-3">
+              <label for="valentine-magic-date" class="form-label"><strong>Select a Date</strong></label>
+              <select class="form-control" id="valentine-magic-date" required onchange="updateValentineMagicTimeSlots()">
+                <option value="">Choose a Date</option>
+                <option value="valentine-magic1">Sunday, January 4</option>
+                <option value="valentine-magic2">Saturday, January 17</option>
+                <option value="valentine-magic3">Sunday, January 18</option>
+                <option value="valentine-magic4">Saturday, January 24</option>
+                <option value="valentine-magic5">Saturday, January 31</option>
+                <option value="valentine-magic6">Sunday, February 1</option>
+                <option value="valentine-magic7">Saturday, February 7</option>
+              </select>
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="valentine-magic-time-slot" class="form-label"><strong>Select Time Slot</strong></label>
+              <select class="form-control" id="valentine-magic-time-slot" required disabled>
+                <option value="">First select a date</option>
+              </select>
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="valentine-magic-tickets" class="form-label"><strong>Party Size</strong></label>
+              <input type="number" class="form-control" id="valentine-magic-tickets" placeholder="Enter number of guests" required min="1" max="5">
+            </div>
+
+            <button onclick="goToCheckout('valentine-magic')" class="btn btn-danger w-100" style="background: linear-gradient(45deg, #e91e63, #f06292); border: none; font-weight: bold; text-shadow: 1px 1px 1px rgba(0,0,0,0.3);">❤️ Book Your Valentine Magic Experience ❤️</button>
+          </div>
+
+          <div class="text-center small" style="color: #6c757d;">
+            By making a booking you agree to: I have read and agree with the <a href="https://www.thehoweranch.com/_files/ugd/fca21d_a063413021c34f2d814bca731db5d2f4.pdf" target="_blank">Farm Visitor FAQs</a> and <a href="https://www.thehoweranch.com/_files/ugd/fca21d_a30cd343d96b4be3913cded96c226b9f.pdf" target="_blank">Farm Policies</a>.
+          </div>
+        </div>
+      </div>
       <!-- Card 2: Season of Love Open Farm Day -->
       <div class="card border-danger" style="background: linear-gradient(135deg, #fff0f3 0%, #ffeef5 100%);">
         <img src="static/pic/valentinesopen.jpg" class="card-img-top" alt="Season of Love Open Farm Day at Howe Ranch" style="border-bottom: 3px solid #e91e63;">
@@ -132,95 +217,9 @@
         </div>
       </div>
 
-      <!-- Card 3: Valentine Magic with the Mini Moos -->
-      <div class="card border-danger" style="background: linear-gradient(135deg, #fff0f3 0%, #ffeef5 100%);">
-        <img src="static/pic/valentinesminimoo.jpg" class="card-img-top" alt="Valentine Magic with the Mini Moos at Howe Ranch" style="border-bottom: 3px solid #e91e63;">
-        <div class="card-body">
-          <h5 class="card-title text-danger" style="font-family: 'serif'; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); color: #e91e63 !important;">❤️ Valentine Magic with the Mini Moos — Including Professional Photos</h5>
-          
-          <div class="text-center p-3 mb-3" style="background: linear-gradient(45deg, #e91e63, #f06292); color: white; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
-            <h4 style="margin: 0; font-weight: bold;">🎁 Mary Lou's Special 🎁</h4>
-            <p style="margin: 5px 0 0 0; font-size: 0.9rem;">Select Dates in January & February</p>
-          </div>
-
-          <div class="card-text text-center p-2 mb-3" style="background: linear-gradient(45deg, #e91e63, #f06292); color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-            <strong>🕓 Select your date and time slot!</strong>
-          </div>
-
-          <p class="card-text">
-            Step into Valentine Town at Howe Ranch for a heart-filled, small-group experience created for guests who want something extra special this season. Each group enjoys a two-hour Valentine Magic experience, designed to feel relaxed, unrushed, and full of meaningful moments with the Mini Moos and friends.
-          </p>
-
-          <p class="card-text">
-            Valentine Magic with the Mini Moos blends baby cow cuddles, whimsical Valentine environments, and a guided professional mini photo session — all in a calm, boutique setting before larger events arrive.
-          </p>
-
-          <p class="card-text">
-            <strong>This is not a private ranch rental and not an Open Farm Day.</strong> It is a thoughtfully paced, early-access experience shared with a few small couples/families, designed for meaningful moments, beautiful photos, and cozy Valentine magic.
-          </p>
-
-          <p class="card-text">
-            <strong>✨ Your Valentine Magic Experience Includes:</strong>
-          </p>
-          <ul class="card-text">
-            <li>🐮 Baby Moo kisses & cuddles with our fluffy Highland calves</li>
-            <li>📸 Two professional mini-session photos with our photographer partner (included with every booking)</li>
-            <li>💘 Romantic & whimsical Valentine Town scenes for exploring and memory-making</li>
-            <li>🎨 Valentine Crafts at our make-and-take station</li>
-            <li>🍬 Seasonal Valentine treats & drinks</li>
-            <li>🐐 Visits with alpacas, mini highland cows, and mini goats dressed in their Valentine best</li>
-            <li>🌸 A fully staffed, relaxed experience with guided flow — no crowds, no chaos</li>
-            <li>💕 Much loved and traditional scavenger hunt</li>
-          </ul>
-
-          <div class="text-center p-2 mb-3" style="background: #ffebee; border-radius: 8px; border: 2px dashed #e91e63;">
-            <strong>📍 Mary Lou's Special: $350 per group</strong><br>
-            <strong>👥 Up to 5 guests per booking (ages 1+)</strong><br>
-            <strong>🎟️ Very limited availability • Advance online reservation required</strong>
-          </div>
-
-          <p class="card-text">
-            Valentine Magic with the Mini Moos is perfect for families, couples, and anyone looking to celebrate love with baby cow snuggles, charming Valentine scenes, and professional photos to remember it all.
-          </p>
-          
-          <div class="border p-3 mb-3" style="background: #f8f9fa; border-radius: 8px;">
-            <div class="form-group mb-3">
-              <label for="valentine-magic-date" class="form-label"><strong>Select a Date</strong></label>
-              <select class="form-control" id="valentine-magic-date" required onchange="updateValentineMagicTimeSlots()">
-                <option value="">Choose a Date</option>
-                <option value="valentine-magic1">Sunday, January 4</option>
-                <option value="valentine-magic2">Saturday, January 17</option>
-                <option value="valentine-magic3">Sunday, January 18</option>
-                <option value="valentine-magic4">Saturday, January 24</option>
-                <option value="valentine-magic5">Saturday, January 31</option>
-                <option value="valentine-magic6">Sunday, February 1</option>
-                <option value="valentine-magic7">Saturday, February 7</option>
-              </select>
-            </div>
-            
-            <div class="form-group mb-3">
-              <label for="valentine-magic-time-slot" class="form-label"><strong>Select Time Slot</strong></label>
-              <select class="form-control" id="valentine-magic-time-slot" required disabled>
-                <option value="">First select a date</option>
-              </select>
-            </div>
-            
-            <div class="form-group mb-3">
-              <label for="valentine-magic-tickets" class="form-label"><strong>Party Size</strong></label>
-              <input type="number" class="form-control" id="valentine-magic-tickets" placeholder="Enter number of guests" required min="1" max="5">
-            </div>
-            
-            <button onclick="goToCheckout('valentine-magic')" class="btn btn-danger w-100" style="background: linear-gradient(45deg, #e91e63, #f06292); border: none; font-weight: bold; text-shadow: 1px 1px 1px rgba(0,0,0,0.3);">❤️ Book Your Valentine Magic Experience ❤️</button>
-          </div>
-          
-          <div class="text-center small" style="color: #6c757d;">
-            By making a booking you agree to: I have read and agree with the <a href="https://www.thehoweranch.com/_files/ugd/fca21d_a063413021c34f2d814bca731db5d2f4.pdf" target="_blank">Farm Visitor FAQs</a> and <a href="https://www.thehoweranch.com/_files/ugd/fca21d_a30cd343d96b4be3913cded96c226b9f.pdf" target="_blank">Farm Policies</a>.
-          </div>
-        </div>
-      </div>
 
 
-    </div> <!-- Close card-group -->
+    <!-- Close card-group -->
   </div> <!-- Close container -->
 
   <div class="text-center mt-3">
