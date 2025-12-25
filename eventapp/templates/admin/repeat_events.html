@@ -1,0 +1,341 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+<div class="container-fluid">
+    <h2>🔄 Create Repeat Events</h2>
+    <p class="text-muted">Easily create single events or repeat them daily, weekly, or monthly - no more SQL needed!</p>
+    
+    {% if message %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-{% if message_type == 'error' %}danger{% else %}success{% endif %} alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                {{ message }}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if created_events %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <h3 class="panel-title">✅ Created Events ({{ created_events|length }})</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Price</th>
+                                    <th>Capacity</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for event in created_events %}
+                                <tr>
+                                    <td>{{ event.title }}</td>
+                                    <td>{{ event.start.strftime('%m/%d/%Y %I:%M %p') if event.start else 'N/A' }}</td>
+                                    <td>{{ event.end.strftime('%m/%d/%Y %I:%M %p') if event.end else 'N/A' }}</td>
+                                    <td>${{ "%.2f"|format(event.price_per_ticket) }}</td>
+                                    <td>{{ event.max_capacity }}</td>
+                                    <td>
+                                        <a href="/admin/eventmodelview/edit/?id={{ event.id }}" class="btn btn-xs btn-primary">Edit</a>
+                                        <a href="https://thehoweranchpayment.com/checkout?event_id={{ event.id }}&tickets=1" 
+                                           target="_blank" class="btn btn-xs btn-success">View Checkout</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">📅 Event Details</h3>
+                </div>
+                <div class="panel-body">
+                    <form method="POST" action="{{ url_for('repeat_events.index') }}">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="title">Event Title *</label>
+                                    <input type="text" class="form-control" id="title" name="title" 
+                                           placeholder="e.g., Mini Moos with Babies" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="description">Description</label>
+                                    <textarea class="form-control" id="description" name="description" rows="3"
+                                              placeholder="Event details, what's included, special instructions..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="start_date">Start Date *</label>
+                                    <input type="date" class="form-control" id="start_date" name="start_date" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="start_time">Start Time *</label>
+                                    <input type="time" class="form-control" id="start_time" name="start_time" 
+                                           value="14:00" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="duration_hours">Duration (Hours)</label>
+                                    <select class="form-control" id="duration_hours" name="duration_hours">
+                                        <option value="1">1 hour</option>
+                                        <option value="2" selected>2 hours</option>
+                                        <option value="3">3 hours</option>
+                                        <option value="4">4 hours</option>
+                                        <option value="6">6 hours</option>
+                                        <option value="8">8 hours</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="price_per_ticket">Price per Ticket ($)</label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon">$</div>
+                                        <input type="number" class="form-control" id="price_per_ticket" name="price_per_ticket" 
+                                               step="0.01" min="0" value="0" placeholder="0.00">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="max_capacity">Max Capacity</label>
+                                    <input type="number" class="form-control" id="max_capacity" name="max_capacity" 
+                                           min="1" max="500" value="50">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>&nbsp;</label>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" id="is_private" name="is_private"> 
+                                            Is Private Event
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" id="private" name="private"> 
+                                            Private
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4>🔄 Repeat Options</h4>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="repeat_type">Repeat Type</label>
+                                    <select class="form-control" id="repeat_type" name="repeat_type" onchange="toggleRepeatOptions()">
+                                        <option value="none">No Repeat (Single Event)</option>
+                                        <option value="daily">Daily</option>
+                                        <option value="weekly">Weekly</option>
+                                        <option value="monthly">Monthly</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group" id="repeat_count_group" style="display: none;">
+                                    <label for="repeat_count">Number of Events</label>
+                                    <input type="number" class="form-control" id="repeat_count" name="repeat_count" 
+                                           min="1" max="52" value="4">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group" id="repeat_interval_group" style="display: none;">
+                                    <label for="repeat_interval">Interval</label>
+                                    <select class="form-control" id="repeat_interval" name="repeat_interval">
+                                        <option value="1">Every</option>
+                                        <option value="2">Every 2nd</option>
+                                        <option value="3">Every 3rd</option>
+                                        <option value="4">Every 4th</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row" id="weekly_days_group" style="display: none;">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Days of the Week</label><br>
+                                    <div class="checkbox-inline">
+                                        <label><input type="checkbox" name="repeat_days" value="0"> Monday</label>
+                                    </div>
+                                    <div class="checkbox-inline">
+                                        <label><input type="checkbox" name="repeat_days" value="1"> Tuesday</label>
+                                    </div>
+                                    <div class="checkbox-inline">
+                                        <label><input type="checkbox" name="repeat_days" value="2"> Wednesday</label>
+                                    </div>
+                                    <div class="checkbox-inline">
+                                        <label><input type="checkbox" name="repeat_days" value="3"> Thursday</label>
+                                    </div>
+                                    <div class="checkbox-inline">
+                                        <label><input type="checkbox" name="repeat_days" value="4"> Friday</label>
+                                    </div>
+                                    <div class="checkbox-inline">
+                                        <label><input type="checkbox" name="repeat_days" value="5"> Saturday</label>
+                                    </div>
+                                    <div class="checkbox-inline">
+                                        <label><input type="checkbox" name="repeat_days" value="6"> Sunday</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <hr>
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="glyphicon glyphicon-plus"></i> <span id="create_button_text">Create Event</span>
+                                </button>
+                                <button type="reset" class="btn btn-default" onclick="resetForm()">
+                                    <i class="glyphicon glyphicon-refresh"></i> Reset Form
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">💡 Quick Tips</h3>
+                </div>
+                <div class="panel-body">
+                    <p><strong>Single Event:</strong> Just fill out the basic details and leave repeat type as "No Repeat"</p>
+                    
+                    <p><strong>Daily Events:</strong> Perfect for camps or courses that run every day</p>
+                    
+                    <p><strong>Weekly Events:</strong> Great for regular sessions like "Mini Moos every Saturday"</p>
+                    
+                    <p><strong>Monthly Events:</strong> Ideal for special monthly events</p>
+                    
+                    <div class="alert alert-warning">
+                        <strong>Pro Tip:</strong> Start with a small number of events first, then add more if needed!
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">📋 Common Event Types</h3>
+                </div>
+                <div class="panel-body">
+                    <small>
+                        <strong>Mini Moos with Babies:</strong><br>
+                        Price: $50-70, Capacity: 15-20<br><br>
+                        
+                        <strong>Photo Shoots:</strong><br>
+                        Price: $100-350, Capacity: 5-10<br><br>
+                        
+                        <strong>Birthday Parties:</strong><br>
+                        Price: $200-400, Capacity: 20-30<br><br>
+                        
+                        <strong>Private Events:</strong><br>
+                        Check "Private Event" box<br>
+                        Higher prices, smaller groups
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleRepeatOptions() {
+    const repeatType = document.getElementById('repeat_type').value;
+    const countGroup = document.getElementById('repeat_count_group');
+    const intervalGroup = document.getElementById('repeat_interval_group');
+    const weeklyGroup = document.getElementById('weekly_days_group');
+    const createButton = document.getElementById('create_button_text');
+    const intervalLabel = document.querySelector('#repeat_interval_group label');
+    
+    if (repeatType === 'none') {
+        countGroup.style.display = 'none';
+        intervalGroup.style.display = 'none';
+        weeklyGroup.style.display = 'none';
+        createButton.textContent = 'Create Event';
+    } else {
+        countGroup.style.display = 'block';
+        intervalGroup.style.display = 'block';
+        
+        if (repeatType === 'weekly') {
+            weeklyGroup.style.display = 'block';
+            intervalLabel.textContent = 'Week Interval';
+            createButton.textContent = 'Create Repeated Events';
+        } else {
+            weeklyGroup.style.display = 'none';
+            createButton.textContent = 'Create Repeated Events';
+            
+            if (repeatType === 'daily') {
+                intervalLabel.textContent = 'Day Interval';
+            } else if (repeatType === 'monthly') {
+                intervalLabel.textContent = 'Month Interval';
+            }
+        }
+    }
+}
+
+function resetForm() {
+    document.querySelector('form').reset();
+    document.getElementById('start_time').value = '14:00';
+    document.getElementById('duration_hours').value = '2';
+    document.getElementById('max_capacity').value = '50';
+    document.getElementById('price_per_ticket').value = '0';
+    toggleRepeatOptions();
+}
+
+// Set default date to tomorrow
+document.addEventListener('DOMContentLoaded', function() {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const dateString = tomorrow.toISOString().split('T')[0];
+    document.getElementById('start_date').value = dateString;
+});
+</script>
+{% endblock %}

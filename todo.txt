@@ -3,4 +3,3 @@ TODO
 crypto process to shows dates better.
 email reminder to be a better time begin end
 ADD BOOKING FEE TO 70dollar purchases
-

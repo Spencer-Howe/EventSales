@@ -1,0 +1,202 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+<div class="container-fluid">
+    <h2>Manual Booking Entry</h2>
+    <p class="text-muted">Use this form to manually create bookings for missed PayPal transactions or other scenarios.</p>
+    
+    {% if message %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-{% if message_type == 'error' %}danger{% else %}success{% endif %} alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                {{ message }}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Booking Details</h3>
+                </div>
+                <div class="panel-body">
+                    <form method="POST" action="{{ url_for('manual_booking.index') }}">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="customer_name">Customer Name *</label>
+                                    <input type="text" class="form-control" id="customer_name" name="customer_name" 
+                                           placeholder="e.g., Chasen Marshall" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="customer_email">Customer Email *</label>
+                                    <input type="email" class="form-control" id="customer_email" name="customer_email" 
+                                           placeholder="e.g., customer@example.com" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="customer_phone">Customer Phone</label>
+                                    <input type="text" class="form-control" id="customer_phone" name="customer_phone" 
+                                           placeholder="e.g., (555) 123-4567">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="order_id">Order ID *</label>
+                                    <input type="text" class="form-control" id="order_id" name="order_id" 
+                                           placeholder="e.g., 47305592FS357260J" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="event_id">Event *</label>
+                                    <select class="form-control" id="event_id" name="event_id" required>
+                                        <option value="">Select an event...</option>
+                                        {% for event in events %}
+                                        <option value="{{ event.id }}">
+                                            {{ event.title }} - {{ event.start.strftime('%m/%d/%Y %H:%M') if event.start else 'No date set' }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="tickets">Number of Tickets *</label>
+                                    <input type="number" class="form-control" id="tickets" name="tickets" 
+                                           value="1" min="1" max="10" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="amount_paid">Amount Paid (USD) *</label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon">$</div>
+                                        <input type="number" class="form-control" id="amount_paid" name="amount_paid" 
+                                               step="0.01" min="0" placeholder="70.00" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="payment_method">Payment Method</label>
+                                    <select class="form-control" id="payment_method" name="payment_method">
+                                        <option value="paypal" selected>PayPal</option>
+                                        <option value="credit_card">Credit Card</option>
+                                        <option value="cash">Cash</option>
+                                        <option value="check">Check</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="paypal_order_id">PayPal Transaction ID</label>
+                                    <input type="text" class="form-control" id="paypal_order_id" name="paypal_order_id" 
+                                           placeholder="e.g., 47305592FS357260J">
+                                    <small class="form-text text-muted">Optional - only for PayPal transactions</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <hr>
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="glyphicon glyphicon-plus"></i> Create Booking
+                                </button>
+                                <button type="reset" class="btn btn-default">
+                                    <i class="glyphicon glyphicon-refresh"></i> Clear Form
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Instructions</h3>
+                </div>
+                <div class="panel-body">
+                    <p><strong>When to use this form:</strong></p>
+                    <ul>
+                        <li>PayPal transactions that didn't get recorded</li>
+                        <li>Manual payment processing</li>
+                        <li>Correction of missing bookings</li>
+                        <li>Phone or in-person sales</li>
+                    </ul>
+                    
+                    <p><strong>Required fields:</strong></p>
+                    <ul>
+                        <li>Customer Name</li>
+                        <li>Customer Email</li>
+                        <li>Unique Order ID</li>
+                        <li>Event</li>
+                        <li>Amount Paid</li>
+                    </ul>
+                    
+                    <div class="alert alert-warning">
+                        <strong>Note:</strong> Ensure the Order ID is unique to avoid conflicts with existing bookings.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Example Booking</h3>
+                </div>
+                <div class="panel-body">
+                    <small>
+                        <strong>Customer:</strong> Chasen Marshall<br>
+                        <strong>Email:</strong> chasen@example.com<br>
+                        <strong>Order ID:</strong> 47305592FS357260J<br>
+                        <strong>Amount:</strong> $70.00<br>
+                        <strong>Tickets:</strong> 2<br>
+                        <strong>PayPal ID:</strong> 47305592FS357260J
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-populate PayPal Transaction ID when Order ID is entered
+document.getElementById('order_id').addEventListener('input', function() {
+    var orderId = this.value;
+    var paymentMethod = document.getElementById('payment_method').value;
+    var paypalOrderId = document.getElementById('paypal_order_id');
+    
+    if (paymentMethod === 'paypal' && orderId && !paypalOrderId.value) {
+        paypalOrderId.value = orderId;
+    }
+});
+
+// Clear PayPal Transaction ID when payment method is not PayPal
+document.getElementById('payment_method').addEventListener('change', function() {
+    if (this.value !== 'paypal') {
+        document.getElementById('paypal_order_id').value = '';
+    }
+});
+</script>
+{% endblock %}
