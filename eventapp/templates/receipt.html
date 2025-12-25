@@ -1,15 +1,15 @@
 <!-- templates/select_tickets.html -->
 {% extends "base.html" %}
 
-{% block title %}Select Tickets{% endblock %}
+{% block title %}Select Experiences{% endblock %}
 
 {% block content %}
 <body>
 {% if processing %}
-    <h1>Payment Received - Finalizing Booking</h1>
+    <h1>Registration Received - Finalizing Visit</h1>
     <div class="alert alert-info" role="alert">
-        <h4 class="alert-heading">Payment Confirmed!</h4>
-        <p>Your payment has been successfully received and is being processed.</p>
+        <h4 class="alert-heading">Registration Confirmed!</h4>
+        <p>Your registration has been successfully received and is being processed.</p>
         <p>Order ID: <strong>{{ order_id }}</strong></p>
         <hr>
         <p class="mb-0">Please refresh this page in a few moments to see your complete receipt and QR code.</p>
@@ -21,15 +21,15 @@
         }, 5000);
     </script>
 {% else %}
-    <h1>Payment Receipt</h1>
+    <h1>Registration Confirmation</h1>
     <p><strong>Name:</strong> {{name}}</p>
     <p><strong>Email:</strong> {{email}}</p>
     <p>Order ID: {{ order_id }}</p>
-    <p>Total Amount: {{ amount }}</p>
+    <p>Registration Fee: {{ amount }}</p>
     <p>Currency: {{ currency }}</p>
     <p>Status: {{ status }}</p>
     <p>Time slot: {{time_slot}}</p>
-    <p>Number of Tickets: {{ tickets }}</p>
+    <p>Number of Guests: {{ tickets }}</p>
     <div class="mb-3">
         <a href="{{ url_for('views.sign_waiver', order_id=order_id) }}" class="btn btn-primary">Please Complete Registration</a>
     </div>
@@ -107,15 +107,15 @@
 
 {% if not processing %}
 <h2 style="margin-top: 30px;">Thank You & Important Visit Information</h2>
-<p>Thank you for purchasing passes to the Mini Moos experience at Howe Ranch! Our miniature Highland cows and their barn friends are excited to show you the magical place they call home:</p>
+<p>Thank you for supporting our farm and booking your visit to the Mini Moos experience at Howe Ranch! Our miniature Highland cows and their barn friends are excited to show you the magical place they call home:</p>
 <p><strong>22053 Highland St<br>Wildomar, CA 92595</strong></p>
 <p>To be compliant with our neighborhood's no impact policies and liability regulations, and ensure a safe and enjoyable experience for the animals and you, we must ask that you please confirm that you have reviewed the visit guidelines below, as posted on our website:</p>
 
 <h3 style="color: #d9534f; margin-top: 25px;">Arrival Guidelines - No Early Arrivals</h3>
 <ul style="padding-left: 20px;">
-    <li><strong>EARLY ARRIVALS STRICTLY PROHIBITED:</strong> Guests must not arrive before the event start time. Entry is strictly prohibited before your scheduled time slot due to farm liability management guidelines, which includes moving animals across the parking access area. Early arrivals disrupt operations, compromise safety while moving animals, and will not be accommodated. You will not miss anything by arriving after your scheduled time. We recommend Montage Brothers and Starbucks coffee houses down the street if you arrive in the area early.</li>
+    <li><strong>EARLY ARRIVALS STRICTLY PROHIBITED:</strong> Guests must not arrive before the visit start time. Entry is strictly prohibited before your scheduled time slot due to farm liability management guidelines, which includes moving animals across the parking access area. Early arrivals disrupt operations, compromise safety while moving animals, and will not be accommodated. You will not miss anything by arriving after your scheduled time. We recommend Montage Brothers and Starbucks coffee houses down the street if you arrive in the area early.</li>
     <br>
-    <li><strong>PRIVATE ROAD LAWS:</strong> Stopping or staging on the private farm road is strictly prohibited. Strict 15 MPH speed limit on the monitored, unpaved street leading to Howe Ranch as posted— speeding will result in loss of your pass(es).</li>
+    <li><strong>PRIVATE ROAD LAWS:</strong> Stopping or staging on the private farm road is strictly prohibited. Strict 15 MPH speed limit on the monitored, unpaved street leading to Howe Ranch as posted— speeding will result in loss of your visit.</li>
 </ul>
 
 <h3 style="color: #2e6c80; margin-top: 25px;">Animal Interactions & Safety</h3>
@@ -131,8 +131,8 @@
 <h3 style="color: #2e6c80; margin-top: 25px;">Transferable Only — No Refunds or Reschedules</h3>
 <p>The moment your experience is booked, resources are reserved and your time slot is blocked from other visitors. Booked experiences are transferable to other guests in your network, but not refundable, and cannot be rescheduled. Because our team is fully dedicated to caring for the animals and hosting scheduled guests, requests for exceptions cannot be accommodated and will not receive a response. If you transfer your experience, we must receive the guest's name prior to arrival.</p>
 
-<p style="margin-top: 25px;">We're so excited to welcome you to the ranch and share the magic of our animals and their farm with you. Thank you for helping us keep our doors open by being a thoughtful steward of small farm experiences in our beautiful area.</p>
-<p style="margin-top: 15px;">When you arrive, turn left at the Parking Sign and show your QR Pass to the gatekeeper, who will direct you to the parking area. Have fun!</p>
+<p style="margin-top: 25px;">We're so excited to welcome you to the ranch and share the magic of our animals and their farm with you. Thank you for supporting our family farm by being a thoughtful steward of small farm experiences in our beautiful area.</p>
+<p style="margin-top: 15px;">When you arrive, turn left at the Parking Sign and show your QR code to the gatekeeper, who will direct you to the parking area. Have fun!</p>
 
 <p>Warmly,<br>Spencer Howe</p>
 {% endif %}

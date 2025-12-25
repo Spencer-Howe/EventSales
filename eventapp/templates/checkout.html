@@ -274,7 +274,7 @@
 <div class="checkout-hero">
   <div class="container">
     <h1 class="fw-bold mb-1">🛡️ Secure Checkout</h1>
-    <p class="lead mb-0">Complete your booking in a few taps</p>
+    <p class="lead mb-0">Complete your visit reservation in a few taps</p>
   </div>
 </div>
 
@@ -288,7 +288,7 @@
   
   <!-- Order Summary -->
   <div class="order-summary">
-    <h5 class="fw-bold mb-2">📋 Your Booking</h5>
+    <h5 class="fw-bold mb-2">📋 Your Visit Reservation</h5>
     <h6 class="text-primary fw-bold mb-1">{{ event_title }}</h6>
     <small class="text-muted d-block mb-2">{{ event_description }}</small>
     
@@ -322,7 +322,7 @@
   <!-- Phone Number Section -->
   <div class="phone-section">
     <h6 class="fw-bold mb-2">📞 Phone Required</h6>
-    <small class="text-muted d-block mb-2">We need your phone for booking confirmation and updates.</small>
+    <small class="text-muted d-block mb-2">We need your phone for visit confirmation and updates.</small>
     <div class="input-group">
       <span class="input-group-text">📱</span>
       <input type="tel" class="form-control" id="phone" name="phone" 
@@ -342,7 +342,7 @@
   </div>
 
   <!-- Payment Methods -->
-  <h5 class="fw-bold mb-3 text-center">💳 Choose Payment</h5>
+  <h5 class="fw-bold mb-3 text-center">💳 Complete Registration</h5>
   
   <!-- PayPal Payment -->
   <div class="payment-card featured mb-3">
@@ -351,7 +351,7 @@
         <i class="fab fa-paypal"></i>
       </div>
       <h6 class="fw-bold mb-2">PayPal</h6>
-      <small class="text-muted d-block mb-2">Quick & secure with buyer protection</small>
+      <small class="text-muted d-block mb-2">Quick & secure registration process</small>
       
       <div class="mb-2">
         <small class="text-success">✅ Instant</small>
@@ -370,11 +370,11 @@
       <div class="payment-icon crypto-icon">
         <i class="fab fa-bitcoin"></i>
       </div>
-      <h6 class="fw-bold mb-2">Cryptocurrency</h6>
+      <h6 class="fw-bold mb-2">Alternative Registration</h6>
 
       <a href="{{ url_for('crypto.crypto_checkout') }}?event_id={{ event_id }}&tickets={{ tickets }}" 
          class="btn btn-crypto btn-payment">
-        ₿ Pay with Crypto
+        ₿ Register with Crypto
       </a>
     </div>
   </div>
@@ -382,9 +382,9 @@
   <!-- Terms Notice -->
   <div class="card border-warning bg-light mt-3">
     <div class="card-body p-3">
-      <h6 class="fw-bold text-warning mb-2">⚠️ Booking Terms</h6>
+      <h6 class="fw-bold text-warning mb-2">⚠️ Visit Terms</h6>
       <small>
-        <strong>Passes</strong> are free for guests under 1 year, transferable, 
+        <strong>Experiences</strong> are free for guests under 1 year, transferable, 
         not refundable, and cannot be rescheduled. We focus on animal care and 
         cannot accommodate changes.
       </small>

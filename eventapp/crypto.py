@@ -247,6 +247,14 @@ def generate_receipt_html(booking):
     # Get latest payment details
     latest_payment = booking.payments[0] if booking.payments else None
     
+    # Format time slot with start and end times
+    if booking.event and booking.event.start and booking.event.end:
+        start_formatted = booking.event.start.strftime("%B %d, %Y, %I:%M %p")
+        end_formatted = booking.event.end.strftime("%I:%M %p")
+        time_slot = f"{start_formatted} - {end_formatted}"
+    else:
+        time_slot = "TBD"
+    
     return f"""
     
     <html>
@@ -259,7 +267,7 @@ def generate_receipt_html(booking):
             <p><strong>Total Amount:</strong> {latest_payment.amount_paid if latest_payment else 0}</p>
             <p><strong>Currency:</strong> {latest_payment.currency if latest_payment else "USD"}</p>
             <p><strong>Status:</strong> {latest_payment.status if latest_payment else "Unknown"}</p>
-            <p><strong>Time Slot:</strong> {booking.event.start if booking.event else "Unknown"}</p>
+            <p><strong>Time Slot:</strong> {time_slot}</p>
             <p><strong>Number of Tickets:</strong> {booking.tickets}</p>
             <p>Please review and sign the waiver if you did not already finish the registration after checkout 
                 <a href="{waiver_url}" style="color: #1a73e8;">here</a>.
