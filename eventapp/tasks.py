@@ -103,6 +103,18 @@ def send_reminder_email(booking):
   22053 Highland St<br>
   Wildomar, CA 92595
 </p>
+
+<!-- Route Map -->
+<div style="text-align: center; margin: 20px 0; padding: 15px; border: 2px solid #2e6c80; border-radius: 8px; background-color: #f8f9fa;">
+  <h3 style="color: #2e6c80; margin-bottom: 15px;">📍 Proper Route to Ranch</h3>
+  <img src="https://thehoweranchpayment.com/static/pic/arrivalnotice.jpg" 
+       alt="Map showing correct route to Howe Ranch avoiding residential areas" 
+       style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 5px;">
+  <p style="margin-top: 10px; font-weight: bold; color: #d9534f;">
+    ⚠️ Please follow this exact route to avoid disturbing neighbors
+  </p>
+</div>
+
 <p>
   If you have any questions or need assistance, please call or text
   <strong>(424) 219-4212</strong>.
