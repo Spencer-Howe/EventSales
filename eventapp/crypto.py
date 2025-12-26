@@ -259,70 +259,68 @@ def generate_receipt_html(booking):
     
     <html>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-            <h1 style="color: #2e6c80;">Payment Receipt</h1>
+            <h1>Registration Confirmation</h1>
             <p><strong>Name:</strong> {booking.customer.name if booking.customer else "Unknown"}</p>
             <p><strong>Email:</strong> {booking.customer.email if booking.customer else "Unknown"}</p>
-            <p><strong>Phone Number:</strong> {booking.customer.phone if booking.customer else "Unknown"}</p>
-            <p><strong>Order ID:</strong> {booking.order_id}</p>
-            <p><strong>Total Amount:</strong> {latest_payment.amount_paid if latest_payment else 0}</p>
-            <p><strong>Currency:</strong> {latest_payment.currency if latest_payment else "USD"}</p>
-            <p><strong>Status:</strong> {latest_payment.status if latest_payment else "Unknown"}</p>
-            <p><strong>Time Slot:</strong> {time_slot}</p>
-            <p><strong>Number of Tickets:</strong> {booking.tickets}</p>
-            <p>Please review and sign the waiver if you did not already finish the registration after checkout 
-                <a href="{waiver_url}" style="color: #1a73e8;">here</a>.
-            </p>
+            <p><strong>Visit:</strong> {booking.event.title if booking.event else "Unknown Visit"}</p>
+            <p>Order ID: {booking.order_id}</p>
+            <p>Registration Fee: {latest_payment.amount_paid if latest_payment else 0}</p>
+            <p>Currency: {latest_payment.currency if latest_payment else "USD"}</p>
+            <p>Status: {latest_payment.status if latest_payment else "Unknown"}</p>
+            <p>Time: {time_slot}</p>
+            <p>Number of Guests: {booking.tickets}</p>
+            <div style="margin-bottom: 20px;">
+                <a href="{waiver_url}" style="background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Please Complete Registration</a>
+            </div>
             
-            <!-- Receipt & QR Code Link -->
-            <div style="text-align: center; margin: 20px 0; padding: 20px; border: 2px dashed #007bff; border-radius: 10px; background-color: #f8f9fa;">
-                <h3 style="color: #007bff; margin-bottom: 15px;">📱 Check-in QR Code</h3>
-                <p style="margin-bottom: 15px;"><strong>Access your QR code for instant check-in at the ranch!</strong></p>
-                <a href="{receipt_url}" style="display: inline-block; background: linear-gradient(45deg, #007bff, #0056b3); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 10px;">
-                    View Receipt & QR Code
-                </a>
+            <!-- QR Code for Check-in -->
+            <div style="text-align: center; margin: 20px 0; border: 2px dashed #007bff; padding: 20px; border-radius: 10px; background-color: #f8f9fa;">
+                <h3 style="color: #007bff; margin-bottom: 15px;">📱 Quick Check-In</h3>
+                <p><strong>Show this QR code when you arrive for instant check-in!</strong></p>
+                
+                <!-- Mobile-friendly access options -->
+                <div style="margin: 15px 0;">
+                    <a href="{receipt_url}" 
+                       style="margin: 5px; padding: 10px 20px; background-color: #28a745; border: none; color: white; text-decoration: none; border-radius: 5px; display: inline-block;">
+                        📥 View QR Code
+                    </a>
+                </div>
+                
                 <p style="margin-top: 10px; font-size: 0.9rem; color: #6c757d;">
-                    Save this link or bookmark it for easy access on your phone
+                    Or visit: {receipt_url}
                 </p>
             </div>
-            <hr style="margin: 30px 0;">
-            <h2 style="color: #2e6c80;">Thank You & Important Visit Information</h2>
-            <p>
-                Thank you for purchasing passes to the <strong>Mini Moos experience</strong> at Howe Ranch! You're officially on our guest list—just identify yourself at the welcome table when you arrive. 
-                Our event is held at:
-            </p>
-            <p>
-                <strong>22053 Highland St<br>
-                Wildomar, CA 92595</strong>
-            </p>
-            <p>
-                To help us ensure a smooth, safe, and enjoyable experience for all our guests and animals, please take a moment to review the visit guidelines below:
-            </p>
-            <ul style="padding-left: 20px;">
-                <li>
-                    <strong>Arrival Time:</strong><br>
-                    Please do <strong>not arrive earlier than your reserved time slot at {booking.event.start if booking.event else "Unknown"}</strong>. Early arrivals are not permitted, as we are actively preparing the animals and property for your visit.<br><br>
-                    Please <strong>do not stage on the private road</strong>, as this creates a safety and liability concern.
-                </li>
-                <br>
-                <li>
-                    <strong>Best Time to Arrive:</strong><br>
-                    Animal interactions are available throughout your reserved window. Most guests find the sweet spot is arriving about 15–30 minutes after the start time to enjoy the full experience.
-                </li>
-                <br>
-                <li>
-                    <strong>Parking:</strong><br>
-                    Enter through the red gate <strong>after your start time</strong> and take the left at the welcome sign.
-                </li>
-                <br>
-                <li>
-    			<strong>What to Bring:</strong><br>
-    			Be sure to bring drinking water, wear closed-toed shoes, and dress comfortably for walking around the farm.
-		        </li>
+            
+            <hr>
+            
+            <h2 style="margin-top: 30px;">Thank You & Important Visit Information</h2>
+            <p>Thank you for supporting our farm and booking your visit to the Mini Moos experience at Howe Ranch! Our miniature Highland cows and their barn friends are excited to show you the magical place they call home:</p>
+            <p><strong>22053 Highland St<br>Wildomar, CA 92595</strong></p>
+            <p>To be compliant with our neighborhood's no impact policies and liability regulations, and ensure a safe and enjoyable experience for the animals and you, we must ask that you please confirm that you have reviewed the visit guidelines below, as posted on our website:</p>
 
+            <h3 style="color: #d9534f; margin-top: 25px;">Arrival Guidelines - No Early Arrivals</h3>
+            <ul style="padding-left: 20px;">
+                <li><strong>EARLY ARRIVALS STRICTLY PROHIBITED:</strong> Guests must not arrive before the visit start time. Entry is strictly prohibited before your scheduled time slot due to farm liability management guidelines, which includes moving animals across the parking access area. Early arrivals disrupt operations, compromise safety while moving animals, and will not be accommodated. You will not miss anything by arriving after your scheduled time. We recommend Montage Brothers and Starbucks coffee houses down the street if you arrive in the area early.</li>
+                <br>
+                <li><strong>PRIVATE ROAD LAWS:</strong> Stopping or staging on the private farm road is strictly prohibited. Strict 15 MPH speed limit on the monitored, unpaved street leading to Howe Ranch as posted— speeding will result in loss of your visit.</li>
             </ul>
-            <p>
-                We're so excited to welcome you to the ranch and share the magic of our animals with you. Thank you for helping us keep the experience safe and enjoyable for all.
-            </p>
+
+            <h3 style="color: #2e6c80; margin-top: 25px;">Animal Interactions & Safety</h3>
+            <ul style="padding-left: 20px;">
+                <li><strong>NO DOGS:</strong> For the safety of our animals and guests, our farm cannot accommodate dogs. Most of our animals are prey species, their reactions would make the encounter unsafe for all, and we have trained livestock guardians to protect from unknown canines on site.</li>
+                <br>
+                <li><strong>SAFETY:</strong> Sunscreen, hat, and closed-toed shoes. Important: Bring water for hydration.</li>
+                <br>
+                <li><strong>SUPERVISED ONLY:</strong> For your safety and the safety of our animals, please do not approach any animals until staff has reviewed safety guidelines with you and is present. Children must be supervised by your group at all time.</li>
+            </ul>
+            <p style="margin-top: 15px;">If you arrive and do not see a staff member immediately, please call or text <strong>(424) 219-4212</strong> and remain in the designated waiting area. We might be assisting other guests or preparing animals for your experience.</p>
+
+            <h3 style="color: #2e6c80; margin-top: 25px;">Transferable Only — No Refunds or Reschedules</h3>
+            <p>The moment your experience is booked, resources are reserved and your time slot is blocked from other visitors. Booked experiences are transferable to other guests in your network, but not refundable, and cannot be rescheduled. Because our team is fully dedicated to caring for the animals and hosting scheduled guests, requests for exceptions cannot be accommodated and will not receive a response. If you transfer your experience, we must receive the guest's name prior to arrival.</p>
+
+            <p style="margin-top: 25px;">We're so excited to welcome you to the ranch and share the magic of our animals and their farm with you. Thank you for supporting our family farm by being a thoughtful steward of small farm experiences in our beautiful area.</p>
+            <p style="margin-top: 15px;">When you arrive, turn left at the Parking Sign and show your QR code to the gatekeeper, who will direct you to the parking area. Have fun!</p>
+
             <p>Warmly,<br>Spencer Howe</p>
         </body>
     </html>

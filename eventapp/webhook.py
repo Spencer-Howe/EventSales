@@ -359,16 +359,25 @@ def send_customer_confirmation_email(booking, payment, order_id):
     from flask import url_for
     from .views import create_receipt_email_content
     
+    # Format time slot with start and end times (matching online receipt)
+    if booking.event and booking.event.start and booking.event.end:
+        start_formatted = booking.event.start.strftime("%B %d, %Y, %I:%M %p")
+        end_formatted = booking.event.end.strftime("%I:%M %p")
+        time_slot = f"{start_formatted} - {end_formatted}"
+    else:
+        time_slot = "TBD"
+    
     # Prepare email details
     email_order_details = {
         'name': booking.customer.name,
         'email': booking.customer.email,
         'phone': booking.customer.phone,
+        'event_title': booking.event.title if booking.event else "Unknown Visit",
         'order_id': order_id,
         'amount': payment.amount_paid,
         'currency': payment.currency,
         'status': payment.status,
-        'time_slot': booking.event.start.strftime('%m/%d/%Y %I:%M %p') if booking.event.start else 'TBD',
+        'time_slot': time_slot,
         'tickets': booking.tickets
     }
     

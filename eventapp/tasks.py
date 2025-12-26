@@ -9,7 +9,7 @@ from eventapp.views import generate_qr_code
 tasks = Blueprint('tasks', __name__)
 
 def send_reminder_email(booking):
-    subject = "Booking Reminder - Upcoming Event at Howe Ranch"
+    subject = "Visit Reminder - Upcoming Farm Experience at Howe Ranch"
     sender = current_app.config['MAIL_USERNAME']
     recipient = booking.customer.email if booking.customer else "unknown@email.com"
     time_slot = booking.event.start.strftime('%Y-%m-%d %H:%M:%S') if booking.event else "Unknown"
@@ -28,7 +28,7 @@ def send_reminder_email(booking):
 
 <h2 style="color: #2e6c80;">Preparing for Your Visit &amp; Farm Policies</h2>
 <p>
-  Thank you for booking a visit to Howe Ranch — we look forward to hosting you!
+  Thank you for registering for a visit to Howe Ranch — we look forward to hosting you!
   Please review the following safety guidelines and farm policies carefully, and
   confirm that you have read and shared them with your group. These experiences
   are only possible with the full support and cooperation of our guests.
@@ -40,11 +40,11 @@ def send_reminder_email(booking):
     <strong>PRIVATE ROAD LAWS:</strong>
     Stopping or staging on the private farm road is prohibited. Strict <span style="color:#b30000; font-weight:bold;">15 MPH</span>
     speed limit on the monitored, unpaved street leading to Howe Ranch —
-    speeding will result in <span style="color:#b30000; font-weight:bold;">loss of your pass(es)</span>.
+    speeding will result in <span style="color:#b30000; font-weight:bold;">loss of your visit</span>.
   </li>
   <li>
     <strong>EARLY ARRIVALS STRICTLY PROHIBITED:</strong>
-    Guests must not arrive before the event start time. Entry is strictly
+    Guests must not arrive before the visit start time. Entry is strictly
     prohibited before your scheduled time slot. Early arrivals disrupt
     operations, compromise safety while moving animals, and will not be
     accommodated.

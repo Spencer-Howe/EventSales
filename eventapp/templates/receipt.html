@@ -24,11 +24,12 @@
     <h1>Registration Confirmation</h1>
     <p><strong>Name:</strong> {{name}}</p>
     <p><strong>Email:</strong> {{email}}</p>
+    <p><strong>Visit:</strong> {{ event_title }}</p>
     <p>Order ID: {{ order_id }}</p>
     <p>Registration Fee: {{ amount }}</p>
     <p>Currency: {{ currency }}</p>
     <p>Status: {{ status }}</p>
-    <p>Time slot: {{time_slot}}</p>
+    <p>Time: {{time_slot}}</p>
     <p>Number of Guests: {{ tickets }}</p>
     <div class="mb-3">
         <a href="{{ url_for('views.sign_waiver', order_id=order_id) }}" class="btn btn-primary">Please Complete Registration</a>
@@ -101,8 +102,6 @@
     </script>
 
     <hr>
-
-    <h2>Thank You & Important Visit Information</h2>
 {% endif %}
 
 {% if not processing %}
