@@ -206,7 +206,7 @@ def confirm_crypto_payment(order_id):
     
     # Send confirmation email
     try:
-        subject = 'Payment Confirmed - Howe Ranch'
+        subject = 'Registration Confirmation - Howe Ranch'
         html_content = generate_receipt_html(booking)
         
         recipient_email = booking.customer.email if booking.customer else None

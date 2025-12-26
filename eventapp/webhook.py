@@ -390,7 +390,7 @@ def send_customer_confirmation_email(booking, payment, order_id):
     
     # Always send email - webhook only runs once per order
     html_content = create_receipt_email_content(email_order_details)
-    subject = "Your Payment Receipt"
+    subject = "Registration Confirmation - Howe Ranch"
     sender = current_app.config['MAIL_USERNAME']
     recipients = [booking.customer.email, 'howeranchservices@gmail.com']
     
