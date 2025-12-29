@@ -232,7 +232,7 @@
       },
 
       events: function(fetchInfo, success, failure) {
-        const url = `/api/bookings?start=${fetchInfo.startStr}&end=${fetchInfo.endStr}`;
+        const url = `/admin/calendar/api/grouped-bookings?start=${fetchInfo.startStr}&end=${fetchInfo.endStr}`;
         fetch(url)
           .then(r => { if (!r.ok) throw new Error('Network ' + r.status); return r.json(); })
           .then(data => {
@@ -245,10 +245,7 @@
                 id: b.id,
                 title: b.title,
                 start: parseStart(b.start),
-                description:
-                  `Amount Paid: ${b.amount_paid || 0} ${b.currency || 'USD'}, ` +
-                  `Tickets: ${b.tickets || 0}, Order ID: ${b.order_id || 'N/A'}, ` +
-                  `Phone: ${b.phone || 'N/A'}, Status: ${b.status || 'unknown'}, Email: ${b.email || 'N/A'}`
+                description: b.description || ''
               };
               if (b.end) e.end = parseStart(b.end);
               events.push(e);

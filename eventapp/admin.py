@@ -20,6 +20,58 @@ class CalendarView(BaseView):
     def index(self):
         return self.render('admin/calendar.html')
 
+    @expose('/api/grouped-bookings')
+    def grouped_bookings_api(self):
+        """Admin calendar API - returns grouped bookings by event"""
+        from flask import jsonify, request
+        from collections import defaultdict
+        
+        # Get date range parameters
+        start_date = request.args.get('start')
+        end_date = request.args.get('end')
+        
+        # Query bookings with events
+        query = Booking.query.join(Event)
+        if start_date and end_date:
+            try:
+                start_dt = datetime.fromisoformat(start_date.replace('Z', '+00:00'))
+                end_dt = datetime.fromisoformat(end_date.replace('Z', '+00:00'))
+                query = query.filter(Event.start >= start_dt, Event.start <= end_dt)
+            except ValueError:
+                pass
+        
+        bookings = query.all()
+        
+        # Group by event
+        events_groups = defaultdict(list)
+        for booking in bookings:
+            if booking.event:
+                event_key = booking.event.id
+                events_groups[event_key].append(booking)
+        
+        # Create grouped calendar events
+        calendar_events = []
+        for event_id, bookings_list in events_groups.items():
+            event = bookings_list[0].event
+            group_count = len(bookings_list)
+            total_tickets = sum(b.tickets for b in bookings_list)
+            
+            # Create description with all booking details
+            details = []
+            for b in bookings_list:
+                payment = b.payments[0] if b.payments else None
+                details.append(f"{b.customer.name if b.customer else 'Unknown'} ({b.tickets} tickets, ${payment.amount_paid if payment else 0})")
+            
+            calendar_events.append({
+                'id': bookings_list[0].id,
+                'title': f"{event.title} ({group_count} groups)",
+                'start': event.start.isoformat(),
+                'end': event.end.isoformat() if event.end else None,
+                'description': f"Total: {total_tickets} tickets\\n" + "\\n".join(details)
+            })
+        
+        return jsonify(calendar_events)
+
     def is_accessible(self):
         return current_user.is_authenticated
 
