@@ -88,7 +88,7 @@ def send_reminder_email(booking):
   not refundable, and cannot be rescheduled. As our focus is on animal care and
   our resources are perpetually at capacity, we are unable to accommodate
   changes — please do not call to request exceptions. If you transfer your
-  experience, we must receive the guest’s name prior to arrival.
+  experience, we must receive the guest’s name prior to arrival via email.
 </p>
 
 <h2 style="color: #2e6c80;">Location and Contact Information</h2>
