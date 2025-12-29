@@ -22,7 +22,7 @@ class CalendarView(BaseView):
 
     @expose('/api/grouped-bookings')
     def grouped_bookings_api(self):
-        """Admin calendar API - returns grouped bookings by event"""
+        """Admin calendar API - returns grouped bookings by event in same format as original"""
         from flask import jsonify, request
         from collections import defaultdict
         
@@ -49,12 +49,13 @@ class CalendarView(BaseView):
                 event_key = booking.event.id
                 events_groups[event_key].append(booking)
         
-        # Create grouped calendar events
+        # Create grouped calendar events in SAME FORMAT as original API
         calendar_events = []
         for event_id, bookings_list in events_groups.items():
             event = bookings_list[0].event
             group_count = len(bookings_list)
             total_tickets = sum(b.tickets for b in bookings_list)
+            total_revenue = sum((b.payments[0].amount_paid if b.payments else 0) for b in bookings_list)
             
             # Create description with all booking details
             details = []
@@ -62,12 +63,20 @@ class CalendarView(BaseView):
                 payment = b.payments[0] if b.payments else None
                 details.append(f"{b.customer.name if b.customer else 'Unknown'} ({b.tickets} tickets, ${payment.amount_paid if payment else 0})")
             
+            # Use SAME format as original API so it displays properly
             calendar_events.append({
                 'id': bookings_list[0].id,
                 'title': f"{event.title} ({group_count} groups)",
                 'start': event.start.isoformat(),
                 'end': event.end.isoformat() if event.end else None,
-                'description': f"Total: {total_tickets} tickets\\n" + "\\n".join(details)
+                'order_id': bookings_list[0].order_id,
+                'tickets': total_tickets,
+                'name': f"{group_count} groups",
+                'email': f"{total_tickets} total tickets", 
+                'phone': f"${total_revenue:.2f} revenue",
+                'amount_paid': total_revenue,
+                'currency': 'USD',
+                'status': 'grouped'
             })
         
         return jsonify(calendar_events)

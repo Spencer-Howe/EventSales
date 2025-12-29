@@ -1,13 +1,9 @@
 {% extends 'admin/base.html' %}
 
 {% block body %}
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-12">
-      <h2 class="text-center mb-3">📅 All Bookings Calendar</h2>
-      <div id="calendar"></div>
-    </div>
-  </div>
+<div class="container">
+  <h2>All Bookings Calendar</h2>
+  <div id="calendar"></div>
 </div>
 
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.2/main.min.css" rel="stylesheet" />
@@ -42,47 +38,15 @@
   font-weight: 600;
 }
 
-/* Week view improvements - force text to show */
-.fc-timegrid-event {
-  font-size: 13px !important;
-  padding: 4px 6px !important;
-  border-radius: 3px;
-  min-height: 25px !important;
+/* Touch-friendly events */
+.fc-event {
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.fc-timegrid-event .fc-event-main {
-  color: #fff !important;
-  font-weight: 700 !important;
-  display: block !important;
-  padding: 2px !important;
-}
-
-.fc-timegrid-event .fc-event-title {
-  color: #fff !important;
-  font-size: 11px !important;
-  font-weight: 700 !important;
-  line-height: 1.1 !important;
-  display: block !important;
-  overflow: visible !important;
-  white-space: nowrap !important;
-}
-
-.fc-timegrid-event .fc-event-time {
-  color: #fff !important;
-  font-size: 10px !important;
-  font-weight: 600 !important;
-  display: block !important;
-}
-
-/* Force all event content to be visible */
-.fc-event-main-frame {
-  display: block !important;
-  padding: 1px 3px !important;
-}
-
-.fc-event-title-container {
-  display: block !important;
-  overflow: visible !important;
+.fc-event:hover {
+  transform: scale(1.02);
+  z-index: 999;
 }
 
 /* Mobile header adjustments */
@@ -154,11 +118,23 @@
   
   /* List view optimizations for mobile */
   .fc-list-event-title {
-    font-size: 13px;
+    font-size: 14px;
+    font-weight: bold;
   }
   
   .fc-list-event-time {
-    font-size: 12px;
+    font-size: 13px;
+    color: #666;
+  }
+  
+  .fc-list-event {
+    padding: 8px !important;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .fc-list-day-cushion {
+    background: #f8f9fa;
+    font-weight: bold;
   }
 }
 
@@ -264,8 +240,6 @@
     const calendar = new FullCalendar.Calendar(calendarEl, {
       initialView: isMobile ? 'listWeek' : 'dayGridMonth',
       timeZone: 'local',
-      height: 'auto',
-      aspectRatio: isMobile ? 1.0 : 1.35,
 
       headerToolbar: isMobile ? {
         left: 'prev,next',
@@ -274,26 +248,16 @@
       } : {
         left: 'prev,next today',
         center: 'title',
-        right: 'dayGridMonth,timeGridWeek,listWeek'
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
       },
 
-      // Mobile-friendly view options
       views: {
-        dayGridMonth: {
-          dayMaxEventRows: isMobile ? 2 : 4
-        },
         listWeek: {
           titleFormat: { month: 'short', day: 'numeric' }
         }
       },
 
-      eventTimeFormat: { hour: '2-digit', minute: '2-digit', meridiem: 'short' },
-      
-      // Better mobile navigation
-      navLinks: !isMobile,
-      navLinkDayClick: function(date, jsEvent) {
-        calendar.changeView('timeGridDay', date);
-      },
+      eventTimeFormat: { hour: '2-digit', minute: '2-digit' },
 
       events: function(fetchInfo, success, failure) {
         const url = `/admin/calendar/api/grouped-bookings?start=${fetchInfo.startStr}&end=${fetchInfo.endStr}`;
@@ -309,7 +273,10 @@
                 id: b.id,
                 title: b.title,
                 start: parseStart(b.start),
-                description: b.description || ''
+                description:
+                  `Amount Paid: ${b.amount_paid || 0} ${b.currency || 'USD'}, ` +
+                  `Tickets: ${b.tickets || 0}, Order ID: ${b.order_id || 'N/A'}, ` +
+                  `Phone: ${b.phone || 'N/A'}, Status: ${b.status || 'unknown'}, Email: ${b.email || 'N/A'}`
               };
               if (b.end) e.end = parseStart(b.end);
               events.push(e);
@@ -321,20 +288,11 @@
       },
 
       eventClick: function(info) {
-        if (isMobile) {
-          // On mobile, show alert first then navigate
-          const description = info.event.extendedProps.description;
-          if (confirm(`${info.event.title}\n\n${description}\n\nTap OK to view details`)) {
-            window.location.href = `/admin/booking/${info.event.id}`;
-          }
-        } else {
-          window.location.href = `/admin/booking/${info.event.id}`;
-        }
+        window.location.href = `/admin/booking/${info.event.id}`;
       },
 
       eventDidMount: function(info) {
-        if (typeof tippy === 'function' && !isMobile) {
-          // Desktop tooltips only
+        if (typeof tippy === 'function') {
           tippy(info.el, {
             content: info.event.extendedProps.description,
             placement: 'top',
@@ -344,109 +302,34 @@
             duration: [200, 200]
           });
         }
-      },
-
-      // Mobile-friendly event display
-      eventDisplay: 'block',
-      displayEventTime: true,
-      eventColor: '#007bff',
-      eventTextColor: '#ffffff',
-
-      // Handle window resize for responsive behavior
-      windowResize: function() {
-        const newIsMobile = window.innerWidth <= 768;
-        if (newIsMobile !== isMobile) {
-          location.reload(); // Reload to apply mobile/desktop settings
-        }
-      },
-
-      // Loading and error handling
-      loading: function(isLoading) {
-        if (isLoading) {
-          calendarEl.innerHTML = '<div class="calendar-loading">Loading bookings...</div>';
-        }
-      },
-
-      // Force event content to show in all views
-      eventContent: function(arg) {
-        const view = arg.view.type;
-        
-        if (view === 'timeGridWeek' || view === 'timeGridDay') {
-          // Force custom content for week/day views to ensure text shows
-          return {
-            html: `<div style="color: white; font-weight: bold; font-size: 11px; padding: 2px; line-height: 1.1;">
-                     ${arg.event.title}
-                   </div>`
-          };
-        }
-        
-        if (isMobile && arg.event.title.length > 20) {
-          return {
-            html: `<div class="fc-event-title" title="${arg.event.title}">
-                     ${arg.event.title.substring(0, 17)}...
-                   </div>`
-          };
-        }
-        return false; // Use default
       }
     });
 
     calendar.render();
 
-    // Add mobile swipe gestures for month navigation
-    if (isMobile) {
-      let startX = 0;
-      let startY = 0;
-
-      calendarEl.addEventListener('touchstart', function(e) {
-        startX = e.touches[0].clientX;
-        startY = e.touches[0].clientY;
-      });
-
-      calendarEl.addEventListener('touchend', function(e) {
-        if (!startX || !startY) return;
-
-        let endX = e.changedTouches[0].clientX;
-        let endY = e.changedTouches[0].clientY;
-
-        let diffX = startX - endX;
-        let diffY = startY - endY;
-
-        // Only trigger if horizontal swipe is dominant
-        if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
-          if (diffX > 0) {
-            calendar.next(); // Swipe left = next month
-          } else {
-            calendar.prev(); // Swipe right = previous month
-          }
-        }
-
-        startX = 0;
-        startY = 0;
-      });
-    }
-
     // Add quick view toggle button for mobile
     if (isMobile) {
-      const toolbar = document.querySelector('.fc-toolbar-chunk:last-child');
-      if (toolbar) {
-        const viewToggle = document.createElement('button');
-        viewToggle.className = 'fc-button fc-button-primary';
-        viewToggle.style.marginLeft = '5px';
-        viewToggle.textContent = '📋';
-        viewToggle.title = 'Toggle List/Month View';
-        viewToggle.onclick = function() {
-          const currentView = calendar.view.type;
-          if (currentView === 'listWeek') {
-            calendar.changeView('dayGridMonth');
-            viewToggle.textContent = '📋';
-          } else {
-            calendar.changeView('listWeek');
-            viewToggle.textContent = '📅';
-          }
-        };
-        toolbar.appendChild(viewToggle);
-      }
+      setTimeout(() => {
+        const toolbar = document.querySelector('.fc-toolbar-chunk:last-child');
+        if (toolbar) {
+          const viewToggle = document.createElement('button');
+          viewToggle.className = 'fc-button fc-button-primary';
+          viewToggle.style.marginLeft = '5px';
+          viewToggle.textContent = '📅';
+          viewToggle.title = 'Toggle List/Month View';
+          viewToggle.onclick = function() {
+            const currentView = calendar.view.type;
+            if (currentView === 'listWeek') {
+              calendar.changeView('dayGridMonth');
+              viewToggle.textContent = '📅';
+            } else {
+              calendar.changeView('listWeek');
+              viewToggle.textContent = '📋';
+            }
+          };
+          toolbar.appendChild(viewToggle);
+        }
+      }, 100);
     }
   });
 </script>
