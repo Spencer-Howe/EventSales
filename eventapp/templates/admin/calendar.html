@@ -18,9 +18,47 @@
 <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light.css" />
 
 <style>
-/* Mobile-friendly calendar styles */
+/* Desktop calendar styles */
 .fc {
   font-size: 14px;
+}
+
+/* Better desktop month view */
+.fc-daygrid-day {
+  min-height: 80px;
+}
+
+.fc-daygrid-event {
+  font-size: 12px;
+  padding: 3px 6px;
+  margin: 1px 0;
+  border-radius: 4px;
+  min-height: 18px;
+  line-height: 1.3;
+  font-weight: 500;
+}
+
+.fc-event-title {
+  font-weight: 600;
+}
+
+/* Week view improvements */
+.fc-timegrid-event {
+  font-size: 13px;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+.fc-timegrid-event .fc-event-main {
+  color: #fff !important;
+  font-weight: 600;
+}
+
+.fc-timegrid-event .fc-event-title {
+  color: #fff !important;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
 }
 
 /* Mobile header adjustments */
@@ -78,10 +116,12 @@
   }
   
   .fc-daygrid-event {
-    font-size: 11px;
-    padding: 1px 3px;
-    margin: 1px 0;
-    border-radius: 3px;
+    font-size: 13px;
+    padding: 4px 6px;
+    margin: 2px 0;
+    border-radius: 4px;
+    min-height: 20px;
+    line-height: 1.2;
   }
   
   .fc-event-title {
