@@ -42,23 +42,47 @@
   font-weight: 600;
 }
 
-/* Week view improvements */
+/* Week view improvements - force text to show */
 .fc-timegrid-event {
-  font-size: 13px;
-  padding: 2px 4px;
+  font-size: 13px !important;
+  padding: 4px 6px !important;
   border-radius: 3px;
+  min-height: 25px !important;
 }
 
 .fc-timegrid-event .fc-event-main {
   color: #fff !important;
-  font-weight: 600;
+  font-weight: 700 !important;
+  display: block !important;
+  padding: 2px !important;
 }
 
 .fc-timegrid-event .fc-event-title {
   color: #fff !important;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 1.2;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  line-height: 1.1 !important;
+  display: block !important;
+  overflow: visible !important;
+  white-space: nowrap !important;
+}
+
+.fc-timegrid-event .fc-event-time {
+  color: #fff !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  display: block !important;
+}
+
+/* Force all event content to be visible */
+.fc-event-main-frame {
+  display: block !important;
+  padding: 1px 3px !important;
+}
+
+.fc-event-title-container {
+  display: block !important;
+  overflow: visible !important;
 }
 
 /* Mobile header adjustments */
@@ -343,8 +367,19 @@
         }
       },
 
-      // Handle long event titles on mobile
+      // Force event content to show in all views
       eventContent: function(arg) {
+        const view = arg.view.type;
+        
+        if (view === 'timeGridWeek' || view === 'timeGridDay') {
+          // Force custom content for week/day views to ensure text shows
+          return {
+            html: `<div style="color: white; font-weight: bold; font-size: 11px; padding: 2px; line-height: 1.1;">
+                     ${arg.event.title}
+                   </div>`
+          };
+        }
+        
         if (isMobile && arg.event.title.length > 20) {
           return {
             html: `<div class="fc-event-title" title="${arg.event.title}">
