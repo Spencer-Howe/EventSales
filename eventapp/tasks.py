@@ -82,13 +82,6 @@ def send_reminder_email(booking):
   </li>
 </ul>
 
-<p>
-  If you arrive and do not see a staff member immediately, please call or text
-  Spencer Howe at <strong>(424) 219-4212</strong> and remain in the designated
-  waiting area. We might be assisting other guests or preparing animals for your
-  experience.
-</p>
-
 <h2 style="color: #2e6c80;">Transferable Only — No Refunds or Reschedules</h2>
 <p>
   Experiences (open farm day passes/private experiences) are transferable, but
@@ -126,7 +119,12 @@ def send_reminder_email(booking):
           </a>
           <p style="margin-top: 10px;"><strong>Order ID: {booking.order_id}</strong></p>
         </div>
-
+<p>
+  If you arrive and do not see a staff member immediately, please call or text
+  Spencer Howe at <strong>(424) 219-4212</strong> and remain in the designated
+  waiting area. We might be assisting other guests or preparing animals for your
+  experience.
+</p>
         <p>We look forward to welcoming you and sharing the magic of our animals and their farm with you.</p>
 
         <p>Warmly,<br>Spencer Howe</p>
