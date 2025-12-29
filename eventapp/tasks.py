@@ -59,6 +59,13 @@ def send_reminder_email(booking):
     Turn left at the WELCOME sign, pass through the gate, and follow signage.
   </li>
 </ul>
+<!-- Route Map -->
+<div style="text-align: center; margin: 20px 0; padding: 15px; border: 2px solid #2e6c80; border-radius: 8px; background-color: #f8f9fa;">
+  <h3 style="color: #2e6c80; margin-bottom: 15px;">📍 Route to Ranch</h3>
+  <img src="https://thehoweranchpayment.com/static/pic/arrivalnotice.jpg" 
+       alt="Route map to Howe Ranch" 
+       style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 5px;">
+</div>
 
 <h2 style="color: #2e6c80;">Animal Interactions &amp; Safety</h2>
 <ul style="padding-left:20px;">
@@ -96,14 +103,6 @@ def send_reminder_email(booking):
   22053 Highland St<br>
   Wildomar, CA 92595
 </p>
-
-<!-- Route Map -->
-<div style="text-align: center; margin: 20px 0; padding: 15px; border: 2px solid #2e6c80; border-radius: 8px; background-color: #f8f9fa;">
-  <h3 style="color: #2e6c80; margin-bottom: 15px;">📍 Route to Ranch</h3>
-  <img src="https://thehoweranchpayment.com/static/pic/arrivalnotice.jpg" 
-       alt="Route map to Howe Ranch" 
-       style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 5px;">
-</div>
 
 <p>
   If you have any questions or need assistance, please call or text
