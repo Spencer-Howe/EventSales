@@ -151,18 +151,18 @@
         <div class="card-body">
           <h5 class="card-title text-danger" style="font-family: 'serif'; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); color: #e91e63 !important;">❤️ Season of Love Open Farm Day at Howe Ranch — Celebrate the Magic of Togetherness</h5>
           <div class="card-text text-center p-2 mb-3" style="background: linear-gradient(45deg, #e91e63, #f06292); color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-            <strong>Select Dates in January to February • 3pm–6pm & 4pm–7pm</strong><br>
+            <strong>Select Dates in January to February • Multiple Time Slots Available</strong><br>
             <strong>🕓 Select your date and time slot!</strong>
           </div>
-          
+
           <p class="card-text">
             This Season of Love, guests are invited to step into a heart-lit magic of Howe Ranch's "Valentine's Town" for a facilitated agritourism farm experience centered on hands-on animal interaction, education, and guided exploration of our working farm. Baby Highland calves in bow headpieces, alpacas in sweetheart scarves, and our friendly goats and donkeys welcome guests into a whimsical, love-themed environment designed as a small-scale farm tour — not a crowded fair.
           </p>
-          
+
           <p class="card-text">
             This experience is intentionally structured to allow guests to move through the farm at a relaxed pace while participating in guided animal encounters, learning about each species, and engaging directly with the Mini Moos and their farm friends under staff supervision.
           </p>
-          
+
           <p class="card-text">
             <strong>✨ Your Season of Love Open Farm Day visit includes:</strong>
           </p>
@@ -175,19 +175,19 @@
             <li>🎨 Make-and-take crafts at the Love Letter & Keepsake Station</li>
             <li>🔍 The Mini Moos Love Trail scavenger hunt, encouraging exploration of the farm and discovery of animals and learning points along the way</li>
           </ul>
-          
+
           <p class="card-text">
             There are no lines, no rushing, and no unstructured wandering. Each visit is guided, staffed, and centered on meaningful connection with the animals and the land, with all elements included in one cohesive farm experience.
           </p>
-          
+
           <div class="text-center p-2 mb-3" style="background: #ffebee; border-radius: 8px; border: 2px dashed #e91e63;">
             <strong>📍 Registration is $35 per guest. Children under 1 attend free.</strong>
           </div>
-          
+
           <p class="card-text">
             Celebrate love in all its forms — family, friendship, and connection — while participating in a hands-on agritourism experience rooted in education, animal care, and unforgettable moments with the Mini Moos and their farm companions.
           </p>
-          
+
           <div class="border p-3 mb-3" style="background: #f8f9fa; border-radius: 8px;">
             <div class="form-group mb-3">
               <label for="valentine-visit-date" class="form-label"><strong>Select a Date</strong></label>
@@ -199,26 +199,26 @@
                 <option value="valentine4">Saturday, February 14 (Valentine's Day)</option>
               </select>
             </div>
-            
+
             <div class="form-group mb-3">
               <label for="valentine-time-slot" class="form-label"><strong>Select Time Slot</strong></label>
               <select class="form-control" id="valentine-time-slot" required disabled>
                 <option value="">First select a date</option>
               </select>
             </div>
-            
+
             <div class="form-group mb-3">
               <label for="valentine-experiences" class="form-label"><strong>Party Size</strong></label>
               <input type="number" class="form-control" id="valentine-experiences" placeholder="Enter number of guests" required min="1" max="10">
             </div>
-            
+
             <button onclick="goToCheckout('valentine')" class="btn btn-danger w-100" style="background: linear-gradient(45deg, #e91e63, #f06292); border: none; font-weight: bold; text-shadow: 1px 1px 1px rgba(0,0,0,0.3);">💕 Register for Season of Love Adventure 💕</button>
           </div>
-          
+
           <div class="text-center small" style="color: #6c757d;">
             <strong>🎟 Advance Reservation Only • No Passes at Gate • Limited Capacity</strong>
           </div>
-          
+
           <div class="text-center small mt-2" style="color: #6c757d;">
             By scheduling your visit you agree to: I have read and agree with the <a href="https://www.thehoweranch.com/_files/ugd/fca21d_a063413021c34f2d814bca731db5d2f4.pdf" target="_blank">Farm Visitor FAQs</a> and <a href="https://www.thehoweranch.com/_files/ugd/fca21d_a30cd343d96b4be3913cded96c226b9f.pdf" target="_blank">Farm Policies</a>.
           </div>
@@ -239,20 +239,35 @@
 function updateValentineTimeSlots() {
     const dateValue = document.getElementById('valentine-visit-date').value;
     const timeSlotSelect = document.getElementById('valentine-time-slot');
-    
+
     // Clear existing options
     timeSlotSelect.innerHTML = '';
-    
+
     if (dateValue) {
         // Enable the time slot dropdown
         timeSlotSelect.disabled = false;
+
+        let timeOptions = '<option value="">Choose a Time Slot</option>';
         
-        // Add time slot options
-        timeSlotSelect.innerHTML = `
-            <option value="">Choose a Time Slot</option>
-            <option value="3pm">3:00 PM - 6:00 PM</option>
-            <option value="4pm">4:00 PM - 7:00 PM</option>
-        `;
+        if (dateValue === 'valentine1') {
+            // 1/11/26 - Keep 3pm and 4pm as is
+            timeOptions += '<option value="3pm">3:00 PM - 6:00 PM</option>';
+            timeOptions += '<option value="4pm">4:00 PM - 7:00 PM</option>';
+        } else if (dateValue === 'valentine2') {
+            // 1/25/26 - 3pm and NEW 12:30pm (remove 4pm)
+            timeOptions += '<option value="3pm">3:00 PM - 6:00 PM</option>';
+            timeOptions += '<option value="1230pm">12:30 PM - 2:30 PM</option>';
+        } else if (dateValue === 'valentine3') {
+            // 2/8/26 - 1pm and 3pm (remove 4pm)
+            timeOptions += '<option value="1pm">1:00 PM - 3:00 PM</option>';
+            timeOptions += '<option value="3pm">3:00 PM - 6:00 PM</option>';
+        } else if (dateValue === 'valentine4') {
+            // 2/14/26 - Only 12:30pm (remove 4pm)
+            timeOptions += '<option value="1230pm">12:30 PM - 2:30 PM</option>';
+            timeOptions += '<option value="3pm">3:00 PM - 6:00 PM</option>'
+        }
+        
+        timeSlotSelect.innerHTML = timeOptions;
     } else {
         // Disable the time slot dropdown
         timeSlotSelect.disabled = true;
@@ -263,11 +278,11 @@ function updateValentineTimeSlots() {
 function updateValentineMagicTimeSlots() {
     const dateValue = document.getElementById('valentine-magic-date').value;
     const timeSlotSelect = document.getElementById('valentine-magic-time-slot');
-    
+
     // Clear existing options
     timeSlotSelect.innerHTML = '<option value="">Loading available times...</option>';
     timeSlotSelect.disabled = true;
-    
+
     if (dateValue) {
         // Query available slots for this date
         fetch('/get_events')
@@ -276,29 +291,29 @@ function updateValentineMagicTimeSlots() {
                 // Filter events for Valentine Magic and the selected date
                 const dateMap = {
                     'valentine-magic1': '2026-01-04',
-                    'valentine-magic2': '2026-01-17', 
+                    'valentine-magic2': '2026-01-17',
                     'valentine-magic3': '2026-01-18',
                     'valentine-magic4': '2026-01-24',
                     'valentine-magic5': '2026-01-31',
                     'valentine-magic6': '2026-02-01',
                     'valentine-magic7': '2026-02-07'
                 };
-                
+
                 const selectedDate = dateMap[dateValue];
-                const availableSlots = events.filter(event => 
+                const availableSlots = events.filter(event =>
                     event.title.includes('Valentine Magic with the Mini Moos') &&
                     event.start.startsWith(selectedDate)
                 );
-                
+
                 timeSlotSelect.innerHTML = '<option value="">Choose a Time Slot</option>';
-                
+
                 if (availableSlots.length === 0) {
                     timeSlotSelect.innerHTML += '<option value="" style="color: red; font-weight: bold;">🔴 SOLD OUT - No available slots for this date</option>';
                     timeSlotSelect.disabled = true;
                 } else {
                     // Sort by time and add available slots
                     availableSlots.sort((a, b) => new Date(a.start) - new Date(b.start));
-                    
+
                     availableSlots.forEach(event => {
                         const eventDate = new Date(event.start);
                         const endDate = new Date(event.end);
@@ -309,20 +324,20 @@ function updateValentineMagicTimeSlots() {
                         });
                         const endTime = endDate.toLocaleTimeString('en-US', {
                             hour: 'numeric',
-                            minute: '2-digit', 
+                            minute: '2-digit',
                             hour12: true
                         });
-                        
+
                         // Create time slot value that matches the mapping
                         const timeSlotValue = startTime.toLowerCase().replace(' ', '');
-                        
+
                         const option = document.createElement('option');
                         option.value = timeSlotValue;
                         option.textContent = `${startTime} - ${endTime}`;
                         option.setAttribute('data-event-id', event.id);
                         timeSlotSelect.appendChild(option);
                     });
-                    
+
                     timeSlotSelect.disabled = false;
                 }
             })
@@ -339,11 +354,11 @@ function updateValentineMagicTimeSlots() {
 
 function goToCheckout(visitType) {
     let visitId, experiences;
-    
+
     if (visitType === 'spooky') {
         visitId = document.getElementById('spooky-visit-date').value;
         experiences = document.getElementById('spooky-experiences').value;
-        
+
         if (!visitId || !experiences) {
             alert('Please select a date and enter the number of guests.');
             return;
@@ -351,7 +366,7 @@ function goToCheckout(visitType) {
     } else if (visitType === 'halloween') {
         visitId = '612'; // Halloween Spectacular visit ID
         experiences = document.getElementById('halloween-experiences').value;
-        
+
         if (!experiences) {
             alert('Please enter the number of guests.');
             return;
@@ -360,26 +375,26 @@ function goToCheckout(visitType) {
         const dateValue = document.getElementById('valentine-visit-date').value;
         const timeSlotValue = document.getElementById('valentine-time-slot').value;
         experiences = document.getElementById('valentine-experiences').value;
-        
+
         if (!dateValue || !timeSlotValue || !experiences) {
             alert('Please select a date, time slot, and enter the number of guests.');
             return;
         }
-        
+
         // Map combinations of dates and time slots to specific visit IDs
         const visitMapping = {
             // Sunday, January 11
             'valentine1_3pm': '1182', // 3pm-6pm slot
             'valentine1_4pm': '1183', // 4pm-7pm slot
-            // Sunday, January 25  
+            // Sunday, January 25
             'valentine2_3pm': '1184', // 3pm-6pm slot
-            'valentine2_4pm': '1185', // 4pm-7pm slot
+            'valentine2_1230pm': '1270', // 12:30pm-2:30pm slot (changed from 4pm-7pm)
             // Sunday, February 8
+            'valentine3_1pm': '1271', // 1pm-3pm slot (need event ID)
             'valentine3_3pm': '1186', // 3pm-6pm slot
-            'valentine3_4pm': '1187', // 4pm-7pm slot
             // Friday, February 14 (Valentine's Day)
-            'valentine4_3pm': '1188', // 3pm-6pm slot
-            'valentine4_4pm': '1189'  // 4pm-7pm slot
+            'valentine4_1230pm': '1272', // 12:30pm-2:30pm slot (need event ID)
+            'valentine4_3pm': '1188'  // 3pm-6pm slot
         };
         
         const visitKey = dateValue + '_' + timeSlotValue;
