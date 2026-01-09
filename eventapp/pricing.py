@@ -10,15 +10,15 @@ def get_total_price(event, tickets):
     if event.is_private:
         return 350
     
-    # Open farm day events: $40 per ticket for 1-3 tickets, $35 per ticket for 4+ tickets
-    if not event.is_private:
-        if tickets >= 4:
-            return tickets * 35  # $35 each for 4+ tickets
-        else:
-            return tickets * 40  # $40 each for 1-3 tickets
+    # If price_per_ticket is NOT the default farm day prices, use it
+    if event.price_per_ticket not in [35, 40, 0]:
+        return tickets * event.price_per_ticket
     
-    # Regular events: price per ticket
-    return tickets * event.price_per_ticket
+    # Default farm day pricing
+    if tickets >= 4:
+        return tickets * 35  # $35 each for 4+ tickets
+    else:
+        return tickets * 40  # $40 each for 1-3 tickets
 
 
 def check_capacity(event, tickets):
