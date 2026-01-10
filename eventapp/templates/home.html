@@ -193,7 +193,6 @@
               <label for="valentine-visit-date" class="form-label"><strong>Select a Date</strong></label>
               <select class="form-control" id="valentine-visit-date" required onchange="updateValentineTimeSlots()">
                 <option value="">Choose a Date</option>
-                <option value="valentine1">Sunday, January 11</option>
                 <option value="valentine2">Sunday, January 25</option>
                 <option value="valentine3">Sunday, February 8</option>
                 <option value="valentine4">Saturday, February 14 (Valentine's Day)</option>
@@ -249,11 +248,7 @@ function updateValentineTimeSlots() {
 
         let timeOptions = '<option value="">Choose a Time Slot</option>';
         
-        if (dateValue === 'valentine1') {
-            // 1/11/26 - Keep 3pm and 4pm as is
-            timeOptions += '<option value="3pm">3:00 PM - 6:00 PM</option>';
-            timeOptions += '<option value="4pm">4:00 PM - 7:00 PM</option>';
-        } else if (dateValue === 'valentine2') {
+        if (dateValue === 'valentine2') {
             // 1/25/26 - 3pm and NEW 12:30pm (remove 4pm)
             timeOptions += '<option value="3pm">3:00 PM - 6:00 PM</option>';
             timeOptions += '<option value="1230pm">12:30 PM - 2:30 PM</option>';
@@ -383,9 +378,6 @@ function goToCheckout(visitType) {
 
         // Map combinations of dates and time slots to specific visit IDs
         const visitMapping = {
-            // Sunday, January 11
-            'valentine1_3pm': '1182', // 3pm-6pm slot
-            'valentine1_4pm': '1183', // 4pm-7pm slot
             // Sunday, January 25
             'valentine2_3pm': '1184', // 3pm-6pm slot
             'valentine2_1230pm': '1270', // 12:30pm-2:30pm slot (changed from 4pm-7pm)
