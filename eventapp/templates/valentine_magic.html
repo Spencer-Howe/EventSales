@@ -202,10 +202,8 @@ function goToCheckout(visitType) {
             return;
         }
         
-        // Show legal modal instead of going directly to checkout
-        showLegalModal('valentine-magic', {
-            url: `/checkout?event_id=${visitId}&tickets=${experiences}`
-        });
+        // Go directly to checkout - no modal needed
+        window.location.href = `/checkout?event_id=${visitId}&tickets=${experiences}`;
     }
 }
 </script>

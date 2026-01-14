@@ -91,10 +91,8 @@
 
 <script>
 function showPrivateMiniMooModal() {
-    // Show legal modal for private mini moo experience
-    showLegalModal('private-mini-moo', {
-        url: '/select_tickets'
-    });
+    // Go directly to checkout - no modal needed
+    window.location.href = '/select_tickets';
 }
 </script>
 

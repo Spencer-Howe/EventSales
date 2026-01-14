@@ -87,34 +87,6 @@
             transform: translateY(-2px);
         }
 
-        /* FAQ Alert - Cross-browser compatible */
-        .faq-alert {
-            background-color: #fce4ec !important;
-            border: 1px solid #e91e63 !important;
-            color: #5d4e5d !important;
-            padding: 10px !important;
-            margin: 15px 0 !important;
-            border-radius: 8px !important;
-            text-align: center !important;
-            font-weight: 500 !important;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
-        }
-
-        .faq-alert h5 {
-            margin: 0 0 5px 0 !important;
-            font-size: 0.9rem !important;
-            color: #5d4e5d !important;
-        }
-
-        .faq-alert a {
-            color: #e91e63 !important;
-            text-decoration: underline !important;
-            font-weight: bold !important;
-        }
-
-        .faq-alert a:hover {
-            color: #c2185b !important;
-        }
 
         /* Subtle footer tech ad */
         .howe-advertisement-container {
@@ -233,11 +205,6 @@
 
 <div class="content-wrapper">
     <div class="container">
-        <!-- FAQ Alert - Shows on every page -->
-        <div class="faq-alert">
-            <h5>📋 Have Questions Before Your Visit?</h5>
-            <p>Read our <a href="https://www.thehoweranch.com/_files/ugd/fca21d_000e01c6a9ca4def8e1b627746c15967.pdf" target="_blank">Frequently Asked Questions</a> and <a href="https://www.thehoweranch.com/_files/ugd/fca21d_a30cd343d96b4be3913cded96c226b9f.pdf" target="_blank">Farm Policies</a> before your visit to ensure you're prepared!</p>
-        </div>
 
         {% block content %}
         <!-- Default content goes here -->
@@ -261,147 +228,7 @@
 
 </footer>
 
-<!-- Legal Acknowledgment Modal -->
-<div class="modal fade" id="legalAcknowledgmentModal" tabindex="-1" aria-labelledby="legalModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header" style="background: linear-gradient(135deg, #d63384 0%, #b02a5b 100%); color: white;">
-                <h5 class="modal-title fw-bold" id="legalModalLabel">📋 Experience Details & Policies</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="alert alert-warning">
-                    <strong>⚠️ Important:</strong> Please read all policies before proceeding to checkout.
-                </div>
-                
-                <h6 class="fw-bold mb-3" style="color: #d63384;">🎯 Experience Type & Details</h6>
-                <div id="experience-details" class="mb-4">
-                    <!-- Experience-specific details will be populated here -->
-                </div>
 
-                <h6 class="fw-bold mb-3" style="color: #d63384;">📋 Booking & Safety Policies</h6>
-                <div class="small">
-                    <p><strong>Booking Requirements:</strong></p>
-                    <ul>
-                        <li>All farm visits must be scheduled at least 24 hours in advance due to strict liability regulations</li>
-                        <li>We must staff a safety trained facilitator for each visit</li>
-                        <li>Private street access for registered guests only</li>
-                    </ul>
-
-                    <p><strong>No Refunds/Reschedule Policy:</strong></p>
-                    <ul>
-                        <li>Experiences are <strong>transferable</strong> to other guests in your network</li>
-                        <li>Experiences are <strong>NOT refundable</strong> and <strong>cannot be rescheduled</strong></li>
-                        <li>Once booked, your time slot is blocked and resources are committed</li>
-                        <li>No exceptions will be made to this policy</li>
-                    </ul>
-
-                    <p><strong>Safety Requirements:</strong></p>
-                    <ul>
-                        <li><strong>Early arrivals strictly prohibited</strong> - do not arrive before your scheduled time</li>
-                        <li>Entry before your time slot is prohibited due to farm liability management</li>
-                        <li>All guests must follow farm rules and staff instructions</li>
-                        <li>Children under 1 attend free</li>
-                    </ul>
-
-                    <p><strong>Required Documents:</strong></p>
-                    <ul>
-                        <li><a href="https://www.thehoweranch.com/_files/ugd/fca21d_000e01c6a9ca4def8e1b627746c15967.pdf" target="_blank">Farm Visitor FAQs</a></li>
-                        <li><a href="https://www.thehoweranch.com/_files/ugd/fca21d_a30cd343d96b4be3913cded96c226b9f.pdf" target="_blank">Farm Policies</a></li>
-                        <li>Liability waiver (completed after booking)</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn fw-bold text-white" style="background-color: #d63384;" id="acknowledge-and-continue" onclick="proceedToCheckout()">
-                    ✓ I Have Read and Agree - Continue to Checkout
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-// Global variables for checkout process
-let pendingCheckoutData = null;
-
-// Function to show legal modal with experience-specific details
-function showLegalModal(experienceType, checkoutData) {
-    pendingCheckoutData = checkoutData;
-    
-    // Set experience-specific details
-    const experienceDetails = document.getElementById('experience-details');
-    
-    if (experienceType === 'valentine-magic') {
-        experienceDetails.innerHTML = `
-            <div class="card" style="border-color: #d63384;">
-                <div class="card-body">
-                    <h6 style="color: #d63384;">❤️ Valentine Magic Experience</h6>
-                    <ul class="small mb-0">
-                        <li><strong>Group Size:</strong> 1-5 guests maximum</li>
-                        <li><strong>Duration:</strong> 2 hours</li>
-                        <li><strong>Type:</strong> Small group experience shared with 2-6 families</li>
-                        <li><strong>Includes:</strong> Professional mini photo session, games, concessions & prizes</li>
-                        <li><strong>Price:</strong> $350 per group</li>
-                        <li><strong>Setting:</strong> Early-access boutique setting</li>
-                    </ul>
-                </div>
-            </div>
-        `;
-    } else if (experienceType === 'valentine' || experienceType === 'open-farm-day') {
-        experienceDetails.innerHTML = `
-            <div class="card" style="border-color: #d63384;">
-                <div class="card-body">
-                    <h6 style="color: #d63384;">💕 Open Farm Day Experience</h6>
-                    <ul class="small mb-0">
-                        <li><strong>Group Size:</strong> Per guest pricing (1+ years)</li>
-                        <li><strong>Pricing:</strong> $40/guest (1-3 guests) • $35/guest (4+ guests)</li>
-                        <li><strong>Type:</strong> Shared experience with ~5-15 families onsite</li>
-                        <li><strong>Setting:</strong> Shared community experience</li>
-                        <li><strong>Note:</strong> No private photo ops guaranteed</li>
-                    </ul>
-                </div>
-            </div>
-        `;
-    } else if (experienceType === 'private-mini-moo') {
-        experienceDetails.innerHTML = `
-            <div class="card" style="border-color: #d63384;">
-                <div class="card-body">
-                    <h6 style="color: #d63384;">🎁 Private Mini Moo Experience</h6>
-                    <ul class="small mb-0">
-                        <li><strong>Group Size:</strong> 1-10 guests maximum</li>
-                        <li><strong>Duration:</strong> 1 hour</li>
-                        <li><strong>Type:</strong> Completely private experience</li>
-                        <li><strong>Price:</strong> $350 per group</li>
-                        <li><strong>Includes:</strong> Baby cow bottle feeding, souvenir bag, professional photo backdrops</li>
-                        <li><strong>Note:</strong> No celebratory activities (cake, decorations)</li>
-                    </ul>
-                </div>
-            </div>
-        `;
-    }
-    
-    // Show the modal
-    const modal = new bootstrap.Modal(document.getElementById('legalAcknowledgmentModal'));
-    modal.show();
-}
-
-// Function to proceed to checkout after acknowledgment
-function proceedToCheckout() {
-    if (pendingCheckoutData) {
-        // Hide the modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById('legalAcknowledgmentModal'));
-        modal.hide();
-        
-        // Proceed with the original checkout
-        window.location.href = pendingCheckoutData.url;
-        
-        // Clear pending data
-        pendingCheckoutData = null;
-    }
-}
-</script>
 
 <!-- Bootstrap Bundle with Popper -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
