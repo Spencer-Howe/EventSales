@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block title %}Valentine Magic - Howe Ranch{% endblock %}
+
+{% block content %}
+<style>
+:root {
+  --ranch-pink: #d63384;
+  --ranch-pink-light: #f8d7da;
+  --ranch-pink-dark: #b02a5b;
+}
+@media (max-width: 576px) {
+  .btn-lg { padding: 12px 20px; font-size: 1rem; }
+  h1 { font-size: 1.75rem; }
+}
+</style>
+
+<!-- Header -->
+<div class="text-white py-3" style="background: linear-gradient(135deg, var(--ranch-pink) 0%, var(--ranch-pink-dark) 100%);">
+  <div class="container text-center">
+    <h1 class="mb-2 fw-bold">❤️ Valentine Magic</h1>
+    <p class="mb-0">1-5 Guests • 2 Hours • Professional Mini Photo Session included • 2-6 Families on Site • Games, Concessions & Prizes</p>
+  </div>
+</div>
+
+<!-- Image -->
+<div class="container mt-3">
+  <img src="static/pic/magicvalentine.jpg" class="img-fluid rounded w-100" alt="Valentine Magic" style="max-width: 800px; margin: 0 auto; display: block;">
+</div>
+
+<!-- Key Details -->
+<div class="container mt-4">
+  <div class="alert alert-info">
+    <small><strong>Small Group Experience:</strong> Shared with 2-6 families • Early-access boutique setting</small>
+  </div>
+  
+  <div class="card">
+    <div class="card-body">
+      <h5 class="mb-3" style="color: var(--ranch-pink);">✨ Includes:</h5>
+      <div class="row g-2">
+        <div class="col-6">
+          <small>🐮 Baby cow cuddles & kisses</small><br>
+          <small>📸 Professional photos (included)</small><br>
+          <small>🎨 Valentine crafts station</small>
+        </div>
+        <div class="col-6">
+          <small>🍬 Seasonal treats & drinks</small><br>
+          <small>💖 Valentine Town scenes</small><br>
+          <small>💕 Scavenger hunt</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Booking Form -->
+<div class="container mt-4">
+  <div class="card" style="border-color: var(--ranch-pink);">
+    <div class="card-header text-white text-center" style="background-color: var(--ranch-pink);">
+      <h5 class="mb-0">📅 Book Your Valentine Magic</h5>
+    </div>
+    <div class="card-body">
+      <div class="form-group mb-3">
+        <label for="valentine-magic-date" class="form-label fw-bold">Select Date</label>
+        <select class="form-control" id="valentine-magic-date" required onchange="updateValentineMagicTimeSlots()">
+          <option value="">Choose a Date</option>
+          <option value="valentine-magic1">Sunday, January 4</option>
+          <option value="valentine-magic2">Saturday, January 17</option>
+          <option value="valentine-magic3">Sunday, January 18</option>
+          <option value="valentine-magic4">Saturday, January 24</option>
+          <option value="valentine-magic5">Saturday, January 31</option>
+          <option value="valentine-magic6">Sunday, February 1</option>
+          <option value="valentine-magic7">Saturday, February 7</option>
+        </select>
+      </div>
+
+      <div class="form-group mb-3">
+        <label for="valentine-magic-time-slot" class="form-label fw-bold">Select Time</label>
+        <select class="form-control" id="valentine-magic-time-slot" required disabled>
+          <option value="">First select a date</option>
+        </select>
+      </div>
+
+      <div class="form-group mb-3">
+        <label for="valentine-magic-experiences" class="form-label fw-bold">Party Size</label>
+        <input type="number" class="form-control" id="valentine-magic-experiences" placeholder="Number of guests" required min="1" max="5">
+        <div class="form-text small">Maximum 5 guests • $350 per group</div>
+      </div>
+
+      <button onclick="goToCheckout('valentine-magic')" class="btn btn-lg w-100 fw-bold text-white" style="background-color: var(--ranch-pink); border-color: var(--ranch-pink);">❤️ Book Valentine Magic ❤️</button>
+    </div>
+  </div>
+</div>
+
+<!-- Details -->
+<div class="container mt-3 mb-4">
+  <div class="card">
+    <div class="card-header bg-light">
+      <button class="btn btn-sm btn-outline-secondary w-100" type="button" data-bs-toggle="collapse" data-bs-target="#details">
+        📋 Experience Details & Policies
+      </button>
+    </div>
+    <div class="collapse" id="details">
+      <div class="card-body">
+        <div class="small">
+          <p><strong>About This Experience:</strong> Not a private visit, not an Open Farm Day. Small-group, early-access experience with professional photography included.</p>
+          
+          <p><strong>Required:</strong> Read <a href="https://www.thehoweranch.com/_files/ugd/fca21d_000e01c6a9ca4def8e1b627746c15967.pdf" target="_blank">Farm FAQs</a> and <a href="https://www.thehoweranch.com/_files/ugd/fca21d_a30cd343d96b4be3913cded96c226b9f.pdf" target="_blank">Farm Policies</a> before booking.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="text-center mt-3">
+    <a href="/" class="btn btn-outline-secondary">← Back to All Experiences</a>
+  </div>
+</div>
+
+<script>
+function updateValentineMagicTimeSlots() {
+    const dateValue = document.getElementById('valentine-magic-date').value;
+    const timeSlotSelect = document.getElementById('valentine-magic-time-slot');
+
+    timeSlotSelect.innerHTML = '<option value="">Loading available times...</option>';
+    timeSlotSelect.disabled = true;
+
+    if (dateValue) {
+        fetch('/get_events')
+            .then(response => response.json())
+            .then(events => {
+                const dateMap = {
+                    'valentine-magic1': '2026-01-04',
+                    'valentine-magic2': '2026-01-17',
+                    'valentine-magic3': '2026-01-18',
+                    'valentine-magic4': '2026-01-24',
+                    'valentine-magic5': '2026-01-31',
+                    'valentine-magic6': '2026-02-01',
+                    'valentine-magic7': '2026-02-07'
+                };
+
+                const selectedDate = dateMap[dateValue];
+                const availableSlots = events.filter(event =>
+                    event.title.includes('Valentine Magic with the Mini Moos') &&
+                    event.start.startsWith(selectedDate)
+                );
+
+                timeSlotSelect.innerHTML = '<option value="">Choose a Time Slot</option>';
+
+                if (availableSlots.length === 0) {
+                    timeSlotSelect.innerHTML += '<option value="" style="color: red; font-weight: bold;">🔴 SOLD OUT - No available slots for this date</option>';
+                    timeSlotSelect.disabled = true;
+                } else {
+                    availableSlots.sort((a, b) => new Date(a.start) - new Date(b.start));
+
+                    availableSlots.forEach(event => {
+                        const eventDate = new Date(event.start);
+                        const endDate = new Date(event.end);
+                        const startTime = eventDate.toLocaleTimeString('en-US', {
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            hour12: true
+                        });
+                        const endTime = endDate.toLocaleTimeString('en-US', {
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            hour12: true
+                        });
+
+                        const timeSlotValue = startTime.toLowerCase().replace(' ', '');
+
+                        const option = document.createElement('option');
+                        option.value = timeSlotValue;
+                        option.textContent = `${startTime} - ${endTime}`;
+                        option.setAttribute('data-event-id', event.id);
+                        timeSlotSelect.appendChild(option);
+                    });
+
+                    timeSlotSelect.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error loading available slots:', error);
+                timeSlotSelect.innerHTML = '<option value="">Error loading slots</option>';
+            });
+    } else {
+        timeSlotSelect.disabled = true;
+        timeSlotSelect.innerHTML = '<option value="">First select a date</option>';
+    }
+}
+
+function goToCheckout(visitType) {
+    if (visitType === 'valentine-magic') {
+        const timeSlotSelect = document.getElementById('valentine-magic-time-slot');
+        const experiences = document.getElementById('valentine-magic-experiences').value;
+        
+        if (!timeSlotSelect.value || !experiences) {
+            alert('Please select a date, time slot, and enter the number of guests.');
+            return;
+        }
+        
+        const selectedOption = timeSlotSelect.options[timeSlotSelect.selectedIndex];
+        const visitId = selectedOption.getAttribute('data-event-id');
+        
+        if (!visitId) {
+            alert('Please select a valid time slot.');
+            return;
+        }
+        
+        // Show legal modal instead of going directly to checkout
+        showLegalModal('valentine-magic', {
+            url: `/checkout?event_id=${visitId}&tickets=${experiences}`
+        });
+    }
+}
+</script>
+
+{% endblock %}

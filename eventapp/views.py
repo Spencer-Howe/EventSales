@@ -54,6 +54,21 @@ def home():
     # noinspection PyUnresolvedReferences
     return render_template('home.html')
 
+@views.route('/private-mini-moo')
+def private_mini_moo():
+    # noinspection PyUnresolvedReferences
+    return render_template('private_mini_moo.html')
+
+@views.route('/valentine-magic')
+def valentine_magic():
+    # noinspection PyUnresolvedReferences
+    return render_template('valentine_magic.html')
+
+@views.route('/open-farm-day')
+def open_farm_day():
+    # noinspection PyUnresolvedReferences
+    return render_template('open_farm_day.html')
+
 # Note: calculate_price route moved to booking.py blueprint
 
 

@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}Open Farm Day - Howe Ranch{% endblock %}
+
+{% block content %}
+<style>
+:root {
+  --ranch-pink: #d63384;
+  --ranch-pink-light: #f8d7da;
+  --ranch-pink-dark: #b02a5b;
+}
+@media (max-width: 576px) {
+  .btn-lg { padding: 12px 20px; font-size: 1rem; }
+  h1 { font-size: 1.75rem; }
+}
+</style>
+
+<!-- Header -->
+<div class="text-white py-3" style="background: linear-gradient(135deg, var(--ranch-pink) 0%, var(--ranch-pink-dark) 100%);">
+  <div class="container text-center">
+    <h1 class="mb-2 fw-bold">💕 Season of Love Open Farm Day</h1>
+    <p class="mb-0">Per Guest Pass 1Y+ • Shared Experience with ~5-15 Mini Cow Lover Families onsite</p>
+  </div>
+</div>
+
+<!-- Image -->
+<div class="container mt-3">
+  <img src="static/pic/valentinesopen.jpg" class="img-fluid rounded w-100" alt="Open Farm Day" style="max-width: 800px; margin: 0 auto; display: block;">
+</div>
+
+<!-- Key Details -->
+<div class="container mt-4">
+  <div class="alert alert-warning">
+    <small><strong>Shared Experience:</strong> 5-15 families onsite • No private photo ops • Micro "festival" atmosphere</small>
+  </div>
+  
+  <div class="card">
+    <div class="card-body">
+      <h5 class="mb-3" style="color: var(--ranch-pink);">✨ Includes:</h5>
+      <div class="row g-2">
+        <div class="col-6">
+          <small>🐮 Mini cow cuddling sessions</small><br>
+          <small>🚶‍♀️ Guided farm tour</small><br>
+          <small>🎨 Arts & crafts station</small>
+        </div>
+        <div class="col-6">
+          <small>🍬 Seasonal treats & drinks</small><br>
+          <small>🔍 Scavenger hunt</small><br>
+          <small>🏆 Games and prizes</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Pricing -->
+<div class="container mt-3">
+  <div class="row g-2">
+    <div class="col-6">
+      <div class="card text-center" style="border-color: var(--ranch-pink);">
+        <div class="card-body py-2">
+          <h6 class="mb-1" style="color: var(--ranch-pink);">1-3 Guests</h6>
+          <strong style="color: var(--ranch-pink);">$40/guest</strong>
+        </div>
+      </div>
+    </div>
+    <div class="col-6">
+      <div class="card text-center" style="border-color: var(--ranch-pink);">
+        <div class="card-body py-2">
+          <h6 class="mb-1" style="color: var(--ranch-pink);">4+ Guests</h6>
+          <strong style="color: var(--ranch-pink);">$35/guest</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="text-center small text-muted mt-2">Children under 1 attend free</p>
+</div>
+
+<!-- Booking Form -->
+<div class="container mt-4">
+  <div class="card" style="border-color: var(--ranch-pink);">
+    <div class="card-header text-white text-center" style="background-color: var(--ranch-pink);">
+      <h5 class="mb-0">📅 Book Your Open Farm Day</h5>
+    </div>
+    <div class="card-body">
+      <div class="form-group mb-3">
+        <label for="valentine-visit-date" class="form-label fw-bold">Select Date</label>
+        <select class="form-control" id="valentine-visit-date" required onchange="updateValentineTimeSlots()">
+          <option value="">Choose a Date</option>
+          <option value="valentine2">Sunday, January 25</option>
+          <option value="valentine3">Sunday, February 8</option>
+          <option value="valentine4">Saturday, February 14 (Valentine's Day)</option>
+        </select>
+      </div>
+
+      <div class="form-group mb-3">
+        <label for="valentine-time-slot" class="form-label fw-bold">Select Time</label>
+        <select class="form-control" id="valentine-time-slot" required disabled>
+          <option value="">First select a date</option>
+        </select>
+      </div>
+
+      <div class="form-group mb-3">
+        <label for="valentine-experiences" class="form-label fw-bold">Party Size</label>
+        <input type="number" class="form-control" id="valentine-experiences" placeholder="Number of guests" required min="1" max="10">
+        <div class="form-text small">Pricing calculated at checkout</div>
+      </div>
+
+      <button onclick="goToCheckout('valentine')" class="btn btn-lg w-100 fw-bold text-white" style="background-color: var(--ranch-pink); border-color: var(--ranch-pink);">💕 Book Open Farm Day 💕</button>
+    </div>
+  </div>
+</div>
+
+<!-- Details -->
+<div class="container mt-3 mb-4">
+  <div class="card">
+    <div class="card-header bg-light">
+      <button class="btn btn-sm btn-outline-secondary w-100" type="button" data-bs-toggle="collapse" data-bs-target="#details">
+        📋 Experience Details & Policies
+      </button>
+    </div>
+    <div class="collapse" id="details">
+      <div class="card-body">
+        <div class="small">
+          <p><strong>About This Experience:</strong> Guided farm tour with educational animal encounters, crafts, and activities. Shared with multiple families for community atmosphere.</p>
+          
+          <p><strong>Required:</strong> Read <a href="https://www.thehoweranch.com/_files/ugd/fca21d_000e01c6a9ca4def8e1b627746c15967.pdf" target="_blank">Farm FAQs</a> and <a href="https://www.thehoweranch.com/_files/ugd/fca21d_a30cd343d96b4be3913cded96c226b9f.pdf" target="_blank">Farm Policies</a> before booking.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="text-center mt-3">
+    <a href="/" class="btn btn-outline-secondary">← Back to All Experiences</a>
+  </div>
+</div>
+
+<script>
+function updateValentineTimeSlots() {
+    const dateValue = document.getElementById('valentine-visit-date').value;
+    const timeSlotSelect = document.getElementById('valentine-time-slot');
+
+    timeSlotSelect.innerHTML = '';
+
+    if (dateValue) {
+        timeSlotSelect.disabled = false;
+
+        let timeOptions = '<option value="">Choose a Time Slot</option>';
+        
+        if (dateValue === 'valentine2') {
+            timeOptions += '<option value="3pm">3:00 PM - 6:00 PM</option>';
+            timeOptions += '<option value="1230pm">12:30 PM - 2:30 PM</option>';
+        } else if (dateValue === 'valentine3') {
+            timeOptions += '<option value="1pm">1:00 PM - 3:00 PM</option>';
+            timeOptions += '<option value="3pm">3:00 PM - 6:00 PM</option>';
+        } else if (dateValue === 'valentine4') {
+            timeOptions += '<option value="1230pm">12:30 PM - 2:30 PM</option>';
+            timeOptions += '<option value="3pm">3:00 PM - 6:00 PM</option>'
+        }
+        
+        timeSlotSelect.innerHTML = timeOptions;
+    } else {
+        timeSlotSelect.disabled = true;
+        timeSlotSelect.innerHTML = '<option value="">First select a date</option>';
+    }
+}
+
+function goToCheckout(visitType) {
+    if (visitType === 'valentine') {
+        const dateValue = document.getElementById('valentine-visit-date').value;
+        const timeSlotValue = document.getElementById('valentine-time-slot').value;
+        const experiences = document.getElementById('valentine-experiences').value;
+
+        if (!dateValue || !timeSlotValue || !experiences) {
+            alert('Please select a date, time slot, and enter the number of guests.');
+            return;
+        }
+
+        const visitMapping = {
+            'valentine2_3pm': '1184',
+            'valentine2_1230pm': '1270',
+            'valentine3_1pm': '1271',
+            'valentine3_3pm': '1186',
+            'valentine4_1230pm': '1272',
+            'valentine4_3pm': '1188'
+        };
+        
+        const visitKey = dateValue + '_' + timeSlotValue;
+        const visitId = visitMapping[visitKey];
+        
+        if (!visitId) {
+            alert('Please select a valid date and time slot.');
+            return;
+        }
+        
+        // Show legal modal instead of going directly to checkout
+        showLegalModal('open-farm-day', {
+            url: `/checkout?event_id=${visitId}&tickets=${experiences}`
+        });
+    }
+}
+</script>
+
+{% endblock %}

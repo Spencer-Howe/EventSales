@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Private Mini Moo Experience - Howe Ranch{% endblock %}
+
+{% block content %}
+<style>
+:root {
+  --ranch-pink: #d63384;
+  --ranch-pink-light: #f8d7da;
+  --ranch-pink-dark: #b02a5b;
+}
+@media (max-width: 576px) {
+  .btn-lg { padding: 12px 20px; font-size: 1rem; }
+  h1 { font-size: 1.75rem; }
+}
+</style>
+
+<!-- Header -->
+<div class="text-white py-3" style="background: linear-gradient(135deg, var(--ranch-pink) 0%, var(--ranch-pink-dark) 100%);">
+  <div class="container text-center">
+    <h1 class="mb-2 fw-bold">🎁 Private Mini Moo Experience</h1>
+    <p class="mb-0">1-10 Guests max • 1 Hour • Private • Animal Focused • Bottle Feeding Calves • DYO Photos</p>
+  </div>
+</div>
+
+<!-- Image -->
+<div class="container mt-3">
+  <img src="static/pic/valentinesminimoo.jpg" class="img-fluid rounded w-100" alt="Private Mini Moo Experience" style="max-width: 800px; margin: 0 auto; display: block;">
+</div>
+
+<!-- Key Details -->
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-body">
+      <h5 class="mb-3" style="color: var(--ranch-pink);">What's Included:</h5>
+      <div class="row g-2">
+        <div class="col-6">
+          <small>🍼 Baby cow cuddles & bottle-feeding</small><br>
+          <small>🌾 Brush and feed mini herd</small><br>
+          <small>🦙 Meet alpacas, goats, donkeys</small>
+        </div>
+        <div class="col-6">
+          <small>📷 Professional photo backdrops</small><br>
+          <small>🎁 Souvenir bag included</small><br>
+          <small>⏱️ Full 60 minutes private</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Pricing & Book -->
+<div class="container mt-3">
+  <div class="card" style="border-color: var(--ranch-pink);">
+    <div class="card-body text-center">
+      <h4 class="mb-2" style="color: var(--ranch-pink);">$350 per group</h4>
+      <p class="mb-3 small text-muted">Up to 10 guests • Ages 1+ • Private experience</p>
+      <button onclick="showPrivateMiniMooModal()" class="btn btn-lg w-100 fw-bold text-white" style="background-color: var(--ranch-pink); border-color: var(--ranch-pink);">🎁 Book Private Experience</button>
+    </div>
+  </div>
+</div>
+
+<!-- Important Notes -->
+<div class="container mt-3 mb-4">
+  <div class="card">
+    <div class="card-header bg-light">
+      <button class="btn btn-sm btn-outline-secondary w-100" type="button" data-bs-toggle="collapse" data-bs-target="#details">
+        📋 Important Details & Policies
+      </button>
+    </div>
+    <div class="collapse" id="details">
+      <div class="card-body">
+        <div class="small">
+          <p><strong>Experience Notes:</strong></p>
+          <ul class="mb-3">
+            <li>No celebratory activities (cake, decorations)</li>
+            <li>Transferable but non-refundable, no reschedules</li>
+            <li>Groups over 10 need second booking</li>
+          </ul>
+          
+          <p><strong>Required:</strong> Read <a href="https://www.thehoweranch.com/_files/ugd/fca21d_000e01c6a9ca4def8e1b627746c15967.pdf" target="_blank">Farm FAQs</a> and <a href="https://www.thehoweranch.com/_files/ugd/fca21d_a30cd343d96b4be3913cded96c226b9f.pdf" target="_blank">Farm Policies</a> before booking.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="text-center mt-3">
+    <a href="/" class="btn btn-outline-secondary">← Back to All Experiences</a>
+  </div>
+</div>
+
+<script>
+function showPrivateMiniMooModal() {
+    // Show legal modal for private mini moo experience
+    showLegalModal('private-mini-moo', {
+        url: '/select_tickets'
+    });
+}
+</script>
+
+{% endblock %}
