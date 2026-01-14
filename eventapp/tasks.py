@@ -159,6 +159,7 @@ def send_personal_notification(booking):
             <ul>
                 <li><strong>Name:</strong> {booking.customer.name if booking.customer else "Unknown"}</li>
                 <li><strong>Email:</strong> {booking.customer.email if booking.customer else "Unknown"}</li>
+                <li><strong>Phone:</strong> {booking.customer.phone if booking.customer else "Unknown"}</li>
                 <li><strong>Time Slot:</strong> {booking.event.start.strftime('%Y-%m-%d %H:%M:%S') if booking.event else "Unknown"}</li>
                 <li><strong>Amount Paid:</strong> ${amount_paid}</li>
             </ul>
