@@ -64,6 +64,11 @@ def valentine_magic():
     # noinspection PyUnresolvedReferences
     return render_template('valentine_magic.html')
 
+@views.route('/springtime-magic')
+def springtime_magic():
+    # noinspection PyUnresolvedReferences
+    return render_template('springtime_magic.html')
+
 @views.route('/open-farm-day')
 def open_farm_day():
     # noinspection PyUnresolvedReferences

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Valentine Magic - Howe Ranch{% endblock %}
+{% block title %}Springtime Magic - Howe Ranch{% endblock %}
 
 {% block content %}
 <style>
@@ -18,14 +18,14 @@
 <!-- Header -->
 <div class="text-white py-3" style="background: linear-gradient(135deg, var(--ranch-pink) 0%, var(--ranch-pink-dark) 100%);">
   <div class="container text-center">
-    <h1 class="mb-2 fw-bold">❤️ Valentine Magic</h1>
-    <p class="mb-0">1-5 Guests • 2 Hours • Professional Mini Photo Session included • 1-5 Families on Site • Games, Concessions & Prizes</p>
+    <h1 class="mb-2 fw-bold">🌸 Springtime Magic</h1>
+    <p class="mb-0">1-5 Guests • 2 Hours • Professional Mini Photo Session included • 1-5 Families on Site • Spring Fairytale Setting • Tea Time with Bunnies</p>
   </div>
 </div>
 
 <!-- Image -->
 <div class="container mt-3">
-  <img src="static/pic/magicvalentine.jpg" class="img-fluid rounded w-100" alt="Valentine Magic" style="max-width: 800px; margin: 0 auto; display: block;">
+  <img src="static/pic/magicspring.jpg" class="img-fluid rounded w-100" alt="Springtime Magic" style="max-width: 800px; margin: 0 auto; display: block;">
 </div>
 
 <!-- Key Details -->
@@ -36,16 +36,17 @@
   
   <div class="card">
     <div class="card-body">
-      <h5 class="mb-3" style="color: var(--ranch-pink);">✨ Your Valentine Magic Experience Includes:</h5>
+      <h5 class="mb-3" style="color: var(--ranch-pink);">✨ Your Springtime Magic Experience Includes:</h5>
       <ul class="small">
         <li>🐮 Baby Moo kisses & cuddles with our fluffy Highland calves</li>
-        <li>📸 Two professional mini-session photos with our photographer partner (included with every visit)</li>
-        <li>💘 Romantic & whimsical Valentine Town scenes for exploring and memory-making</li>
-        <li>🎨 Valentine Crafts at our make-and-take station</li>
-        <li>🍬 Seasonal Valentine treats & drinks</li>
-        <li>🐐 Visits with alpacas, mini highland cows, and mini goats dressed in their Valentine best</li>
-        <li>🌸 A fully staffed, relaxed experience with guided flow — no crowds, no chaos</li>
-        <li>💕 Much loved and traditional scavenger hunt</li>
+        <li>📸 Three professional mini-session photos with our photographer partner</li>
+        <li>🌸 A spring fairytale farm setting filled with storybook charm</li>
+        <li>🐰 Wonderland Tea Time with our bunnies in their enchanted garden</li>
+        <li>🍓 Seasonal spring treats & refreshing drinks</li>
+        <li>🐐 Relaxation time with alpacas, mini Highland cows, mini goats and donkeys</li>
+        <li>🎨 Includes a free project at our make-and-take craft station</li>
+        <li>🌼 A fully staffed, relaxed experience with guided flow — no crowds, no chaos</li>
+        <li>🗺️ A whimsical scavenger hunt adventure through our enchanted farm settings with prizes for all ages</li>
       </ul>
     </div>
   </div>
@@ -55,36 +56,34 @@
 <div class="container mt-4">
   <div class="card" style="border-color: var(--ranch-pink);">
     <div class="card-header text-white text-center" style="background-color: var(--ranch-pink);">
-      <h5 class="mb-0">📅 Book Your Valentine Magic</h5>
+      <h5 class="mb-0">📅 Book Your Springtime Magic</h5>
     </div>
     <div class="card-body">
       <div class="form-group mb-3">
-        <label for="valentine-magic-date" class="form-label fw-bold">Select Date</label>
-        <select class="form-control" id="valentine-magic-date" required onchange="updateValentineMagicTimeSlots()">
+        <label for="springtime-magic-date" class="form-label fw-bold">Select Date</label>
+        <select class="form-control" id="springtime-magic-date" required onchange="updateSpringtimeMagicTimeSlots()">
           <option value="">Choose a Date</option>
-          <option value="valentine-magic1">Sunday, January 4</option>
-          <option value="valentine-magic2">Saturday, January 17</option>
-          <option value="valentine-magic4">Saturday, January 24</option>
-          <option value="valentine-magic5">Saturday, January 31</option>
-          <option value="valentine-magic6">Sunday, February 1</option>
-          <option value="valentine-magic7">Saturday, February 7</option>
+          <option value="springtime-magic1">Sunday, February 22</option>
+          <option value="springtime-magic2">Sunday, March 1</option>
+          <option value="springtime-magic3">Sunday, March 15</option>
+          <option value="springtime-magic4">Sunday, March 22</option>
         </select>
       </div>
 
       <div class="form-group mb-3">
-        <label for="valentine-magic-time-slot" class="form-label fw-bold">Select Time</label>
-        <select class="form-control" id="valentine-magic-time-slot" required disabled>
+        <label for="springtime-magic-time-slot" class="form-label fw-bold">Select Time</label>
+        <select class="form-control" id="springtime-magic-time-slot" required disabled>
           <option value="">First select a date</option>
         </select>
       </div>
 
       <div class="form-group mb-3">
-        <label for="valentine-magic-experiences" class="form-label fw-bold">Party Size</label>
-        <input type="number" class="form-control" id="valentine-magic-experiences" placeholder="Number of guests" required min="1" max="5">
+        <label for="springtime-magic-experiences" class="form-label fw-bold">Party Size</label>
+        <input type="number" class="form-control" id="springtime-magic-experiences" placeholder="Number of guests" required min="1" max="5">
         <div class="form-text small">Maximum 5 guests • $350 per group</div>
       </div>
 
-      <button onclick="goToCheckout('valentine-magic')" class="btn btn-lg w-100 fw-bold text-white" style="background-color: var(--ranch-pink); border-color: var(--ranch-pink);">❤️ Book Valentine Magic ❤️</button>
+      <button onclick="goToCheckout('springtime-magic')" class="btn btn-lg w-100 fw-bold text-white" style="background-color: var(--ranch-pink); border-color: var(--ranch-pink);">🌸 Book Springtime Magic 🌸</button>
     </div>
   </div>
 </div>
@@ -114,9 +113,9 @@
 </div>
 
 <script>
-function updateValentineMagicTimeSlots() {
-    const dateValue = document.getElementById('valentine-magic-date').value;
-    const timeSlotSelect = document.getElementById('valentine-magic-time-slot');
+function updateSpringtimeMagicTimeSlots() {
+    const dateValue = document.getElementById('springtime-magic-date').value;
+    const timeSlotSelect = document.getElementById('springtime-magic-time-slot');
 
     timeSlotSelect.innerHTML = '<option value="">Loading available times...</option>';
     timeSlotSelect.disabled = true;
@@ -126,17 +125,15 @@ function updateValentineMagicTimeSlots() {
             .then(response => response.json())
             .then(events => {
                 const dateMap = {
-                    'valentine-magic1': '2026-01-04',
-                    'valentine-magic2': '2026-01-17',
-                    'valentine-magic4': '2026-01-24',
-                    'valentine-magic5': '2026-01-31',
-                    'valentine-magic6': '2026-02-01',
-                    'valentine-magic7': '2026-02-07'
+                    'springtime-magic1': '2026-02-22',
+                    'springtime-magic2': '2026-03-01',
+                    'springtime-magic3': '2026-03-15',
+                    'springtime-magic4': '2026-03-22'
                 };
 
                 const selectedDate = dateMap[dateValue];
                 const availableSlots = events.filter(event =>
-                    event.title.includes('Valentine Magic with the Mini Moos') &&
+                    event.title.includes('Springtime Magic with the Mini Moos') &&
                     event.start.startsWith(selectedDate)
                 );
 
@@ -185,9 +182,9 @@ function updateValentineMagicTimeSlots() {
 }
 
 function goToCheckout(visitType) {
-    if (visitType === 'valentine-magic') {
-        const timeSlotSelect = document.getElementById('valentine-magic-time-slot');
-        const experiences = document.getElementById('valentine-magic-experiences').value;
+    if (visitType === 'springtime-magic') {
+        const timeSlotSelect = document.getElementById('springtime-magic-time-slot');
+        const experiences = document.getElementById('springtime-magic-experiences').value;
         
         if (!timeSlotSelect.value || !experiences) {
             alert('Please select a date, time slot, and enter the number of guests.');
