@@ -197,8 +197,10 @@ function goToCheckout(visitType) {
             return;
         }
         
-        // Go directly to checkout - no modal needed
-        window.location.href = `/checkout?event_id=${visitId}&tickets=${experiences}`;
+        // Show legal modal for Open Farm Days (not your premium $350 customers)
+        showLegalModal('open-farm-day', {
+            url: `/checkout?event_id=${visitId}&tickets=${experiences}`
+        });
     }
 }
 </script>

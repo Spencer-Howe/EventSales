@@ -5,6 +5,7 @@
     <file url="file://$PROJECT_DIR$/crystal_mccook_payment_insert.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/joseph_cabrera_simple_insert.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/private_mini_moo_schedule.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/springtime_magic_events_insert.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/venue_tour_event_insert.sql" dialect="PostgreSQL" />
   </component>
 </project>
