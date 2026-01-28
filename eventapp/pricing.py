@@ -4,8 +4,39 @@ Simple pricing logic - easy to extend
 from .extensions import db
 
 
+# New pricing classes for event_type functionality
+class PhotoSessionPricing:
+    """Pricing for photo sessions - flat rate"""
+    def calculate_price(self, tickets):
+        return 150  # Flat $150 for photo sessions
+
+
+class WorkshopPricing:
+    """Pricing for workshops"""
+    def calculate_price(self, tickets):
+        return tickets * 75  # $75 per person for workshops
+
+
+class PrivatePremiumPricing:
+    """Premium private events - higher than standard $350"""
+    def calculate_price(self, tickets):
+        return 500  # Flat $500 for premium private events
+
+
 def get_total_price(event, tickets):
-    """Calculate total price for any event"""
+    """Calculate total price for any event - backwards compatible"""
+    
+    # NEW: Check for special event types first (only if event_type exists)
+    if hasattr(event, 'event_type') and event.event_type:
+        if event.event_type == 'photo_session':
+            return PhotoSessionPricing().calculate_price(tickets)
+        elif event.event_type == 'workshop':
+            return WorkshopPricing().calculate_price(tickets)
+        elif event.event_type == 'private_premium':
+            return PrivatePremiumPricing().calculate_price(tickets)
+        # Add more new event types here as needed
+    
+    # EXISTING LOGIC: Keep exactly as-is for backwards compatibility
     # Private events: flat $350 rate regardless of ticket count
     if event.is_private:
         return 350

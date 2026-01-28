@@ -393,12 +393,12 @@ class EventModelView(ModelView):
     }
     
     # Form columns - both is_private and private are needed for different purposes
-    form_columns = ['title', 'start', 'end', 'price_per_ticket', 'max_capacity', 'description', 'is_private', 'private', 'is_booked', 'user_id']
+    form_columns = ['title', 'start', 'end', 'price_per_ticket', 'max_capacity', 'event_type', 'description', 'is_private', 'private', 'is_booked', 'user_id']
     
     # List view columns
-    column_list = ['id', 'title', 'start', 'end', 'price_per_ticket', 'max_capacity', 'is_private', 'is_booked', 'user.username']
+    column_list = ['id', 'title', 'start', 'end', 'price_per_ticket', 'max_capacity', 'event_type', 'is_private', 'is_booked', 'user.username']
     column_searchable_list = ['title', 'description']
-    column_filters = ['start', 'is_private', 'is_booked', 'user.username']
+    column_filters = ['start', 'is_private', 'is_booked', 'event_type', 'user.username']
     column_sortable_list = ['id', 'title', 'start', 'end', 'price_per_ticket', 'max_capacity']
     
     # Form validation and pre-population
@@ -476,6 +476,7 @@ class RepeatEventsView(BaseView):
                             end=end_datetime,
                             price_per_ticket=price_per_ticket,
                             max_capacity=max_capacity,
+                            event_type='open_farm',  # Default event type
                             is_private=is_private,
                             private=private,
                             is_booked=False,
@@ -538,6 +539,7 @@ class RepeatEventsView(BaseView):
                                     end=event_end,
                                     price_per_ticket=price_per_ticket,
                                     max_capacity=max_capacity,
+                                    event_type='open_farm',  # Default event type
                                     is_private=is_private,
                                     private=private,
                                     is_booked=False,
@@ -573,6 +575,7 @@ class RepeatEventsView(BaseView):
                                     end=event_end,
                                     price_per_ticket=price_per_ticket,
                                     max_capacity=max_capacity,
+                                    event_type='open_farm',  # Default event type
                                     is_private=is_private,
                                     private=private,
                                     is_booked=False,
