@@ -16,3 +16,6 @@ dataSources.local.xml
 workspace.xml
 scratch
 TODO
+__pycache__/
+*.pyc
+*.pyo
