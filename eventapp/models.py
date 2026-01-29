@@ -58,6 +58,8 @@ class Booking(db.Model):
     checked_in = db.Column(db.Boolean, default=False)
     checkin_time = db.Column(db.DateTime, nullable=True)
     receipt_sent = db.Column(db.Boolean, default=False, nullable=False)
+    #. New DB column: photo_followup_sent (boolean, default false)
+    photo_followup_sent = db.Column(db.Boolean, default=False, nullable=True)
     
     # Foreign keys
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
