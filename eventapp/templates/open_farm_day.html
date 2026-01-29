@@ -91,7 +91,6 @@
         <label for="valentine-visit-date" class="form-label fw-bold">Select Date</label>
         <select class="form-control" id="valentine-visit-date" required onchange="updateValentineTimeSlots()">
           <option value="">Choose a Date</option>
-          <option value="valentine2">Sunday, January 25</option>
           <option value="valentine3">Sunday, February 8</option>
           <option value="valentine4">Saturday, February 14 (Valentine's Day)</option>
         </select>
@@ -180,11 +179,9 @@ function goToCheckout(visitType) {
         }
 
         const visitMapping = {
-            'valentine2_3pm': '1184',
             'valentine2_1230pm': '1270',
             'valentine3_1pm': '1271',
             'valentine3_3pm': '1186',
-            'valentine4_1230pm': '1272',
             'valentine4_3pm': '1188'
         };
         
