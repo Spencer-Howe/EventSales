@@ -2,13 +2,19 @@
 Simple pricing logic - easy to extend
 """
 from .extensions import db
-
+from .models import Booking, Payment
+from datetime import datetime, timedelta
+import pytz
 
 # New pricing classes for event_type functionality
 class PhotoSessionPricing:
     """Pricing for photo sessions - flat rate"""
     def calculate_price(self, tickets):
-        return 150  # Flat $150 for photo sessions
+        return 350  # Flat $150 for photo sessions
+    def capacity_check(self, event, tickets):
+        if tickets > 5:
+            return False, "Photo sessions accommodate up to 5 guests maximum."
+        return True, None
 
 
 class WorkshopPricing:
@@ -23,18 +29,22 @@ class PrivatePremiumPricing:
         return 500  # Flat $500 for premium private events
 
 
+# Dictionary mapping event types to pricing classes
+PRICING_CLASSES = {
+    'photo_session': PhotoSessionPricing,
+    'workshop': WorkshopPricing,
+    'private_premium': PrivatePremiumPricing,
+}
+
+
 def get_total_price(event, tickets):
     """Calculate total price for any event - backwards compatible"""
     
     # NEW: Check for special event types first (only if event_type exists)
     if hasattr(event, 'event_type') and event.event_type:
-        if event.event_type == 'photo_session':
-            return PhotoSessionPricing().calculate_price(tickets)
-        elif event.event_type == 'workshop':
-            return WorkshopPricing().calculate_price(tickets)
-        elif event.event_type == 'private_premium':
-            return PrivatePremiumPricing().calculate_price(tickets)
-        # Add more new event types here as needed
+        pricing_class = PRICING_CLASSES.get(event.event_type)
+        if pricing_class:
+            return pricing_class().calculate_price(tickets)
     
     # EXISTING LOGIC: Keep exactly as-is for backwards compatibility
     # Private events: flat $350 rate regardless of ticket count
@@ -54,9 +64,6 @@ def get_total_price(event, tickets):
 
 def check_capacity(event, tickets):
     """Check if booking fits capacity"""
-    from .models import Booking, Payment
-    from datetime import datetime, timedelta
-    import pytz
     
     # Universal check: allow booking during event, prevent booking 6 hours after event starts
     pacific_tz = pytz.timezone('America/Los_Angeles')
@@ -64,6 +71,12 @@ def check_capacity(event, tickets):
     booking_cutoff = event.start + timedelta(hours=6) if event.start else None
     if booking_cutoff and now >= booking_cutoff:
         return False, f"This event has ended and is no longer available for booking."
+    
+    # NEW: Check for special event types first (only if event_type exists)
+    if hasattr(event, 'event_type') and event.event_type:
+        pricing_class = PRICING_CLASSES.get(event.event_type)
+        if pricing_class and hasattr(pricing_class, 'capacity_check'):
+            return pricing_class().capacity_check(event, tickets)
     #check for 5 max photos
     if event.title and "Professional Photos" in event.title:
         current_bookings = db.session.query(db.func.sum(Booking.tickets)).join(Payment).filter(
