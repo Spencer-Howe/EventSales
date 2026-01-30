@@ -8,6 +8,44 @@ from eventapp.views import generate_qr_code
 
 tasks = Blueprint('tasks', __name__)
 
+def send_photo_followup(booking):
+    subject = "Your Mini Moo Photos Are Being Edited - Thank You!"
+    sender = current_app.config['MAIL_USERNAME']
+    recipient = booking.customer.email if booking.customer else "unknown@email.com"
+    name = booking.customer.name if booking.customer else "Unknown"
+
+    # Email content
+    html_content = f"""
+    <html>
+      <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+        <p>Hello {name},</p>
+
+        <p>It was such a pleasure welcoming you to the farm for mini moo magic this weekend. Thank you for choosing to spend such a special moment together with us — we truly loved having you here.</p>
+
+        <p>
+          Our photographer partners are now carefully editing your images, and we typically receive completed galleries by Wednesday. Once everything is ready, you'll receive a follow-up email with your downloadable gallery link.
+        </p>
+
+        <p>Thank you again for sharing your time, smiles, and connection with our animals — it truly means so much to our little farm.</p>
+
+        <p>Warmly,<br>Spencer Howe<br>Howe Ranch</p>
+      </body>
+    </html>
+    """
+
+    # Create email message
+    msg = Message(subject, sender=sender, recipients=[recipient], html=html_content)
+
+    # Send email
+    try:
+        mail.send(msg)
+        print(f"Photo follow-up email sent to {recipient}")
+        return True
+    except Exception as e:
+        print(f"Failed to send photo follow-up email to {recipient}: {str(e)}")
+        return False
+
+
 def send_reminder_email(booking):
     subject = "Visit Reminder - Upcoming Farm Experience at Howe Ranch"
     sender = current_app.config['MAIL_USERNAME']
@@ -215,6 +253,40 @@ def check_and_send_reminders(app):
                 print(f"Booking {booking.id} already processed by another instance")
 
         print(f"Checked and processed {processed_count} reminders for bookings between {now} and {end_time}")
+
+
+def check_and_send_photo_followups(app):
+    with app.app_context():
+        now = datetime.utcnow()
+
+        # Query all photo sessions that haven't been sent follow-up emails
+        # More reliable - never misses an event even if scheduler was down
+        bookings = Booking.query.join(Event).filter(
+            Event.event_type == 'photo_session',  # Photo session events
+            Event.end < now,  # Event has ended
+            Booking.photo_followup_sent != True  # Not sent yet (handles NULL and False)
+        ).all()
+
+        processed_count = 0
+        for booking in bookings:
+            # Atomic update: only process if we can successfully mark as sent
+            rows_updated = db.session.query(Booking).filter(
+                Booking.id == booking.id,
+                Booking.photo_followup_sent != True
+            ).update({'photo_followup_sent': True})
+            
+            if rows_updated > 0:
+                # We successfully claimed this booking, commit the flag update
+                db.session.commit()
+                
+                # Now send the email
+                send_photo_followup(booking)
+                processed_count += 1
+            else:
+                # Another process already claimed this booking
+                print(f"Booking {booking.id} already processed by another instance")
+
+        print(f"Checked and processed {processed_count} photo follow-ups for sessions between {start_time} and {end_time}")
 
 
 

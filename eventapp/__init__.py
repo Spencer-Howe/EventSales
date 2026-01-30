@@ -38,7 +38,7 @@ def register_blueprints(app):
         return User.query.get(user_id)
 
 
-def create_app(config_class=Config, check_and_send_reminders=None, clear_old_bookings=None):
+def create_app(config_class=Config, check_and_send_reminders=None, check_and_send_photo_followups=None, clear_old_bookings=None):
     app = Flask(__name__)
     configure_app(app, config_class)
     configure_database(app)
@@ -46,6 +46,7 @@ def create_app(config_class=Config, check_and_send_reminders=None, clear_old_boo
 
     scheduler.init_app(app)
     scheduler.add_job(func=check_and_send_reminders, trigger='interval', args=[app], hours=1, id='email_reminder')
+    scheduler.add_job(func=check_and_send_photo_followups, trigger='interval', args=[app], hours=1, id='photo_followup')
     # Removed clear_old_bookings job - now handled by frontend filtering
     scheduler.start()
     app.config['PAYPAL_CLIENT_ID'] = os.getenv('PAYPAL_CLIENT_ID')
