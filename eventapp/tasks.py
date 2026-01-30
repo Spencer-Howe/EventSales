@@ -22,7 +22,6 @@ def send_photo_followup(booking):
 
         <p>It was such a pleasure welcoming you to the farm for mini moo magic this weekend. Thank you for choosing to spend such a special moment together with us — we truly loved having you here.</p>
 
-        <h2 style="color: #2e6c80;">Your Photos Are Being Carefully Edited</h2>
         <p>
           Our photographer partners are now carefully editing your images, and we typically receive completed galleries by Wednesday. Once everything is ready, you'll receive a follow-up email with your downloadable gallery link.
         </p>
@@ -259,14 +258,12 @@ def check_and_send_reminders(app):
 def check_and_send_photo_followups(app):
     with app.app_context():
         now = datetime.utcnow()
-        start_time = now - timedelta(hours=25)  # 24-25 hours ago
-        end_time = now - timedelta(hours=23)    # 23-24 hours ago
 
-        # Query bookings from photo sessions that ended 24 hours ago
+        # Query all photo sessions that haven't been sent follow-up emails
+        # More reliable - never misses an event even if scheduler was down
         bookings = Booking.query.join(Event).filter(
-            Event.end >= start_time,
-            Event.end < end_time,
             Event.event_type == 'photo_session',  # Photo session events
+            Event.end < now,  # Event has ended
             Booking.photo_followup_sent != True  # Not sent yet (handles NULL and False)
         ).all()
 
